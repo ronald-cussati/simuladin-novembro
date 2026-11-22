@@ -257,6 +257,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   id: "ed",
   title: "Estrutura de Dados II",
   subtitle: "Prof. Luiz Guilherme Spolador · Ordenação + Ponteiros + Alocação dinâmica",
+  exam: "01/12",
   color: "#4f46e5",
   intro: "Banco de 50 questões montado em cima das Aulas 5, 6, 7 e 8 (Bubble/Selection, Ponteiros e malloc, Insertion/Merge, Quick). As questões de código usam os mesmos exemplos dos slides (vetor 23, 4, 67, -8, 21...).",
   notice: "**Comece por:** alocação dinâmica, Quick Sort, ponteiros e complexidade dos algoritmos. São os assuntos com maior chance de cair.",
@@ -931,7 +932,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();

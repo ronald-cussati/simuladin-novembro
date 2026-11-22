@@ -310,7 +310,7 @@
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();

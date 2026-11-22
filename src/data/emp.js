@@ -2,6 +2,7 @@ window.EXAM = {
   id: "emp",
   title: "Empreendedorismo",
   subtitle: "Prof. Rafael Altoé Frossard · Aulas 1, 2 e 3 + Listas 1, 2 e 3",
+  exam: "25/11",
   color: "#0f766e",
   intro: "59 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
   notice: "**Foco provável: SWOT.** Comece pelo assunto “SWOT (diagnóstico estratégico)”. **Dica de prova:** as respostas certas quase sempre repetem o texto do slide; as erradas costumam usar “apenas”, “exclusivamente”, “ignorar” ou “evitar”.",

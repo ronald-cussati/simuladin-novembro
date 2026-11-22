@@ -256,7 +256,9 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 <script>window.EXAM = {
   id: "csharp",
   title: "Modelos e Linguagem de Programação III — C# / .NET",
-  subtitle: "Prova prática · Prof. Antonio Izo Júnior · Aulas 1, 2 e 3",
+  subtitle: "Prof. Antonio Izo Júnior · Aulas 1, 2 e 3",
+  exam: "27/11",
+  examLabel: "Prova prática",
   color: "#7c3aed",
   intro: "50 questões de leitura de código (o que imprime? onde está o erro? qual trecho completa o programa?) mais 8 exercícios de **escrever código** com solução, na aba Prática. A prova é prática: o que o professor construiu nas aulas é o que vai cair — média de notas, lista de tarefas com menu, `while`, `TryParse` e métodos.",
   notice: "**Prova prática:** digite o código no compilador online, não só leia. O exercício mais importante é refazer do zero a lista de tarefas com menu e métodos.",
@@ -1253,7 +1255,7 @@ class Pessoa
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();

@@ -257,6 +257,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   id: "redes",
   title: "Redes de Computadores II",
   subtitle: "Prof. Luiz Guilherme Spolador · Endereçamento IP, máscara, CIDR e sub-redes",
+  exam: "26/11",
   color: "#0369a1",
   intro: "60 questões em cima da Aula 5 (IP, máscara, gateway, classes, CIDR) e da Aula 6 (Sub-redes). Metade do simulado é cálculo de sub-rede, porque é o que mais vai pesar.",
   notice: "**Aviso do professor em aula:** focar principalmente no **slide 6 (sub-redes)**, que provavelmente vai cair, e também no **slide 5 (IP)**. Por isso 30 das 60 questões são só de cálculo de sub-rede.",
@@ -963,7 +964,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();
