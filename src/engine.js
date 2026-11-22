@@ -10,13 +10,16 @@
       .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
       .replace(/\n/g, "<br>");
 
+  // id estável da questão = hash de assunto + enunciado + código + texto da resposta certa.
+  // O progresso é salvo por esse id (e não pela posição), então inserir/reordenar questões não perde nada.
+  const qid = (a) => { const t = a[0] + "|" + a[1] + "|" + (a[7] || "") + "|" + a[2][a[3]]; let h = 5381; for (let k = 0; k < t.length; k++) h = ((h << 5) + h + t.charCodeAt(k)) | 0; return (h >>> 0).toString(36); };
   // normaliza perguntas: [topico, enunciado, opcoes, correta, explicacao, analogia, porQueErrado[], codigo]
   // gira as alternativas de forma fixa por questão, para a letra certa não ficar sempre na mesma posição
   const Q = E.questions.map((a, i) => {
     let o = a[2], ans = a[3], w = a[6] || [];
     const n = o.length, r = (i * 7 + 3) % n;
     if (r) { const rot = (arr) => arr.map((_, k) => arr[(k + r) % n]); o = rot(o); w = w.length ? rot(w) : w; ans = (ans - r + n) % n; }
-    return { i, t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
+    return { i, id: qid(a), t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
   });
   const T = {};
   E.topics.forEach((t) => (T[t.id] = t));
@@ -26,7 +29,14 @@
   const KEY = "sim_" + E.id;
   let store = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || { q: {}, hist: [] }; } catch (e) { return { q: {}, hist: [] }; } })();
   const save = () => { store.total = Q.length; try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
-  const record = (i, ok) => { const p = store.q[i] || { n: 0 }; store.q[i] = { ok, n: p.n + 1 }; save(); };
+  // migração: versões antigas guardavam o progresso pela posição da questão (chave numérica)
+  if (store.v !== 2) {
+    const nq = {}; let moved = 0;
+    for (const k in store.q) { if (/^\d+$/.test(k)) { if (Q[+k]) { nq[Q[+k].id] = store.q[k]; moved++; } } else nq[k] = store.q[k]; }
+    store.q = nq; store.v = 2;
+    if (moved || Object.keys(nq).length) save();
+  }
+  const record = (i, ok) => { const id = Q[i].id, p = store.q[id] || { n: 0 }; store.q[id] = { ok, n: p.n + 1 }; save(); };
 
   // ---------- estado ----------
   let view = "home";
@@ -47,8 +57,8 @@
   // ---------- estatísticas ----------
   function topicStats(id) {
     const qs = Q.filter((q) => q.t === id);
-    const done = qs.filter((q) => store.q[q.i]);
-    const ok = done.filter((q) => store.q[q.i].ok).length;
+    const done = qs.filter((q) => store.q[q.id]);
+    const ok = done.filter((q) => store.q[q.id].ok).length;
     return { total: qs.length, done: done.length, ok, acc: done.length ? ok / done.length : null };
   }
 
@@ -89,7 +99,7 @@
   // ---------- MONTAR SIMULADO ----------
   let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true };
   function setup() {
-    const wrongs = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok).length;
+    const wrongs = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
     const R = (name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
     app.innerHTML = `<div class="card"><h2>Montar simulado</h2>
       ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, como numa prova de verdade.")}
@@ -109,7 +119,7 @@
     if (cfg.mode === "full") l = Q.slice();
     else if (cfg.mode === "top") l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20);
     else if (cfg.mode === "topic") l = Q.filter((q) => q.t === cfg.topic);
-    else l = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok);
+    else l = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok);
     return cfg.sq ? shuffle(l) : l.sort((a, b) => a.i - b.i);
   }
   function startSession(list, label) {
@@ -219,7 +229,7 @@
     if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
     if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
     if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
-    if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [] }; save(); render(); } }
+    if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [], v: 2 }; save(); render(); } }
   });
   document.addEventListener("keydown", (ev) => {
     if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches(".tcard")) { ev.preventDefault(); ev.target.click(); }

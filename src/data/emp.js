@@ -3,10 +3,11 @@ window.EXAM = {
   title: "Empreendedorismo",
   subtitle: "Prof. Rafael Altoé Frossard · Aulas 1, 2 e 3 + Listas 1, 2 e 3",
   color: "#0f766e",
-  intro: "50 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
-  notice: "**Dica de prova:** as respostas certas quase sempre repetem o texto do slide; as erradas costumam usar “apenas”, “exclusivamente”, “ignorar” ou “evitar”.",
-  disclaimer: "**Padrão do professor (pelas 3 listas):** cada lista tem 5 questões objetivas contextualizadas (“Imagine uma empresa brasileira de…”) que testam **a definição exata do slide**, mais 1 discursiva. As respostas certas quase sempre são as que repetem o texto do slide; as erradas costumam usar “apenas”, “ignorar”, “evitar”, “exclusivamente”. Não achei provas antigas da Multivix publicadas; as estimativas de chance vêm do peso de cada tema nos slides e nas listas.",
+  intro: "59 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
+  notice: "**Foco provável: SWOT.** Comece pelo assunto “SWOT (diagnóstico estratégico)”. **Dica de prova:** as respostas certas quase sempre repetem o texto do slide; as erradas costumam usar “apenas”, “exclusivamente”, “ignorar” ou “evitar”.",
+  disclaimer: "**Padrão do professor (pelas 3 listas):** cada lista tem 5 questões objetivas contextualizadas (“Imagine uma empresa brasileira de…”) que testam **a definição exata do slide**, mais 1 discursiva. As respostas certas quase sempre são as que repetem o texto do slide; as erradas costumam usar “apenas”, “ignorar”, “evitar”, “exclusivamente”. Não achei provas antigas da Multivix publicadas; as estimativas de chance vêm do peso de cada tema nos slides e nas listas. As questões de SWOT seguem o modelo clássico de livros de administração (o tema não está nos slides das Aulas 1 a 3, mas é considerado provável de cair); se o professor usou outra nomenclatura, vale a dele.",
   topics: [
+    { id: "swot", name: "SWOT (diagnóstico estratégico)", src: "Fora dos slides", focus: true, prob: 92, why: "Indicado como provável de cair. Forças e fraquezas (internas), oportunidades e ameaças (externas), classificar fatores, cruzar quadrantes para formar estratégias e o papel da SWOT no pitch." },
     { id: "oport", name: "Oportunidade e ação empreendedora", prob: 80, why: "Definição de Hisrich e Peters (Lista 1, questão 1). Percepção → avaliação → ação." },
     { id: "pens", name: "Pensamento: estrutural, bricolagem, efetuação", prob: 93, why: "3 das 6 questões da Lista 1. Slide com 3 exemplos (NASA, fazenda de metano, Zé das Couves). **Quase certo.**" },
     { id: "adapt", name: "Mentalidade e adaptabilidade cognitiva", prob: 75, why: "Definição + 4 etapas (conhecimento, conexão, estratégicas, reflexão). Questão 4 da Lista 1." },
@@ -14,9 +15,10 @@ window.EXAM = {
     { id: "intra", name: "Intraempreendedorismo e cultura empreendedora", prob: 96, why: "Lista 2 **inteira** é sobre isso (5 questões + discursiva). Aula 2 inteira. Prioridade máxima." },
     { id: "estrat", name: "Estratégia empreendedora, recursos e conhecimentos", prob: 90, why: "Lista 3 quase inteira: nova entrada, recursos (valiosos/raros/inimitáveis), conhecimento empírico/mercado/tecnológico." },
     { id: "janela", name: "Janela de oportunidade e pioneirismo", prob: 78, why: "Aula 3, slides 9–13: erro de comissão/omissão, vantagens e desvantagens de ser pioneiro." },
-    { id: "extra", name: "Bônus: SWOT, Porter, BSC (fora dos slides)", prob: 25, why: "Não estão nos slides das Aulas 1–3, mas o enunciado da AV cita SWOT, Porter e Balanced Scorecard. Só 3 questões, por segurança." }
+    { id: "extra", name: "Bônus: Porter e Balanced Scorecard (fora dos slides)", prob: 30, why: "Não estão nos slides das Aulas 1 a 3, mas o enunciado da AV cita os dois. Só 2 questões, por segurança." }
   ],
   plan: [
+    "**Primeiro: SWOT.** Faça o simulado por assunto em “SWOT (diagnóstico estratégico)” e leia o bloco SWOT do Resumão.",
     "**Prioridade 1:** Intraempreendedorismo (96%) e Pensamento estrutural/bricolagem/efetuação (93%). Faça o simulado por assunto nesses dois.",
     "**Prioridade 2:** Estratégia empreendedora (recursos e 3 tipos de conhecimento) e Janela de oportunidade/pioneiro.",
     "**Truque de prova:** nas alternativas, desconfie de “apenas”, “exclusivamente”, “ignorar”, “evitar”, “proibir”. Quase sempre são as erradas.",
@@ -273,7 +275,7 @@ window.EXAM = {
       ["Demanda é sobre tamanho e crescimento do mercado.", "", "Clientes: dificuldade de saber se o produto agrega valor para eles.", "É vantagem, não incerteza.", "Comissão é um tipo de erro de ação."]],
 
     // ========== BÔNUS ==========
-    ["extra", "Na análise **SWOT** (FOFA), forças e fraquezas referem-se ao ambiente ______, e oportunidades e ameaças ao ambiente ______.",
+    ["swot", "Na análise **SWOT** (FOFA), forças e fraquezas referem-se ao ambiente ______, e oportunidades e ameaças ao ambiente ______.",
       ["externo / interno", "interno / externo", "interno / interno", "externo / externo", "financeiro / jurídico"], 1,
       "**Forças e Fraquezas = internas** (da organização). **Oportunidades e Ameaças = externas** (do ambiente).",
       "Time de futebol: forças/fraquezas = seu elenco; oportunidades/ameaças = adversário, clima, campo.",
@@ -287,9 +289,65 @@ window.EXAM = {
       ["Financeira, clientes, processos internos e aprendizado e crescimento", "Forças, fraquezas, oportunidades e ameaças", "Produto, preço, praça e promoção", "Rivalidade, entrantes, substitutos e fornecedores", "Missão, visão, valores e metas"], 0,
       "BSC: **financeira, clientes, processos internos, aprendizado e crescimento**. Serve para medir a efetividade da estratégia (KPIs, metas, indicadores) — item do pitch da AV.",
       "Painel de controle do carro: velocímetro, combustível, temperatura, óleo — vários indicadores, não só um.",
-      ["", "Isso é o SWOT.", "Isso é o mix de marketing (4Ps).", "Isso é Porter.", "Isso é identidade organizacional, não o BSC."]]
+      ["", "Isso é o SWOT.", "Isso é o mix de marketing (4Ps).", "Isso é Porter.", "Isso é identidade organizacional, não o BSC."]],
+
+    // ========== SWOT (reforço) ==========
+    ["swot", "Uma startup de software tem uma equipe técnica experiente em inteligência artificial. Na análise SWOT, esse fator é classificado como:",
+      ["Força", "Fraqueza", "Oportunidade", "Ameaça", "Problema estratégico"], 0,
+      "A equipe faz parte da própria empresa (fator **interno**) e é algo **positivo**: é uma **Força** (Strengths).",
+      "Interno e bom = força. Interno e ruim = fraqueza. Externo e bom = oportunidade. Externo e ruim = ameaça.",
+      ["", "Fraqueza é um fator interno negativo; uma equipe experiente é positiva.", "Oportunidade é externa; a equipe faz parte da empresa.", "Ameaça é externa e negativa.", "O problema estratégico é o resultado do diagnóstico, não um item da matriz."]],
+    ["swot", "Qual dos itens abaixo deve ser listado como **Ameaça** na SWOT de uma loja virtual brasileira?",
+      ["Entrada de uma concorrente internacional com preços mais baixos", "Equipe de atendimento treinada e rápida", "Falta de capital de giro para comprar estoque", "Crescimento do número de brasileiros que compram pela internet", "Marca já reconhecida pelos clientes da região"], 0,
+      "Ameaça = fator **externo** e **negativo**. A concorrente que chega com preços menores vem do mercado, não da loja.",
+      "Ameaça é a tempestade que vem de fora; fraqueza é o telhado furado de dentro.",
+      ["", "É um fator interno e positivo: uma Força.", "É um fator interno e negativo: uma Fraqueza.", "É um fator externo e positivo: uma Oportunidade.", "É um fator interno e positivo: uma Força."]],
+    ["swot", "Qual dos itens abaixo é uma **Oportunidade** para uma escola de idiomas?",
+      ["Professores com ampla experiência", "Aumento da procura por cursos online entre trabalhadores remotos", "Sistema de matrícula antigo e lento", "Reajuste do aluguel do prédio definido pelo proprietário", "Reputação consolidada na cidade"], 1,
+      "Oportunidade = fator **externo** e **positivo**. O aumento da procura vem do mercado e a escola pode aproveitá-lo.",
+      "Oportunidade é o vento a favor: você não o criou, mas pode usá-lo para navegar.",
+      ["É interno e positivo: uma Força.", "", "É interno e negativo: uma Fraqueza.", "É externo e negativo: uma Ameaça.", "É interno e positivo: uma Força."]],
+    ["swot", "Por que uma empresa consegue agir diretamente sobre suas forças e fraquezas, mas não sobre as oportunidades e ameaças?",
+      ["Porque oportunidades e ameaças são sempre mais importantes que o resto", "Porque forças e fraquezas só existem no passado da empresa", "Porque forças e fraquezas são fatores internos, que a empresa controla; oportunidades e ameaças vêm do ambiente externo, que ela só pode monitorar e responder", "Porque ameaças nunca podem ser reduzidas", "Porque a SWOT avalia apenas o ambiente externo"], 2,
+      "O **ambiente interno** (forças e fraquezas) está sob controle da empresa. O **ambiente externo** (oportunidades e ameaças: mercado, economia, concorrência, tecnologia) ela não controla; só acompanha e se adapta.",
+      "Você pode arrumar a própria casa, mas não pode mudar o clima.",
+      ["A importância não é o critério de separação.", "Forças e fraquezas descrevem a situação atual da empresa.", "", "Ameaças podem ser reduzidas com estratégias, mesmo sem ser controladas.", "A SWOT avalia os dois ambientes: interno e externo."]],
+    ["swot", "Uma rede de cafés com marca forte (força) percebe o crescimento do consumo de cafés especiais (oportunidade) e abre novas unidades. Essa combinação de fatores indica uma estratégia:",
+      ["Defensiva (fraquezas × ameaças): minimizar fraquezas e evitar ameaças", "De confronto (forças × ameaças): usar forças para reduzir ameaças", "De reorientação (fraquezas × oportunidades): corrigir fraquezas para aproveitar oportunidades", "Ofensiva (forças × oportunidades): usar o ponto forte para aproveitar o cenário favorável", "Nenhuma, pois a SWOT não permite combinar fatores"], 3,
+      "Ao **cruzar** os quadrantes, forças com oportunidades formam a estratégia **ofensiva**, de crescimento. Os nomes variam entre os autores (por exemplo SO, “maxi-maxi”), mas a lógica é a mesma: **usar o que a empresa tem de bom para aproveitar o que o mercado oferece**.",
+      "Time forte jogando em casa, com a torcida a favor: é hora de atacar.",
+      ["Isso combina pontos fracos com riscos externos, que não é o caso.", "O cenário descrito é de oportunidade, e não de ameaça.", "Aqui não há fraqueza a corrigir; o ponto de partida é uma força.", "", "Combinar quadrantes é justamente o uso da SWOT para formar estratégias."]],
+    ["swot", "Uma clínica tem como fraqueza uma agenda desorganizada, e há grande procura por teleconsultas (oportunidade). Ao contratar um sistema de agendamento online para aproveitar essa procura, a clínica está combinando:",
+      ["Forças × oportunidades", "Forças × ameaças", "Fraquezas × ameaças", "Fraquezas × oportunidades: corrigir uma deficiência interna para aproveitar o cenário externo", "Nenhum fator da SWOT"], 3,
+      "Ela corrige uma **fraqueza** (agenda) justamente para **aproveitar uma oportunidade** (teleconsultas). É a estratégia de **reorientação** (fraquezas × oportunidades), com nomes que variam conforme o autor.",
+      "Arrumar a loja antes de abrir para a multidão que está chegando.",
+      ["Não há força envolvida no exemplo.", "Não há ameaça envolvida no exemplo.", "Não há ameaça envolvida: a clínica está aproveitando uma oportunidade.", "", "O exemplo usa uma fraqueza e uma oportunidade da matriz."]],
+    ["swot", "No pitch da atividade avaliativa, o bloco “Diagnóstico estratégico” pede a SWOT e o problema estratégico. Qual a função da SWOT nesse bloco?",
+      ["Substituir a missão, a visão e os valores", "Medir os resultados do plano com indicadores (KPIs)", "Organizar forças, fraquezas, oportunidades e ameaças para identificar o problema estratégico que sustenta o objetivo e as estratégias propostas", "Apresentar o histórico da organização", "Definir sozinha a estratégia, dispensando justificativa"], 2,
+      "Na estrutura do pitch, o **diagnóstico estratégico** traz a **SWOT** (forças, fraquezas, oportunidades, ameaças) e o **problema estratégico** identificado. O diagnóstico alimenta o objetivo central e as estratégias, que depois são justificadas com modelos estudados.",
+      "É o exame médico antes do tratamento: sem ele, a estratégia vira chute.",
+      ["Missão, visão e valores ficam no bloco de apresentação da organização.", "Indicadores e KPIs fazem parte do bloco de indicadores de sucesso.", "", "Histórico faz parte da apresentação da organização.", "A SWOT apoia a decisão; as estratégias ainda precisam ser justificadas com modelos."]],
+    ["swot", "Um grupo listou como **Fraqueza** da empresa o “aumento da taxa de juros no país”. Qual é o erro?",
+      ["Nenhum: fatores econômicos são sempre fraquezas", "Deveria ser uma Força, pois todo fator econômico fortalece a empresa", "O erro é listar mais de um item por quadrante", "Os juros são um fator do ambiente externo, que a empresa não controla: o lugar certo é Ameaça (ou Oportunidade, conforme o caso)", "Juros não podem entrar em uma SWOT"], 3,
+      "Fraquezas são **internas**. A taxa de juros é do **ambiente externo** (econômico): entra como **Ameaça** (se prejudica a empresa) ou Oportunidade (se favorece). Misturar interno e externo é o erro mais comum.",
+      "Culpar o clima por um defeito do próprio telhado, ou o contrário.",
+      ["Fatores econômicos são externos, e podem ser ameaça ou oportunidade.", "Não é fator interno e nem necessariamente positivo.", "Pode haver vários itens por quadrante.", "", "Fatores econômicos entram na análise do ambiente externo."]],
+    ["swot", "Qual afirmação sobre a SWOT está **correta**?",
+      ["É um indicador financeiro que mede o lucro da empresa", "Avalia apenas o ambiente interno", "Só serve para grandes empresas", "É uma ferramenta de diagnóstico que organiza fatores internos e externos para apoiar a definição de estratégias, mas não define a estratégia sozinha", "Deve ser feita uma única vez, sem nunca ser revisada"], 3,
+      "A SWOT é uma **ferramenta de diagnóstico**: organiza forças e fraquezas (internas) e oportunidades e ameaças (externas). Ela **apoia** a escolha das estratégias, mas as estratégias ainda precisam ser formuladas e justificadas.",
+      "É o mapa da situação, não o caminho: você ainda precisa escolher a rota.",
+      ["Não mede lucro; é uma análise qualitativa.", "Avalia o ambiente interno e o externo.", "Serve para organizações de qualquer porte.", "", "O ambiente muda; a análise deve ser revista periodicamente."]]
   ],
   cheat: [
+    { h: "SWOT (foco provável)", items: [
+      "**SWOT = FOFA:** **S**trengths (**Forças**), **W**eaknesses (**Fraquezas**), **O**pportunities (**Oportunidades**), **T**hreats (**Ameaças**).",
+      "**Interno (a empresa controla):** forças (positivas) e fraquezas (negativas). **Externo (a empresa só monitora):** oportunidades (positivas) e ameaças (negativas).",
+      "**Como classificar:** pergunte 1) vem de **dentro** ou de **fora**? 2) é **bom** ou **ruim**? Interno+bom = força · interno+ruim = fraqueza · externo+bom = oportunidade · externo+ruim = ameaça.",
+      "**Erro clássico:** misturar interno com externo (ex.: “juros altos” como fraqueza; é **ameaça**).",
+      "**Cruzamento dos quadrantes (nomes variam):** forças × oportunidades = **ofensiva** · forças × ameaças = **confronto** · fraquezas × oportunidades = **reorientação** · fraquezas × ameaças = **defensiva/sobrevivência**.",
+      "**No pitch da AV:** o bloco “Diagnóstico estratégico” (0,5) = **SWOT + problema estratégico**; ele sustenta o objetivo central e as estratégias.",
+      "A SWOT é **diagnóstico**: apoia a estratégia, mas não a define sozinha."
+    ]},
     { h: "Aula 1 — Introdução", items: [
       "**Oportunidade empreendedora** = situação em que novos bens/serviços/matérias-primas/métodos podem ser vendidos por valor **maior que o custo de produção**. Sozinha não significa nada: precisa da **ação empreendedora**.",
       "**Pensamento estrutural** → semelhança **estrutural** (mecanismos) entre tecnologia e mercado; não é óbvio. Ex.: simulador NASA → TDAH; rede social → pais de autistas.",
@@ -334,6 +392,9 @@ window.EXAM = {
     { t: "Conhecimento empírico (Lista 3)", q: "Analise como o conhecimento empírico de usuários, como pilotos de trilha que modificam motos, contribui para a estratégia empreendedora, comparando com as limitações do conhecimento de mercado e o impacto em nichos. Dê exemplos e pelo menos duas vantagens sociais.",
       a: "O **conhecimento empírico** vem de quem conhece muito um produto como consumidor aficionado: ele enxerga **falhas** e **melhorias** antes dos fabricantes. Pilotos de trilha adaptam suas motos para andar fora do asfalto; depois as montadoras incorporam essas mudanças para atender um **nicho**. A estratégia empreendedora pode, assim, focar em um nicho ou **criar novos mercados** a partir da experiência.\n\nO **conhecimento de mercado** (informações, know-how, análise de clientes) é importante, mas a pesquisa tem limite: as pessoas têm dificuldade de dizer que precisam de algo que ainda não existe. O empírico complementa essa limitação.\n\n**Vantagens sociais:** (1) produtos mais adequados às necessidades reais de comunidades específicas; (2) geração de empregos e renda em nichos antes ignorados; (3) inclusão de usuários como coautores da inovação." },
     { t: "Pitch estratégico (AV — 18/12)", q: "Monte a estrutura do pitch de 5 minutos da atividade avaliativa (valor 3,0) e diga o que colocar em cada bloco.",
-      a: "São 6 blocos de 0,5 ponto:\n1. **Apresentação da organização:** nome, setor, breve histórico, **missão, visão e valores**.\n2. **Diagnóstico estratégico:** **SWOT** (forças, fraquezas, oportunidades, ameaças) e o **problema estratégico** identificado.\n3. **Objetivo central:** meta principal, de curto ou médio prazo.\n4. **Estratégias propostas:** corporativas, competitivas ou funcionais, **justificadas com modelos estudados** (SWOT, Porter, Balanced Scorecard etc.).\n5. **Indicadores de sucesso e resultados esperados:** KPIs, metas, como medir a efetividade.\n6. **Mensagem final:** por que a estratégia é viável e merece ser implementada.\n\n**Atenção:** slides obrigatórios; 5 minutos; pode ser em grupo de até 5; apresentação presencial em **18/12/2026**; plágio = nota zero." }
+      a: "São 6 blocos de 0,5 ponto:\n1. **Apresentação da organização:** nome, setor, breve histórico, **missão, visão e valores**.\n2. **Diagnóstico estratégico:** **SWOT** (forças, fraquezas, oportunidades, ameaças) e o **problema estratégico** identificado.\n3. **Objetivo central:** meta principal, de curto ou médio prazo.\n4. **Estratégias propostas:** corporativas, competitivas ou funcionais, **justificadas com modelos estudados** (SWOT, Porter, Balanced Scorecard etc.).\n5. **Indicadores de sucesso e resultados esperados:** KPIs, metas, como medir a efetividade.\n6. **Mensagem final:** por que a estratégia é viável e merece ser implementada.\n\n**Atenção:** slides obrigatórios; 5 minutos; pode ser em grupo de até 5; apresentação presencial em **18/12/2026**; plágio = nota zero." },
+    { t: "Monte uma SWOT (diagnóstico do pitch)", q: "Escolha uma organização fictícia (ex.: uma cafeteria universitária). Monte a SWOT com 2 itens por quadrante, escreva o **problema estratégico** e uma estratégia para cada cruzamento (FO, FA, DO, DA).",
+      hint: "Para cada item, pergunte: vem de dentro ou de fora? É bom ou ruim?",
+      a: "**Forças:** localização dentro do campus; equipe treinada. **Fraquezas:** pouco capital de giro; sem canal de pedidos online. **Oportunidades:** aumento do consumo de cafés especiais; alunos que pedem entrega no intervalo. **Ameaças:** rede de cafeterias de shopping abrindo unidade perto; alta do preço do grão.\n\n**Problema estratégico:** a cafeteria tem demanda e localização favoráveis, mas não consegue atender o pico do intervalo por falta de canal digital e de capital.\n\n**Estratégias:** (ofensiva) usar a localização e a equipe para lançar uma linha de cafés especiais; (confronto) usar a equipe treinada e o relacionamento com os alunos para fidelizar antes da concorrente; (reorientação) investir em um sistema de pedidos pelo celular para aproveitar o pico de demanda; (defensiva) negociar com dois fornecedores de grão para reduzir o impacto do aumento de preço." }
   ]
 };
