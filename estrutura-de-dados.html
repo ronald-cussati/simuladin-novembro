@@ -133,6 +133,24 @@ table.topics td:last-child,table.topics th:last-child{padding-right:0;text-align
 .sec p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
 .notice{border:1px solid var(--line);border-left:3px solid var(--accent-fg);border-radius:var(--radius);background:var(--surface);padding:16px 20px;margin-bottom:16px;color:var(--ink2);font-size:.95rem}
 
+.notice.resume{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+
+/* fluxo contínuo: aviso de novo assunto, atalhos entre assuntos, sair/encerrar */
+.newtopic{border-left:3px solid var(--accent-fg);background:var(--soft);border-radius:10px;padding:14px 18px;margin:0 0 18px}
+.newtopic .label{color:var(--accent-fg);display:block;margin-bottom:2px}
+.newtopic>b{display:block;font-size:1.08rem;font-weight:620;letter-spacing:-.01em}
+.newtopic .small b{font-weight:600;color:var(--ink2)}
+.segs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 0 10px;scrollbar-width:thin}
+.segchip{flex:none;display:inline-flex;align-items:center;gap:8px;max-width:210px;background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:4px 11px;font:inherit;font-size:.78rem;font-weight:500;cursor:pointer;white-space:nowrap}
+.segchip span{overflow:hidden;text-overflow:ellipsis}
+.segchip i{font-style:normal;font-variant-numeric:tabular-nums;opacity:.8}
+.segchip:hover{border-color:var(--line2);color:var(--ink)}
+.segchip.on{border-color:var(--accent-fg);color:var(--ink)}
+.segchip.done{color:var(--ok)}
+.endrow{text-align:center;margin-top:16px}
+.linkbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:.85rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkbtn:hover{color:var(--ink)}
+
 /* assuntos em cartões (mesma linguagem dos cartões do index) */
 .tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media (max-width:700px){.tgrid{grid-template-columns:1fr}}
@@ -269,20 +287,20 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       "Fila de banco ordenada por prioridade: entre duas pessoas com a mesma prioridade, quem chegou primeiro continua na frente.",
       ["Está ordenado, mas inverteu 5b e 5a. Ordena certo, porém **não é estável**.", "", "Está em ordem decrescente e o enunciado pede crescente.", "Nem está ordenado.", "Mantém 5a antes de 5b, mas o vetor não está em ordem crescente."]],
     ["conc", "Um sistema precisa ordenar um arquivo de 200 GB num computador com 16 GB de RAM, lendo os dados em grandes blocos. Esse cenário caracteriza ordenação:",
-      ["Interna, pois qualquer elemento pode ser acessado imediatamente", "Externa, pois os dados não cabem na memória principal e ficam em memória secundária", "Estável, pois o arquivo está em disco", "Lexicográfica, pois arquivos guardam texto", "Decrescente, pois os dados estão em arquivo"], 1,
+      ["Interna, pois o acesso a qualquer elemento é imediato quando se usa um disco rápido", "Externa, pois os dados não cabem na RAM e ficam em memória secundária", "Estável, pois os dados em arquivo preservam a ordem original dos registros", "Lexicográfica, pois os registros do arquivo são ordenados em ordem alfabética", "Interna, pois a leitura em blocos mantém na memória principal os dados em uso"], 1,
       "Na **ordenação externa** o conjunto não cabe na RAM, fica em memória secundária (arquivo) e é lido sequencialmente ou em blocos. Na **interna** tudo cabe na RAM e qualquer elemento é acessado na hora.",
       "Organizar uma biblioteca inteira numa mesinha pequena: você traz uma caixa de livros por vez, não a biblioteca toda.",
-      ["Interna exige que tudo caiba na RAM — aqui não cabe.", "", "Estabilidade é outra propriedade (ordem de chaves iguais), não tem relação com onde os dados estão.", "Lexicográfica é um tipo de regra de ordenação (alfabética), não de onde os dados ficam.", "Crescente ou decrescente é o sentido da ordenação; não depende de onde os dados estão guardados."]],
+      ["A ordenação interna exige que todo o conjunto caiba na RAM, o que não ocorre aqui.", "", "Estabilidade é outra propriedade (ordem de chaves iguais) e não tem relação com onde os dados ficam.", "Lexicográfica é um tipo de regra de ordenação (alfabética), e não uma indicação de onde os dados estão.", "Mesmo lendo em blocos, o conjunto todo não cabe na RAM; por isso a ordenação é externa."]],
     ["conc", "Em um algoritmo de ordenação, a “chave de ordenação” é:",
-      ["O nome do algoritmo escolhido", "O campo do item usado nas comparações (por exemplo, o campo nome de uma struct)", "A posição inicial do array na memória", "A quantidade N de elementos", "O menor valor do conjunto de dados"], 1,
+      ["O algoritmo usado para definir a ordem em que os itens serão comparados", "O campo do item usado nas comparações, como o campo nome de uma struct", "A posição inicial de cada item no array antes de a ordenação começar", "O menor valor encontrado no conjunto, usado como referência para as trocas", "O número de elementos do conjunto, que define quantas comparações ocorrem"], 1,
       "A chave é o campo usado para comparar. Pode ser um inteiro de um vetor ou o campo `nome` de uma struct. É ela que diz se um elemento vem antes ou depois de outro. Precisa existir uma **regra de ordenação bem definida** (numérica, alfabética...).",
       "Na lista de chamada, a chave pode ser o nome ou a matrícula — muda o critério, não os alunos.",
-      ["Nome do algoritmo não tem relação com a chave.", "", "Posição na memória não é critério de comparação.", "N é o tamanho do conjunto, não o critério.", "O menor valor é um dado do conjunto; a chave é o campo usado nas comparações."]],
+      ["O algoritmo não é a chave; a chave é o campo que ele compara.", "", "A posição inicial não é critério de comparação.", "O menor valor é um dado do conjunto; a chave é o campo usado nas comparações.", "N é o tamanho do conjunto, e não o critério de comparação."]],
     ["conc", "Entre os algoritmos estudados (Insertion, Merge e Quick Sort), qual **NÃO** é estável?",
-      ["Insertion Sort", "Merge Sort", "Quick Sort", "Todos são estáveis", "Nenhum deles; todos são instáveis"], 2,
+      ["Insertion Sort", "Merge Sort", "Quick Sort", "Insertion Sort e Merge Sort", "Merge Sort e Quick Sort"], 2,
       "Segundo os slides, Insertion e Merge são estáveis; o **Quick Sort não é estável**, porque o particionamento troca elementos distantes entre si e pode inverter a ordem de chaves iguais.",
       "No Quick Sort é como trocar duas pessoas de lugar na fila, mesmo que estejam longe: quem era igual pode acabar trocado.",
-      ["O slide destaca: “Estável: não altera a ordem dos dados iguais”.", "O slide destaca a estabilidade como vantagem do Merge.", "", "O Quick tem sim a desvantagem “não é um algoritmo estável”.", "Insertion e Merge são estáveis (os slides citam isso como vantagem)."]],
+      ["O Insertion Sort é estável.", "O Merge Sort é estável.", "", "Os dois são estáveis; o instável é outro.", "O Merge Sort é estável; só o Quick Sort não é."]],
 
     // ================= BUBBLE =================
     ["bubble", "Dado V = {23, 4, 67, -8, 21}, qual o vetor ao final da **primeira passagem** do `for` interno do bubble sort (ordem crescente)?",
@@ -302,16 +320,16 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       "Cada troca desfaz exatamente um “par invertido”. Conte os pares desordenados e você sabe as trocas.",
       ["Faltou contar a troca 4↔2 da segunda passagem.", "", "Passou do número de pares invertidos (4).", "Passou do número de pares invertidos (4).", "Menos que o número de pares fora de ordem (5-1, 5-4, 5-2 e 4-2 são 4)."]],
     ["bubble", "No código do bubbleSort, qual o papel do comando `fim--` ao final de cada iteração do `do-while`?",
-      ["Reduz a região percorrida, pois o maior elemento da passagem já está na posição final", "Diminui o tamanho do vetor na memória", "Conta quantas trocas foram feitas", "Garante que o algoritmo seja estável", "Reinicia a variável `continua` para o próximo ciclo"], 0,
+      ["Reduz a região percorrida, pois o maior elemento da passagem já está no lugar", "Diminui o tamanho do vetor na memória a cada passagem concluída", "Conta quantas trocas foram feitas na passagem, para decidir se o laço continua", "Garante a estabilidade do algoritmo, evitando trocar elementos iguais", "Reinicia a variável `continua` para o próximo ciclo do `do-while`"], 0,
       "A cada passagem o maior valor da parte não ordenada vai para o fim. Esse elemento já está **no lugar definitivo**, então a próxima passagem pode parar um pouco antes (`fim-1`).",
       "Depois de levar o maior livro para a última prateleira, você não precisa mais olhar para ela.",
-      ["", "O vetor continua do mesmo tamanho; só a parte percorrida diminui.", "Quem sinaliza troca é a variável `continua`.", "Estabilidade não depende do `fim--`.", "Quem reinicia `continua` é o `continua = 0` no começo do `do`, não o `fim--`."],
+      ["", "O vetor continua do mesmo tamanho; só a parte percorrida diminui.", "Quem sinaliza as trocas é a variável `continua`.", "A estabilidade não depende do `fim--`.", "Quem reinicia `continua` é o `continua = 0` no começo do `do`, e não o `fim--`."],
       "do {\n  continua = 0;\n  for (i = 0; i < fim-1; i++) { ... }\n  fim--;\n} while (continua != 0);"],
     ["bubble", "Qual afirmação descreve corretamente o **Bubble Sort**?",
-      ["Divide o vetor ao meio recursivamente e intercala as metades", "Escolhe um pivô e separa menores e maiores", "Compara pares adjacentes e os troca se estiverem fora de ordem, levando o maior valor da parte não ordenada para o fim", "A cada passo escolhe o menor elemento e o coloca na primeira posição livre", "Insere cada elemento na posição correta da parte já ordenada, à esquerda"], 2,
+      ["Divide o vetor ao meio recursivamente e intercala as metades já ordenadas", "Escolhe um pivô e separa os menores à esquerda e os maiores à direita", "Compara pares adjacentes e troca os que estão fora de ordem, levando o maior ao fim", "A cada passo escolhe o menor elemento e o coloca na primeira posição livre", "Insere cada elemento na posição correta da parte já ordenada, à esquerda"], 2,
       "Bubble = comparar **vizinhos** e trocar. A cada passagem o maior valor da porção não ordenada sobe até sua posição final.",
       "Truque para não confundir: Bubble = vizinhos; Selection = escolher; Insertion = cartas na mão; Merge = juntar metades; Quick = pivô.",
-      ["Isso é o **Merge Sort** (dividir para conquistar).", "Isso é o **Quick Sort**.", "", "Isso é o **Selection Sort**.", "Isso descreve o Insertion Sort."]],
+      ["Isso é o Merge Sort (dividir para conquistar).", "Isso é o Quick Sort.", "", "Isso é o Selection Sort.", "Isso é o Insertion Sort."]],
 
     // ================= SELECTION =================
     ["sel", "Dado V = {23, 4, 67, -8, 21}, como fica o vetor após o **primeiro passo** (i = 0) do selection sort crescente?",
@@ -332,14 +350,14 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       ["", "Nenhuma posição precisa de troca.", "N-1=4 é o **máximo** de trocas, não o que ocorre aqui.", "O selection nunca passa de N-1 trocas.", "10 é o número de comparações (4+3+2+1), não de trocas; o `if (i != menor)` evita todas as trocas aqui."],
       "if (i != menor) {\n  troca = V[i];\n  V[i] = V[menor];\n  V[menor] = troca;\n}"],
     ["sel", "Bubble sort e selection sort têm a mesma complexidade média O(N²). Segundo a aula, por que na prática o selection sort quase sempre supera o bubble?",
-      ["Porque é recursivo", "Porque é O(N log N)", "Porque envolve um número menor de comparações/operações de troca", "Porque é estável", "Porque usa um array auxiliar para acelerar"], 2,
+      ["Porque usa recursão para dividir o vetor em partes menores", "Porque sua complexidade média é O(N log N), e não O(N²)", "Porque envolve um número menor de comparações e trocas", "Porque é estável e preserva a ordem de chaves iguais", "Porque usa um array auxiliar para acelerar as trocas"], 2,
       "Segundo o slide: apesar da mesma complexidade no caso médio, o selection “quase sempre supera” o bubble porque envolve **menos operações** (no máximo N-1 trocas). Além disso não usa memória adicional.",
       "Duas pessoas arrumando estantes: uma troca livros vizinhos o tempo todo (bubble); a outra procura o livro certo e faz uma única troca por prateleira (selection).",
-      ["O selection é iterativo, não recursivo.", "Ele continua sendo O(N²).", "", "Estabilidade não é a razão dada na aula.", "O selection não precisa de memória adicional (isso é uma das vantagens dele)."]],
+      ["O selection é iterativo, e não recursivo.", "Ele continua sendo O(N²) no caso médio.", "", "A estabilidade não é a razão apresentada na aula.", "O selection não precisa de memória adicional; isso é uma das vantagens dele."]],
 
     // ================= INSERTION =================
     ["ins", "O Insertion Sort é comparado, na aula, a qual situação do dia a dia?",
-      ["Dividir um baralho em dois montes até sobrar uma carta", "Pegar uma carta de cada vez e inseri-la no lugar certo entre as cartas que já estão ordenadas na mão", "Procurar a menor carta do baralho inteiro a cada rodada", "Escolher uma carta de referência e separar menores e maiores", "Empilhar as cartas por naipe em montes separados"], 1,
+      ["Dividir o baralho em dois montes até sobrar uma carta em cada, e depois juntá-los", "Pegar uma carta por vez e inseri-la no lugar certo entre as cartas já ordenadas na mão", "Procurar a menor carta do baralho inteiro a cada rodada e colocá-la no início", "Escolher uma carta de referência e separar as menores e as maiores em dois montes", "Empilhar as cartas por naipe em montes separados e depois ordenar cada pilha"], 1,
       "Insertion = **ordenar cartas de baralho na mão**: pega uma, insere na posição correta, mantendo a mão sempre ordenada.",
       "Cada carta nova “abre espaço” empurrando as maiores um pouquinho para a direita.",
       ["Isso é o Merge Sort.", "", "Isso é o Selection Sort.", "Isso é o Quick Sort (pivô).", "Não é a analogia da aula, que é ordenar as cartas que estão na mão."]],
@@ -350,15 +368,15 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       ["", "Seria o vetor antes de inserir -8 (parte ordenada {4,23,67}).", "Quebraria a ordem do trecho já ordenado.", "-8 deve ficar antes do 4 para o trecho ficar ordenado.", "Esse é o resultado do selection sort após o primeiro passo, não do insertion."],
       "for (i = 1; i < N; i++) {\n  aux = V[i];\n  for (j = i; (j > 0) && (aux < V[j-1]); j--)\n    V[j] = V[j-1];\n  V[j] = aux;\n}"],
     ["ins", "Para ordenar um conjunto **pequeno** de dados que já está **quase ordenado**, qual dos algoritmos costuma ser o mais rápido, segundo a aula?",
-      ["Selection Sort", "Merge Sort", "Insertion Sort", "Quick Sort", "Todos têm exatamente o mesmo desempenho nesse caso"], 2,
+      ["Selection Sort", "Merge Sort", "Insertion Sort", "Quick Sort", "O desempenho é equivalente entre eles, pois o conjunto é pequeno"], 2,
       "Insertion é um dos mais rápidos para conjuntos pequenos (supera até o Quick) e tem **melhor caso O(N)** quando já está ordenado — vetores quase ordenados se aproximam disso.",
       "Se a mão de cartas já está quase em ordem, você quase não mexe em nada: só encaixa umas cartas fora do lugar.",
       ["Selection é O(N²) sempre, mesmo se já estiver ordenado.", "O Merge tem custo extra de memória e O(N log N) fixo — exagero para poucos dados.", "", "Em dados quase ordenados, o Quick (pivô nas pontas) pode cair no pior caso O(N²).", "O melhor caso O(N) do insertion faz diferença; selection e merge não aproveitam a ordem existente."]],
     ["ins", "Dizer que o Insertion Sort é “online” significa que ele:",
-      ["Só funciona com dados vindos da internet", "Pode ordenar os elementos à medida que os recebe, sem precisar ter o conjunto completo", "Usa um array auxiliar do tamanho do vetor", "É executado em dois processos paralelos", "Ordena sempre em ordem decrescente"], 1,
+      ["Funciona com dados que chegam pela internet, em tempo real", "Pode ordenar os elementos à medida que os recebe, sem ter o conjunto completo", "Usa um array auxiliar do tamanho do vetor para guardar os elementos recebidos", "É executado em dois processos paralelos que ordenam metades do conjunto", "Ordena os elementos em ordem decrescente enquanto eles são recebidos"], 1,
       "“Online” = consegue ordenar em tempo real, **conforme os dados chegam**, sem ter todo o conjunto de dados de início.",
       "Você vai ordenando as cartas conforme o dealer entrega — não precisa esperar o baralho inteiro chegar.",
-      ["Nada a ver com internet.", "", "Isso é característica do merge sort.", "Não tem relação com paralelismo.", "“Online” não tem relação com o sentido da ordenação."]],
+      ["O termo não tem relação com a internet.", "", "Isso é característica do Merge Sort.", "Não tem relação com paralelismo.", "“Online” não tem relação com o sentido da ordenação."]],
 
     // ================= MERGE =================
     ["merge", "Qual a complexidade do **Merge Sort**?",
@@ -367,10 +385,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       "Cortar uma pizza ao meio várias vezes (log N cortes) e depois remontar fatia por fatia (N trabalho por nível).",
       ["Esse é o perfil do Insertion/Bubble.", "", "N² é de bubble/selection.", "Ainda é preciso olhar todos os N elementos.", "O Merge divide em log N níveis e cada nível custa N; não é linear."]],
     ["merge", "Qual é a principal **desvantagem** do Merge Sort apresentada na aula?",
-      ["É instável", "Seu pior caso é O(N²)", "Possui gasto extra de memória (array auxiliar) em relação aos demais métodos", "Só ordena números inteiros", "Não funciona com vetores de tamanho ímpar"], 2,
+      ["É instável: altera a ordem relativa de elementos com chaves iguais", "Seu pior caso é quadrático, O(N²), quando o vetor já está ordenado", "Gasta memória extra (array auxiliar) em relação aos demais métodos", "Funciona com vetores de números inteiros, mas não com outros tipos de dado", "Não funciona com vetores de tamanho ímpar, pois não dá para dividir ao meio"], 2,
       "O merge precisa de um **array auxiliar** para intercalar (na versão simples, uma cópia a cada chamada recursiva). Vantagem: é estável e O(N log N) sempre.",
       "Para juntar duas pilhas de cartas ordenadas você precisa de uma mesa extra para montar a pilha nova.",
-      ["Merge é estável (é uma de suas vantagens).", "Isso é do Quick Sort.", "", "Ordena qualquer tipo com regra de ordenação definida.", "Funciona com qualquer tamanho; numa divisão desigual, um lado só fica com um elemento a mais."]],
+      ["O Merge é estável; isso é uma de suas vantagens.", "Isso descreve o Quick Sort; o Merge é O(N log N) em todos os casos.", "", "Ordena qualquer tipo de dado que tenha regra de ordenação definida.", "Funciona com qualquer tamanho; na divisão de um vetor ímpar, uma metade fica com um elemento a mais."]],
     ["merge", "Considere V = {23, 4, 67, -8, 90, 54, 21} com início=0 e fim=6. Na primeira divisão do mergeSort (meio = (0+6)/2 = 3), quais sub-vetores são formados?",
       ["{23, 4, 67} e {-8, 90, 54, 21}", "{23, 4, 67, -8} e {90, 54, 21}", "{23, 4, 67, -8, 90} e {54, 21}", "{23} e {4, 67, -8, 90, 54, 21}", "{23, 4} e {67, -8, 90, 54, 21}"], 1,
       "Com meio = 3, a primeira metade vai de 0 a 3 (4 elementos: 23, 4, 67, -8) e a segunda de 4 a 6 (90, 54, 21). É exatamente o que aparece no slide do passo a passo.",
@@ -390,31 +408,31 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       ["", "Isso é o vetor original quase sem mexer.", "A partição **não** deixa os lados ordenados; isso só acontece depois das chamadas recursivas.", "Os menores não ficam na ordem inversa; o resultado tem {-8, 4, 21} à esquerda.", "O vetor é rearranjado: menores à esquerda, maiores à direita, e o pivô vai para a posição 3."],
       "int particiona(int *V, int inicio, int final) {\n  int esq, dir, pivo, aux;\n  esq = inicio; dir = final;\n  pivo = V[inicio];\n  while (esq < dir) {\n    while (esq <= final && V[esq] <= pivo) esq++;\n    while (dir >= 0 && V[dir] > pivo) dir--;\n    if (esq < dir) { aux = V[esq]; V[esq] = V[dir]; V[dir] = aux; }\n  }\n  V[inicio] = V[dir];\n  V[dir] = pivo;\n  return dir;\n}"],
     ["quick", "Usando o primeiro elemento como pivô, em que situação o Quick Sort apresenta seu **pior caso** O(N²)?",
-      ["Quando o vetor tem muitos elementos repetidos", "Quando o particionamento é desbalanceado, como em um vetor já ordenado (partições de N-1 e 0 elementos)", "Quando o vetor tem tamanho par", "Quando o vetor está em ordem aleatória", "Quando o vetor tem apenas dois elementos"], 1,
+      ["Quando o vetor contém valores negativos, que desequilibram as comparações com o pivô", "Quando o particionamento é desbalanceado, como em vetor já ordenado (N-1 e 0 elementos)", "Quando o vetor tem tamanho par e as duas partições ficam do mesmo tamanho", "Quando o vetor está em ordem aleatória, pois o pivô cai em posições imprevisíveis", "Quando o vetor tem poucos elementos, pois a recursão não compensa o custo"], 1,
       "Se o pivô é sempre o menor (ou o maior), uma partição fica com N-1 elementos e a outra com 0: a recursão tem N níveis e cada um custa N → **O(N²)**. Um vetor já ordenado provoca isso com pivô no início.",
       "Se o juiz sempre escolhe o aluno mais baixo como referência, ele separa só 1 pessoa por rodada e a turma demora para ser dividida.",
-      ["Repetidos não são o problema descrito na aula.", "", "Paridade não importa.", "Em ordem aleatória o caso é o médio: O(N log N).", "O pior caso vem de partições de N-1 e 0 elementos repetidas a cada nível, não do tamanho do vetor."]],
+      ["O sinal dos valores não afeta o balanceamento; o que importa é a posição do pivô entre os elementos.", "", "A paridade do tamanho não importa.", "Em ordem aleatória o caso é o médio: O(N log N).", "O pior caso vem de partições de N-1 e 0 elementos repetidas a cada nível, e não do tamanho do vetor."]],
     ["quick", "O que a função `particiona` retorna?",
-      ["O maior valor do vetor", "A posição final do pivô, depois de menores à esquerda e maiores à direita", "O número de trocas feitas", "O primeiro elemento do vetor", "O endereço de memória do vetor"], 1,
+      ["O maior valor do vetor, que é levado para a última posição", "A posição final do pivô, com os menores à esquerda e os maiores à direita", "O número de trocas realizadas durante a partição do vetor", "O valor do primeiro elemento do vetor, usado como pivô na chamada recursiva seguinte", "O endereço de memória do vetor, para a chamada recursiva"], 1,
       "`particiona` rearranja o vetor em torno do pivô e **devolve a posição em que o pivô ficou**. Essa posição é usada pelo `quickSort` para definir as duas partições.",
       "Depois que o juiz se posiciona, você anota o número da cadeira dele para dividir a turma em duas partes.",
-      ["Não é o maior valor.", "", "Não conta trocas.", "O primeiro elemento é o pivô, mas o retorno é a posição final dele.", "Não retorna endereço: retorna o índice em que o pivô ficou."]],
+      ["Não retorna o maior valor.", "", "A função não conta trocas.", "O primeiro elemento é o pivô, mas o retorno é a posição final dele.", "Não retorna endereço: retorna o índice em que o pivô ficou."]],
     ["quick", "Após `pivo = particiona(V, inicio, fim)`, quais intervalos o `quickSort` ordena recursivamente?",
-      ["[inicio, pivo] e [pivo, fim]", "[inicio, pivo-1] e [pivo+1, fim]", "[inicio, fim] duas vezes", "Apenas [pivo+1, fim]", "[inicio, pivo-1] e [pivo, fim]"], 1,
+      ["[inicio, pivo] e [pivo, fim]", "[inicio, pivo-1] e [pivo+1, fim]", "[inicio, fim] duas vezes", "[pivo+1, fim], deixando a parte esquerda sem ordenar", "[inicio, pivo-1] e [pivo, fim]"], 1,
       "O pivô já está na posição definitiva, por isso fica de fora: chama `quickSort(V, inicio, pivo-1)` e `quickSort(V, pivo+1, fim)`.",
       "Quem já está no lugar certo não entra de novo na confusão.",
       ["Incluiria o pivô de novo (e poderia nunca terminar).", "", "Chamaria sem reduzir o problema — loop infinito.", "Esqueceria a partição da esquerda.", "Incluiria o pivô de novo na segunda partição, e ele já está no lugar certo."],
       "void quickSort(int *V, int inicio, int fim) {\n  int pivo;\n  if (fim > inicio) {\n    pivo = particiona(V, inicio, fim);\n    quickSort(V, inicio, pivo-1);\n    quickSort(V, pivo+1, fim);\n  }\n}"],
     ["quick", "Para um vetor **já ordenado**, com o pivô escolhido no primeiro elemento, qual afirmação é correta?",
-      ["Insertion sort é O(N) e Quick sort cai em O(N²)", "Ambos são O(N log N)", "Quick sort é O(N) e Insertion sort é O(N²)", "Ambos são O(N²)", "Insertion sort é O(N²) e Quick sort é O(N log N)"], 0,
+      ["Insertion sort é O(N) e Quick sort cai em O(N²)", "Insertion sort e Quick sort ficam em O(N log N)", "Quick sort é O(N) e Insertion sort é O(N²)", "Insertion sort e Quick sort ficam em O(N²)", "Insertion sort é O(N²) e Quick sort é O(N log N)"], 0,
       "O slide diz exatamente isso: o pior caso do Quick ocorre com o array já ordenado (**O(N²)**), situação em que o Insertion é **O(N)**.",
       "Arrumar uma fila que já está em ordem: o Insertion só confere; o Quick (com pivô ruim) refaz tudo sem necessidade.",
-      ["", "Só vale para o caso médio do Quick.", "Está invertido.", "O Insertion é O(N) no melhor caso (ordenado).", "Está invertido: com vetor já ordenado o Insertion é O(N) e o Quick (pivô no início) cai em O(N²)."]],
+      ["", "O O(N log N) vale para o caso médio do Quick, e não para o vetor já ordenado com pivô no início.", "Está invertido.", "O Insertion é O(N) no melhor caso, que é o vetor já ordenado.", "Está invertido: com o vetor já ordenado, o Insertion é O(N) e o Quick (pivô no início) cai em O(N²)."]],
     ["quick", "Apesar de o pior caso ser O(N²), o Quick Sort “costuma ser a melhor opção prática para ordenar grandes conjuntos”. Por quê?",
-      ["Porque é estável", "Porque seu caso médio e melhor caso são O(N log N) e o particionamento muito desbalanceado é raro na prática", "Porque nunca precisa de recursão", "Porque usa menos memória que qualquer outro e sempre faz O(N) trocas", "Porque sempre divide o vetor em duas metades exatamente iguais"], 1,
+      ["Porque é estável e preserva a ordem original dos elementos de chaves iguais", "Porque o caso médio e o melhor são O(N log N) e a partição muito desbalanceada é rara", "Porque dispensa a recursão e ordena o vetor com um único laço", "Porque usa menos memória que os demais e faz no máximo N trocas", "Porque divide o vetor em duas metades de tamanho idêntico a cada chamada"], 1,
       "Médio e melhor caso são **O(N log N)** com constantes baixas; o pior caso só ocorre com particionamento desbalanceado, que é situação especial. Por isso é muito rápido na maioria dos casos.",
       "Um carro rápido que só pifa numa estrada muito ruim: no dia a dia ele ganha da concorrência.",
-      ["O Quick **não** é estável.", "", "O Quick é recursivo.", "Isso não é uma propriedade do Quick.", "Isso só acontece com sorte; o pior caso é justamente a divisão desbalanceada."]],
+      ["O Quick não é estável.", "", "O Quick é recursivo.", "Isso não é uma propriedade do Quick.", "Isso só acontece com sorte; o pior caso é justamente a divisão desbalanceada."]],
 
     // ================= COMPARAÇÃO =================
     ["comp", "Qual dos algoritmos abaixo tem complexidade **O(N log N) em todos os casos**?",
@@ -423,10 +441,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       "Merge é o “regular” da turma: tempo previsível, não importa como os dados chegam.",
       ["Varia de O(N) a O(N²).", "É O(N²) em todos os casos.", "Varia de O(N) a O(N²).", "", "Seu pior caso é O(N²); não é O(N log N) em todos os casos."]],
     ["comp", "Quais algoritmos têm **melhor caso O(N)** quando o vetor já está ordenado?",
-      ["Bubble Sort (com a flag) e Insertion Sort", "Selection Sort e Merge Sort", "Merge Sort e Quick Sort", "Selection Sort e Quick Sort", "Bubble Sort e Selection Sort"], 0,
+      ["Bubble Sort e Insertion Sort", "Selection Sort e Merge Sort", "Merge Sort e Quick Sort", "Selection Sort e Quick Sort", "Bubble Sort e Selection Sort"], 0,
       "Bubble (com `continua`) e Insertion: uma passada sem trocas. Selection é sempre O(N²); Merge é sempre O(N log N); Quick fica O(N log N) no melhor caso.",
       "Dois “conferentes” rápidos: só confirmam que está tudo em ordem.",
-      ["", "Selection é sempre N²; Merge sempre N log N.", "Nenhum deles é O(N) no melhor caso.", "Nenhum deles é O(N) no melhor caso.", "O Selection é sempre O(N²), mesmo com o vetor ordenado."]],
+      ["", "O Selection é sempre O(N²) e o Merge é sempre O(N log N).", "Nenhum dos dois é O(N) no melhor caso.", "Nenhum dos dois é O(N) no melhor caso.", "O Selection é sempre O(N²), mesmo com o vetor ordenado."]],
     ["comp", "Você precisa de uma ordenação com **garantia** de O(N log N) em qualquer entrada **e** que seja estável, aceitando gastar memória extra. Qual escolher?",
       ["Quick Sort", "Selection Sort", "Merge Sort", "Bubble Sort", "Insertion Sort"], 2,
       "Merge: O(N log N) sempre, estável; custo = array auxiliar. Quick não é estável e pode degradar a O(N²).",
@@ -435,10 +453,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 
     // ================= PONTEIROS: BÁSICO =================
     ["ptr", "Em C, um ponteiro é:",
-      ["Uma variável que armazena um endereço de memória de outra variável", "Uma variável que armazena um valor inteiro maior que o int", "Uma função que acessa a memória", "Um vetor de caracteres", "Um tipo de dado que armazena textos"], 0,
+      ["Uma variável que guarda o endereço de memória de outra variável", "Uma variável que guarda um valor inteiro maior do que o tipo int comporta", "Uma função que acessa diretamente posições da memória do computador", "Um vetor de caracteres usado para guardar textos na memória", "Um tipo de dado que guarda o valor da última variável acessada"], 0,
       "Ponteiros não guardam um valor “comum” (número, caractere): guardam o **endereço** de outra variável. Dizemos que ele “aponta” para ela.",
       "Ponteiro é o papelzinho com o endereço da casa, não a casa.",
-      ["", "Não guarda valor, guarda endereço.", "Não é função.", "Vetor de caracteres é uma string.", "Textos são strings (vetores de char); ponteiro guarda endereços."]],
+      ["", "Ponteiro não guarda valor: guarda endereço.", "Ponteiro não é uma função.", "Vetor de caracteres é uma string.", "Não guarda o último valor acessado; guarda um endereço."]],
     ["ptr", "Qual será a saída do código abaixo?",
       ["10", "15", "5", "Um endereço de memória", "20"], 1,
       "`p` aponta para `x`. `*p = *p + 5` altera o conteúdo apontado: x passa de 10 para 15. O `printf` de `x` imprime **15**.",
@@ -446,10 +464,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       ["Esse seria o valor antes da alteração.", "", "5 é só o valor somado.", "Só imprimiria endereço se usasse `%p` com `p`.", "Seria o resultado se a soma fosse 10; o código soma 5 ao valor 10."],
       "int x = 10;\nint *p = &x;\n*p = *p + 5;\nprintf(\"%d\", x);"],
     ["ptr", "Por que ponteiros em C têm tipo (`int *`, `char *`, `double *`) se só guardam um endereço?",
-      ["Porque o endereço muda de formato conforme o tipo", "Porque o tipo informa ao compilador quantos bytes o dado apontado ocupa (ex.: char = 1, int = 4), o que importa para ler o dado e fazer aritmética", "Porque ponteiros de tipos diferentes ficam em regiões de memória diferentes", "Porque C não permite ponteiros genéricos de nenhum tipo", "Porque o compilador usa o tipo para decidir se o ponteiro pode ser nulo"], 1,
+      ["Porque o endereço muda de formato conforme o tipo do dado que está sendo apontado", "Porque o tipo informa quantos bytes o dado ocupa, para ler o dado e avançar o ponteiro", "Porque ponteiros de tipos diferentes ficam armazenados em regiões diferentes da memória", "Porque C não permite ponteiros genéricos, então cada tipo precisa de um ponteiro próprio", "Porque o compilador usa o tipo para decidir se o ponteiro pode receber o valor NULL"], 1,
       "O tipo diz **quantos bytes** ler/escrever e **quanto avançar** com `p++`. `char*` sabe que são 1 byte; `int*` geralmente 4.",
       "É como saber se cada “cômodo” mede 1 m ou 4 m para saber quanto andar até o próximo.",
-      ["O endereço é sempre um número; o tipo é sobre o dado apontado.", "", "Não tem a ver com regiões de memória.", "Existe `void *` (genérico), como o retorno do malloc.", "A possibilidade de ser NULL não depende do tipo do ponteiro."]],
+      ["O endereço é sempre um número; o tipo diz respeito ao dado apontado.", "", "Isso não tem a ver com regiões de memória.", "Existe `void *` (ponteiro genérico), como o retorno do malloc.", "A possibilidade de ser NULL não depende do tipo do ponteiro."]],
     ["ptr", "Dados `int idade = 25;` e `int *ptr = &idade;`, qual expressão acessa o **valor 25** através do ponteiro?",
       ["ptr", "&ptr", "*ptr", "&idade", "*idade"], 2,
       "`*ptr` (indireção) acessa o conteúdo no endereço apontado: 25. `ptr` é o endereço de `idade`; `&ptr` é o endereço do próprio ponteiro; `&idade` também é o endereço de `idade`.",
@@ -463,10 +481,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 
     // ================= ARITMÉTICA / VETORES / MATRIZES =================
     ["arit", "Um `int *p` aponta para v[0] e um `int` ocupa 4 bytes. Depois de `p++`, o ponteiro:",
-      ["Avança 1 byte", "Avança 4 bytes, apontando para o próximo elemento int", "Avança 8 bytes", "Não muda", "Avança 2 bytes"], 1,
+      ["Avança 1 byte, para o endereço seguinte da memória", "Avança 4 bytes, apontando para o próximo elemento int do vetor", "Avança 8 bytes, o tamanho de um ponteiro de 64 bits", "Soma 1 ao valor de v[0], deixando o ponteiro no mesmo lugar", "Avança 4 posições do vetor, para o elemento v[4]"], 1,
       "Aritmética de ponteiros respeita o tipo: `p++` avança **sizeof(tipo)** bytes. int* → 4; double* → 8. Por isso dá para percorrer vetores.",
       "Passos do tamanho do “degrau” do tipo: no `char` o degrau é 1, no `int` é 4.",
-      ["Só char* avança 1 byte.", "", "8 bytes seria um double*.", "O ponteiro muda para o próximo elemento.", "Só seria 2 se o int ocupasse 2 bytes; o enunciado diz 4."]],
+      ["Só um char* avança 1 byte.", "", "O passo do `p++` é o tamanho do tipo apontado (int), e não o tamanho do ponteiro.", "Isso seria `(*p)++`; `p++` altera o ponteiro, e não o valor.", "O `p++` avança um elemento (que ocupa 4 bytes), e não quatro elementos."]],
     ["arit", "Dado o código abaixo, qual valor é impresso?",
       ["10", "20", "30", "50", "40"], 2,
       "`p` aponta para v[0]. `p+2` aponta para v[2] e `*(p+2)` é seu conteúdo: **30**. (`p+2` não soma 2 bytes: avança 2 elementos.)",
@@ -479,10 +497,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       "O nome do vetor é o endereço do “primeiro vagão do trem”.",
       ["`*vet[0]` não faz sentido para int.", "", "Tem tipo diferente (ponteiro para o vetor inteiro).", "`vet[0]` é o valor do primeiro elemento, não o endereço.", "Aponta para o segundo elemento (&vet[1]), não para o primeiro."]],
     ["arit", "Por que, no slide “Eficiência ao zerar uma matriz”, usar um ponteiro (`*ptr = 0; ptr++`) é mais rápido que o laço duplo com `matriz[i][j]`?",
-      ["Porque a matriz é guardada em ordem inversa na memória", "Porque a matriz é um bloco contínuo de memória e o incremento do ponteiro evita recalcular o endereço de matriz[i][j] a cada iteração", "Porque o ponteiro usa menos de 1 byte", "Porque ponteiros ignoram os limites da matriz e por isso não precisam do laço", "Porque ponteiros ocupam menos memória que índices"], 1,
+      ["Porque a matriz é guardada em ordem inversa e o ponteiro percorre do fim para o início", "Porque a matriz é um bloco contínuo e o ponteiro só incrementa, sem recalcular matriz[i][j]", "Porque o ponteiro acessa a memória sem verificar os limites, dispensando o laço", "Porque o ponteiro ocupa menos memória do que as variáveis i e j do laço duplo", "Porque os índices i e j exigem acesso ao disco a cada iteração do laço"], 1,
       "Para o computador, uma matriz é um **bloco contínuo** de memória. Percorrer com ponteiro apenas “anda” de elemento em elemento; `matriz[i][j]` exige calcular a posição a cada acesso.",
       "Andar pela rua número a número vs. recalcular o endereço de cada casa pelo mapa toda vez.",
-      ["Não é ordem inversa.", "", "Isso não existe.", "O laço continua existindo (um só, de 2500 elementos).", "O ganho vem de não recalcular o endereço de matriz[i][j] a cada acesso, não do tamanho do ponteiro."],
+      ["A matriz não é guardada em ordem inversa.", "", "O laço continua existindo (um só, de 2500 elementos).", "O ganho vem de não recalcular o endereço de matriz[i][j] a cada acesso, e não do tamanho das variáveis.", "Os índices são variáveis em memória, e não exigem acesso ao disco."],
       "int matriz[LINS][COLS];\nint *ptr = &matriz[0][0];\nfor (i = 0; i < LINS * COLS; i++) {\n  *ptr = 0;\n  ptr++;\n}"],
 
     // ================= STRUCT, ** E PASSAGEM POR REFERÊNCIA =================
@@ -511,42 +529,42 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 
     // ================= ALOCAÇÃO DINÂMICA =================
     ["alloc", "Qual a diferença entre alocação estática e dinâmica de memória?",
-      ["Estática: o espaço é definido em tempo de execução; dinâmica: em tempo de compilação", "Estática: o espaço é definido em tempo de compilação; dinâmica: solicitado em tempo de execução, conforme a necessidade", "Estática usa malloc; dinâmica usa vetores", "Não há diferença, só o nome muda", "Estática só serve para vetores e dinâmica só para variáveis simples"], 1,
+      ["Estática: tamanho definido na execução; dinâmica: definido na compilação", "Estática: tamanho definido na compilação; dinâmica: solicitado em tempo de execução", "Estática usa malloc e free; dinâmica usa vetores de tamanho fixo", "Estática serve para vetores; dinâmica serve para variáveis simples como int", "Estática guarda os dados no disco; dinâmica guarda os dados na memória RAM"], 1,
       "**Estática** (`char nome[50];`): o compilador reserva tamanho fixo. **Dinâmica**: o programa pede memória enquanto roda (`malloc`...), podendo ajustar o tamanho.",
       "Estática = reservar uma mesa de 50 lugares sem saber quantos convidados vêm. Dinâmica = pedir cadeiras conforme eles chegam.",
-      ["Está invertido.", "", "Está invertido: malloc é a dinâmica.", "A diferença é central na Aula 6.", "Ambas servem para vários tipos; o que muda é quando o tamanho é definido (compilação x execução)."]],
+      ["Está invertido.", "", "Está invertido: malloc e free fazem parte da alocação dinâmica.", "Ambas servem para vários tipos; o que muda é quando o tamanho é definido.", "As duas usam a memória do programa; a diferença é o momento em que o tamanho é definido."]],
     ["alloc", "Se você declara `char nome[10];` e o usuário digita “Alexandre Magno”, qual é o risco apresentado na aula?",
-      ["Desperdício de memória, só", "Buffer overflow: escrever além do espaço reservado, sobrescrevendo outras informações da memória", "Memory leak", "O compilador acusa erro de compilação", "Segmentation fault garantido sempre que o texto passar do tamanho"], 1,
+      ["Desperdício de memória, pois o vetor reservado é muito maior que o texto digitado", "Buffer overflow: escrita além do espaço reservado, sobrescrevendo outras informações", "Memory leak, pois o vetor não é liberado com free ao final do programa", "Erro de compilação, pois o texto digitado excede o tamanho declarado do vetor", "Segmentation fault imediato, interrompendo o programa no momento da digitação"], 1,
       "O texto não cabe nos 10 bytes: o programa escreve além do espaço → **buffer overflow**, que pode corromper outros dados, travar ou virar falha de segurança. (Desperdício é o problema oposto: `nome[100]` para guardar “Ana”.)",
       "Tentar enfiar 15 pessoas num elevador de 10: alguém vai ocupar o espaço que não era dele.",
-      ["O desperdício acontece quando o vetor é grande demais.", "", "Leak é esquecer de dar `free`.", "O compilador não sabe o que o usuário digitará.", "Não é garantido: o comportamento é indefinido (pode corromper dados sem travar na hora)."]],
+      ["O desperdício acontece quando o vetor é grande demais, e aqui ele é pequeno demais.", "", "Leak é esquecer de dar `free` em memória dinâmica, e `nome[10]` é alocação estática.", "O compilador não sabe o que o usuário vai digitar.", "O comportamento é indefinido: pode corromper dados sem travar na hora."]],
     ["alloc", "O que a função `malloc()` retorna e o que significa `NULL` nesse contexto?",
-      ["Retorna `void *` para o primeiro byte do bloco; retorna `NULL` quando não há memória disponível", "Retorna `int` com o número de bytes; `NULL` indica que o bloco foi zerado", "Retorna `char *`; `NULL` indica que a memória já foi liberada", "Retorna `void`; `NULL` não é usado", "Retorna `float *`; `NULL` indica que o valor é zero"], 0,
+      ["Retorna `void *` para o primeiro byte do bloco; `NULL` indica que não há memória disponível", "Retorna `int` com o número de bytes alocados; `NULL` indica que o bloco foi zerado e está pronto para uso", "Retorna `char *` para o bloco; `NULL` indica que a memória já foi liberada", "Retorna `void` (sem valor); `NULL` é usado quando o tamanho pedido é zero", "Retorna `float *` para o bloco; `NULL` indica que o valor armazenado é zero"], 0,
       "`malloc(bytes)` devolve um ponteiro genérico `void*` para o começo do bloco (por isso o cast `(int*)`). Se não houver memória, devolve **NULL** — sempre teste!",
       "Pedir um terreno: ou você recebe a escritura (endereço) ou recebe “nada disponível” (NULL).",
-      ["", "Não retorna quantidade de bytes.", "O retorno é void*, e NULL significa falha.", "Retorna ponteiro, não void.", "malloc retorna `void *`, e NULL indica falha na alocação, não valor zero."],
+      ["", "O malloc não retorna a quantidade de bytes.", "O retorno é `void *`, e NULL indica falha na alocação, e não memória liberada.", "O malloc retorna um ponteiro, e não void.", "O malloc retorna `void *`, e NULL indica falha na alocação, e não valor zero."],
       "int *v = (int *) malloc(5 * sizeof(int));\nif (v == NULL) {\n  printf(\"Erro na alocacao!\\n\");\n  return 1;\n}"],
     ["alloc", "Qual a principal diferença entre `calloc` e `malloc`?",
-      ["calloc libera memória e malloc aloca", "calloc recebe dois argumentos (quantidade e tamanho de cada elemento) e inicializa todos os bytes com 0", "calloc só funciona com strings", "calloc é mais lento porque usa recursão", "calloc aloca na pilha (stack) e malloc no heap"], 1,
+      ["`calloc` libera a memória antes de alocar, enquanto `malloc` reserva o bloco", "`calloc` recebe a quantidade e o tamanho de cada elemento e zera todos os bytes do bloco", "`calloc` é restrito a strings, enquanto `malloc` aceita qualquer tipo de dado", "`calloc` é mais lento porque usa recursão para percorrer os elementos do bloco", "`calloc` aloca na pilha (stack), enquanto `malloc` aloca no heap"], 1,
       "`calloc(qtd, sizeof(tipo))` aloca para N elementos **e zera** tudo, evitando “lixo de memória”. Já `malloc` recebe só o total de bytes e não inicializa.",
       "malloc entrega o terreno como está (com entulho). calloc entrega limpo.",
-      ["Quem libera é free.", "", "Funciona para qualquer tipo.", "Nada a ver com recursão.", "Ambos alocam no heap; a diferença é a inicialização com zero e os argumentos."]],
+      ["Quem libera memória é o `free`.", "", "O calloc funciona para qualquer tipo.", "Não há recursão envolvida.", "Os dois alocam no heap; a diferença é a inicialização com zero e os argumentos."]],
     ["alloc", "Por que o resultado de `realloc` deve sempre ser **reatribuído** a um ponteiro (ex.: `texto = realloc(texto, 30);`)?",
-      ["Porque realloc apaga o conteúdo antigo", "Porque o bloco pode ser movido para outro lugar da memória, se não houver espaço contíguo para expandir", "Porque realloc só retorna int", "Porque realloc libera automaticamente o ponteiro", "Porque realloc sempre retorna NULL se o bloco for aumentado"], 1,
+      ["Porque o `realloc` apaga o conteúdo antigo e o ponteiro precisa receber o novo bloco vazio", "Porque o bloco pode ser movido para outro endereço, se não houver espaço contíguo para crescer", "Porque o `realloc` devolve um int com o novo tamanho, e não o endereço do bloco", "Porque o `realloc` retorna NULL ao aumentar o bloco, e o ponteiro deve guardar esse valor", "Porque o compilador exige reatribuir o ponteiro depois de chamar funções da stdlib"], 1,
       "`realloc` redimensiona **preservando o conteúdo**, mas pode mover o bloco para outro endereço. Se não guardar o novo retorno, você continuará usando o endereço antigo, que já pode ser inválido.",
       "Aumentar o apartamento: se não houver espaço ao lado, você muda para outro maior e leva a mobília. Precisa anotar o endereço novo.",
-      ["O conteúdo é preservado.", "", "Retorna ponteiro.", "Não libera: a responsabilidade do free continua sua.", "Só retorna NULL se falhar; do contrário devolve o endereço do bloco (que pode ser outro)."]],
+      ["O conteúdo é preservado.", "", "O `realloc` retorna um ponteiro.", "Só retorna NULL se falhar; do contrário devolve o endereço do bloco, que pode ser outro.", "Não existe essa exigência; a reatribuição é necessária porque o bloco pode mudar de lugar."]],
     ["alloc", "O que acontece no código abaixo?",
-      ["Nada de errado: a memória é liberada automaticamente ao fim de cada iteração", "Ocorre memory leak: 5 blocos de 1000 ints ficam alocados e inacessíveis, pois o ponteiro é perdido sem `free`", "Erro de compilação, pois malloc não pode ficar dentro de um laço", "O programa troca os 5 blocos entre si", "O programa trava na segunda iteração, pois o mesmo ponteiro não pode ser alocado duas vezes"], 1,
+      ["Nada de errado: a memória é liberada automaticamente ao fim de cada iteração do laço", "Memory leak: 5 blocos ficam alocados e inacessíveis, pois o ponteiro é perdido sem `free`", "Erro de compilação, pois `malloc` não pode ser chamado dentro de um laço `for`", "O programa trava na segunda iteração, pois o mesmo ponteiro não pode ser alocado duas vezes", "Estouro de pilha (stack overflow), pois cada iteração empilha 1000 inteiros"], 1,
       "Cada iteração aloca um bloco e **perde o ponteiro** `p` ao fim do bloco do `for`, sem `free`. A memória continua ocupada mas inacessível: **vazamento de memória**. Corrigir: `free(p);` no fim de cada volta.",
       "Alugar um depósito e jogar a chave fora: o depósito continua pago, mas ninguém abre.",
-      ["C não tem coletor automático: só `free` libera memória dinâmica.", "", "malloc pode ficar em laço.", "Não há troca nenhuma.", "O código é válido; o problema é só a falta de `free`, que causa o vazamento."],
+      ["C não tem coletor automático: só o `free` libera memória dinâmica.", "", "O `malloc` pode ser chamado dentro de laços.", "O código é válido; o problema é a falta de `free`, que causa o vazamento.", "Os blocos do `malloc` ficam no heap, e não na pilha."],
       "int i;\nfor (i = 0; i < 5; i++) {\n  int *p = (int *) malloc(1000 * sizeof(int));\n  /* usa p... */\n}"],
     ["alloc", "Por que usar `malloc(10 * sizeof(int))` em vez de `malloc(40)`?",
-      ["Porque sizeof executa mais rápido", "Para portabilidade: o tamanho de um int pode variar entre arquiteturas (2 ou 4 bytes), e sizeof devolve o valor correto", "Porque malloc só aceita sizeof como argumento", "Porque sizeof evita o uso de free", "Porque 40 bytes não pode ser alocado em C"], 1,
+      ["Porque o `sizeof` é resolvido mais rápido que um número fixo digitado no código", "Para portabilidade, já que o tamanho de um int varia entre arquiteturas", "Porque o `malloc` aceita o resultado de `sizeof` como único argumento de tamanho", "Porque o `sizeof` libera automaticamente o bloco ao final da função", "Porque 40 bytes é um valor que o compilador não aceita como argumento do `malloc`"], 1,
       "O tamanho dos tipos varia entre máquinas. Fixar valores (“hardcodar”) é má prática; `sizeof(tipo)` garante que o código funcione em qualquer sistema.",
       "Pedir “10 cadeiras” e deixar o fornecedor calcular o espaço de cada uma, em vez de assumir o tamanho.",
-      ["sizeof é resolvido em compilação; o motivo não é velocidade.", "", "malloc aceita qualquer número de bytes.", "free continua obrigatório.", "malloc aceita qualquer quantidade de bytes; o ponto é não fixar o tamanho do int."]]
+      ["O `sizeof` é resolvido em compilação; o motivo não é velocidade.", "", "O `malloc` aceita qualquer número de bytes.", "O `free` continua sendo obrigatório.", "O `malloc` aceita qualquer quantidade de bytes; o ponto é não fixar o tamanho do int."]]
   ],
   cheat: [
     { h: "Ordenação — conceitos", items: [
@@ -596,7 +614,9 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     { t: "Vetor dinâmico com calloc", q: "Peça n ao usuário, aloque dinamicamente um vetor de n notas (double) já zeradas, leia as notas, calcule a média e libere a memória.",
       hint: "calloc(n, sizeof(double)), teste NULL, free no fim.",
       code: "#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n  int n, i;\n  double soma = 0, *notas;\n  printf(\"Quantas notas? \");\n  scanf(\"%d\", &n);\n\n  notas = (double *) calloc(n, sizeof(double));\n  if (notas == NULL) {\n    printf(\"Erro na alocacao!\\n\");\n    return 1;\n  }\n\n  for (i = 0; i < n; i++) {\n    scanf(\"%lf\", &notas[i]);\n    soma += notas[i];\n  }\n  printf(\"Media: %.2f\\n\", soma / n);\n\n  free(notas);\n  return 0;\n}" }
-  ]
+  ],
+  // ids antigos das questões cujo texto da resposta certa mudou: mantém o progresso salvo (não apagar!)
+  pin: {"1xgvmyu":"2h6ng6","651opf":"1pcm5up","1fgjifm":"1h23dbb","3y0n8u":"s0pbg7","1efe838":"yc58n3","f2w463":"czxgn9","1k2rlsz":"13jqgfw","zmeofs":"hjnm1e","19b2ksn":"1c5mucm","5lmecl":"5zp8sv","16gscv4":"1jmrgme","1r9jnds":"nnvk2z","1fprmym":"1ba2rfw","1b76qw0":"1u9hcq8","l0qtut":"1hsuffm","kte86c":"3dme53","1kbzv4t":"1dmoba3","42w6br":"1lkfwi6","1vbf79d":"v5kb8x","ysjani":"f1gd4r","lr1gga":"1ap1goz","1x9qkxy":"261src","w1fluh":"177o5bo"}
 };
 </script>
 <script>/* Motor de simulado — compartilhado pelos 4 sites */
@@ -620,7 +640,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     let o = a[2], ans = a[3], w = a[6] || [];
     const n = o.length, r = (i * 7 + 3) % n;
     if (r) { const rot = (arr) => arr.map((_, k) => arr[(k + r) % n]); o = rot(o); w = w.length ? rot(w) : w; ans = (ans - r + n) % n; }
-    return { i, id: qid(a), t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
+    return { i, id: (E.pin && E.pin[qid(a)]) || qid(a), t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
   });
   const T = {};
   E.topics.forEach((t) => (T[t.id] = t));
@@ -646,13 +666,23 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   // ---------- navegação ----------
+  const VIEWS = ["home", "setup", "quiz", "result", "cheat", "practice"];
   function nav() {
     const tabs = [["home", "Prioridades"], ["setup", "Simulado"], ["cheat", "Resumão"]];
     if (E.practice) tabs.push(["practice", E.practiceTab || "Prática"]);
     const cur = view === "quiz" || view === "result" ? "setup" : view;
     $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
   }
-  function go(v) { view = v; render(); window.scrollTo(0, 0); }
+  // mostra uma tela (sem mexer no histórico); telas que dependem de uma sessão caem em "home" se ela não existe
+  function show(v) {
+    if (!VIEWS.includes(v)) v = "home";
+    if (v === "quiz" && (!S || S.done)) v = S && S.done ? "result" : "home";
+    if (v === "result" && !(S && S.done)) v = "home";
+    view = v; render(); window.scrollTo(0, 0);
+  }
+  // vai para uma tela e registra no histórico do navegador: o botão "voltar" (inclusive no celular) funciona
+  function go(v) { show(v); if (location.hash !== "#" + v) { try { location.hash = v; } catch (e) {} } }
+  window.addEventListener("hashchange", () => { const v = location.hash.slice(1) || "home"; if (v !== view) show(v); });
   function render() { nav(); const hi = $("#h-intro"); if (hi) hi.hidden = view !== "home"; ({ home, setup, quiz, result, cheat, practice })[view](); }
 
   // ---------- estatísticas ----------
@@ -681,13 +711,14 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
         <div class="tc-foot"><span>${acc}</span><span class="go">Treinar &rarr;</span></div></div>`;
     };
     app.innerHTML = `
+    ${resumeBar()}
     ${E.notice ? `<div class="notice">${md(E.notice)}</div>` : ""}
     <div class="card stats">
       <div><b>${Q.length}</b><span>questões no banco</span></div>
       <div><b>${answered}</b><span>já respondidas</span></div>
       <div><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b><span>de acerto${answered ? ` · ${right} certas, ${answered - right} erradas` : ""}</span></div>
     </div>
-    <div class="sec"><h2>Por onde começar</h2><p>Ordenado por chance de cair e pelo quanto você ainda erra.</p></div>
+    <div class="sec"><h2>Por onde começar</h2><p>Ordenado por chance de cair e pelo quanto você ainda erra. Ao terminar um assunto, o simulado segue direto para o próximo e avisa a troca.</p></div>
     <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div>
     <div class="sec"><h2>Mapa de probabilidade por assunto</h2><p>A barra mostra a chance de cair; depois que você treina, ela passa a mostrar o seu acerto.</p></div>
     <div class="tgrid">${rows.map(card).join("")}</div>
@@ -697,61 +728,98 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     ${E.disclaimer ? `<div class="details-card"><details><summary>Como estimei a chance de cair</summary><p>${md(E.disclaimer)}</p></details></div>` : ""}`;
   }
 
+  // aviso "simulado em andamento" (home e setup)
+  function resumeBar() {
+    if (!S || S.done) return "";
+    const answered = S.list.filter((i) => S.ans[i] != null).length;
+    return `<div class="notice resume"><div><b>Simulado em andamento</b><div class="small muted">Questão ${S.p + 1} de ${S.list.length} · ${answered} respondidas · ${esc(S.label)}</div></div>
+      <div class="row"><button class="btn sm" data-act="resume">Retomar</button><button class="btn ghost sm" data-act="discard">Descartar</button></div></div>`;
+  }
+
   // ---------- MONTAR SIMULADO ----------
-  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true };
+  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true, chain: true, mix: false };
   function setup() {
     const wrongs = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
     const R = (name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
-    app.innerHTML = `<div class="card"><h2>Montar simulado</h2>
-      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, como numa prova de verdade.")}
+    app.innerHTML = `${resumeBar()}<div class="card"><h2>Montar simulado</h2>
+      <p class="muted small" style="margin:-4px 0 12px">O simulado segue em fluxo contínuo, assunto por assunto: ao terminar um, entra direto no próximo e avisa a troca.</p>
+      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, assunto por assunto, como numa prova de verdade.")}
       ${R("mode", "top", cfg.mode, "Rápido · as 20 mais prováveis", "Questões dos assuntos com maior chance de cair. Bom para a véspera.")}
-      ${R("mode", "topic", cfg.mode, "Por assunto", `<select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
+      ${R("mode", "topic", cfg.mode, "Por assunto", `Começa no assunto escolhido e segue para os próximos.<br><select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
       ${R("mode", "wrong", cfg.mode, `Só as que eu errei · ${wrongs}`, wrongs ? "Refaz apenas as questões que você errou da última vez." : "Nada para refazer ainda. Faça um simulado primeiro.")}
       <h3>Modo</h3>
       ${R("fb", "treino", cfg.feedback, "Treino", "Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.")}
       ${R("fb", "prova", cfg.feedback, "Prova", "Resultado e explicações só no final. Simula a pressão real.")}
-      <label class="check" style="margin-top:14px"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões</label>
+      <label class="check" style="margin-top:14px"><input type="checkbox" id="chain" ${cfg.chain ? "checked" : ""}> Em “Por assunto”, ao terminar seguir para o próximo assunto</label>
+      <label class="check"><input type="checkbox" id="mix" ${cfg.mix ? "checked" : ""}> Misturar as questões de todos os assuntos (sem blocos)</label>
+      <label class="check"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões dentro de cada assunto</label>
       <label class="check"><input type="checkbox" id="so" ${cfg.so ? "checked" : ""}> Embaralhar as alternativas (evita decorar a letra)</label>
       <div style="margin-top:18px"><button class="btn" data-act="start" ${cfg.mode === "wrong" && !wrongs ? "disabled" : ""}>Começar</button></div></div>`;
   }
 
+  // ordena as questões em blocos por assunto, na ordem do mapa (a partir de startId, dando a volta no fim)
+  function orderByTopic(qs, startId, byProb) {
+    let ids = E.topics.map((t) => t.id);
+    if (byProb) ids = E.topics.slice().sort((a, b) => b.prob - a.prob).map((t) => t.id);
+    else if (startId) { const k = ids.indexOf(startId); ids = ids.slice(k).concat(ids.slice(0, k)); }
+    const by = {}; qs.forEach((q) => (by[q.t] = by[q.t] || []).push(q));
+    let out = [];
+    ids.forEach((t) => { if (by[t]) out = out.concat(cfg.sq ? shuffle(by[t]) : by[t].slice().sort((a, b) => a.i - b.i)); });
+    return out;
+  }
   function buildList() {
-    let l;
+    let l, byProb = false, start = null;
     if (cfg.mode === "full") l = Q.slice();
-    else if (cfg.mode === "top") l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20);
-    else if (cfg.mode === "topic") l = Q.filter((q) => q.t === cfg.topic);
+    else if (cfg.mode === "top") { l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20); byProb = true; }
+    else if (cfg.mode === "topic") { l = cfg.chain ? Q.slice() : Q.filter((q) => q.t === cfg.topic); start = cfg.topic; }
     else l = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok);
-    return cfg.sq ? shuffle(l) : l.sort((a, b) => a.i - b.i);
+    return cfg.mix ? shuffle(l) : orderByTopic(l, start, byProb);
   }
   function startSession(list, label) {
-    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now() };
+    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now(), back: view === "setup" ? "setup" : "home", mixed: cfg.mix, segs: [] };
     S.list.forEach((i) => { const n = Q[i].o.length; const idx = [...Array(n).keys()]; S.ord[i] = cfg.so ? shuffle(idx) : idx; });
+    // blocos por assunto (um bloco = sequência de questões do mesmo assunto)
+    S.list.forEach((i, p) => { const t = Q[i].t, last = S.segs[S.segs.length - 1]; if (!last || last.t !== t) S.segs.push({ t, from: p, to: p }); else last.to = p; });
     go("quiz");
   }
+  const segOf = (p) => S.segs.findIndex((s) => p >= s.from && p <= s.to);
+  const segDone = (sg) => { let n = 0; for (let p = sg.from; p <= sg.to; p++) if (S.ans[S.list[p]] != null) n++; return n; };
+  const segRight = (sg) => { let n = 0; for (let p = sg.from; p <= sg.to; p++) if (S.ans[S.list[p]] === Q[S.list[p]].a) n++; return n; };
 
   // ---------- QUESTÃO ----------
   function quiz() {
     const i = S.list[S.p], q = Q[i], ord = S.ord[i], picked = S.ans[i];
     const locked = S.fb === "treino" && picked != null;
     const [cls, lab] = lvl(T[q.t].prob);
-    const n = S.list.length;
+    const n = S.list.length, k = segOf(S.p), sg = S.segs[k], m = S.segs.length;
+    const mixed = S.mixed || m < 2;
+    const newTopic = !mixed && S.p === sg.from;
+    const prev = k > 0 ? S.segs[k - 1] : null;
+    const nextIsNew = !mixed && S.p === sg.to && S.p < n - 1;
+    const banner = newTopic ? `<div class="newtopic"><div class="label">${k === 0 ? "Começando" : "Novo assunto"} · ${k + 1} de ${m}</div><b>${esc(T[q.t].name)}</b>
+        <div class="small muted">${sg.to - sg.from + 1} ${sg.to === sg.from ? "questão" : "questões"} · chance de cair: ${lab.toLowerCase()}${prev && S.fb === "treino" ? ` · você concluiu <b>${esc(T[prev.t].name)}</b> com ${segRight(prev)}/${prev.to - prev.from + 1} certas` : ""}</div></div>` : "";
+    const chips = mixed ? "" : `<div class="segs">${S.segs.map((s, j) => { const d = segDone(s), sz = s.to - s.from + 1; return `<button class="segchip ${j === k ? "on" : ""} ${d === sz ? "done" : ""}" data-seg="${j}" title="${esc(T[s.t].name)}"><span>${esc(T[s.t].name)}</span><i>${d}/${sz}</i></button>`; }).join("")}</div>`;
     app.innerHTML = `<div class="card">
-      <div class="qhead"><span>Questão ${S.p + 1} de ${n} · ${esc(S.label)}</span><span id="clock"></span></div>
+      <div class="row sp" style="margin-bottom:6px"><button class="btn ghost sm" data-act="leave">&larr; Sair</button><span class="qhead"><span id="clock"></span></span></div>
+      <div class="qhead"><span>Questão ${S.p + 1} de ${n} · ${esc(S.label)}</span></div>
       <div class="progress"><i style="width:${(S.p / n) * 100}%"></i></div>
+      ${chips}${banner}
       <div class="tags"><span class="tag">${esc(T[q.t].name)}</span><span class="tag"><span class="lvl ${cls}">Chance ${lab.toLowerCase()}</span></span>${q.bonus ? '<span class="tag">bônus</span>' : ""}</div>
       <div class="qtext">${md(q.q)}</div>
       ${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}
-      <div id="opts">${ord.map((oi, k) => {
+      <div id="opts">${ord.map((oi, kk) => {
         let c = "opt";
         if (locked) { c += " lock"; if (oi === q.a) c += " ok"; else if (oi === picked) c += " no"; }
         else if (picked === oi) c += " sel";
-        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[k]}</span><span>${md(q.o[oi])}</span></button>`;
+        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[kk]}</span><span>${md(q.o[oi])}</span></button>`;
       }).join("")}</div>
       <div class="fb" id="fb">${locked ? explain(q, picked) : ""}</div>
       <div class="row sp" style="margin-top:22px">
         <button class="btn ghost" data-act="prev" ${S.p === 0 ? "disabled" : ""}>Anterior</button>
-        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar" : "Próxima"}</button>
-      </div></div>`;
+        <div class="row">${S.fb === "treino" && picked == null && S.p < n - 1 ? '<button class="btn ghost" data-act="skip">Pular</button>' : ""}
+        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar" : nextIsNew ? "Próximo assunto" : "Próxima"}</button></div>
+      </div>
+      <div class="endrow"><button class="linkbtn" data-act="end">Encerrar agora e ver o resultado</button></div></div>`;
     tick();
   }
   let clockT;
@@ -784,9 +852,11 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     } else { S.ans[i] = oi; quiz(); }
   }
 
-  function finish() {
+  function finish(early) {
     clearInterval(clockT);
-    if (S.fb === "prova") S.list.forEach((i) => record(i, S.ans[i] === Q[i].a));
+    if (early) S.list = S.list.filter((i) => S.ans[i] != null);          // só conta o que foi respondido
+    if (!S.list.length) { S = null; go("home"); return; }
+    if (S.fb === "prova") S.list.forEach((i) => { if (S.ans[i] != null) record(i, S.ans[i] === Q[i].a); });
     const s = S.list.filter((i) => S.ans[i] === Q[i].a).length;
     store.hist.push({ d: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }), s, n: S.list.length, m: S.label });
     save(); S.done = true; go("result");
@@ -819,17 +889,28 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   }
 
   // ---------- eventos ----------
+  const startTopic = (id) => { cfg.mode = "topic"; cfg.topic = id; startSession(buildList(), (cfg.chain ? "A partir de: " : "Assunto: ") + T[id].name); };
   document.addEventListener("click", (ev) => {
-    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic]");
+    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic],[data-seg]");
     if (!b) return;
     if (b.dataset.go) return go(b.dataset.go);
-    if (b.dataset.topic) { cfg.mode = "topic"; cfg.topic = b.dataset.topic; const l = buildList(); return startSession(l, "Assunto: " + T[cfg.topic].name); }
+    if (b.dataset.topic) return startTopic(b.dataset.topic);
     if (b.dataset.opt != null) return answer(+b.dataset.opt);
+    if (b.dataset.seg != null) {                                          // pular para outro assunto da sessão
+      const sg = S.segs[+b.dataset.seg]; let p = sg.from;
+      for (let x = sg.from; x <= sg.to; x++) if (S.ans[S.list[x]] == null) { p = x; break; }
+      S.p = p; quiz(); window.scrollTo(0, 0); return;
+    }
     const a = b.dataset.act;
-    if (a === "start") { const l = buildList(); const lab = { full: "Completo", top: "Rápido", topic: "Assunto: " + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(l, lab + (cfg.feedback === "prova" ? " · prova" : "")); }
+    if (a === "start") { const lab = { full: "Completo", top: "Rápido", topic: (cfg.chain ? "A partir de: " : "Assunto: ") + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(buildList(), lab + (cfg.feedback === "prova" ? " · prova" : "")); }
     if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
+    if (a === "skip") { if (S.p < S.list.length - 1) { S.p++; quiz(); window.scrollTo(0, 0); } }
     if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
-    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
+    if (a === "leave") { clearInterval(clockT); go(S && S.back === "setup" ? "setup" : "home"); }
+    if (a === "end") { if (S.list.some((i) => S.ans[i] != null) ? confirm("Encerrar agora e ver o resultado do que você já respondeu?") : confirm("Você ainda não respondeu nada. Sair do simulado?")) finish(true); }
+    if (a === "resume") go("quiz");
+    if (a === "discard") { if (confirm("Descartar o simulado em andamento?")) { clearInterval(clockT); S = null; render(); } }
+    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; cfg.mode = "wrong"; startSession(cfg.mix ? shuffle(l) : orderByTopic(l, null, false), "Refazendo erradas"); }
     if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [], v: 2 }; save(); render(); } }
   });
   document.addEventListener("keydown", (ev) => {
@@ -842,6 +923,8 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     else if (t.id === "tsel") cfg.topic = t.value;
     else if (t.id === "sq") cfg.sq = t.checked;
     else if (t.id === "so") cfg.so = t.checked;
+    else if (t.id === "chain") cfg.chain = t.checked;
+    else if (t.id === "mix") cfg.mix = t.checked;
   });
 
   // ---------- início ----------
@@ -850,7 +933,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   $("#h-title").textContent = E.title;
   $("#h-sub").textContent = E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
-  render();
+  show(location.hash.slice(1) || "home");
 })();
 </script>
 </body></html>

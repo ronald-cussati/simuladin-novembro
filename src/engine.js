@@ -19,7 +19,7 @@
     let o = a[2], ans = a[3], w = a[6] || [];
     const n = o.length, r = (i * 7 + 3) % n;
     if (r) { const rot = (arr) => arr.map((_, k) => arr[(k + r) % n]); o = rot(o); w = w.length ? rot(w) : w; ans = (ans - r + n) % n; }
-    return { i, id: qid(a), t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
+    return { i, id: (E.pin && E.pin[qid(a)]) || qid(a), t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
   });
   const T = {};
   E.topics.forEach((t) => (T[t.id] = t));
@@ -45,13 +45,23 @@
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   // ---------- navegação ----------
+  const VIEWS = ["home", "setup", "quiz", "result", "cheat", "practice"];
   function nav() {
     const tabs = [["home", "Prioridades"], ["setup", "Simulado"], ["cheat", "Resumão"]];
     if (E.practice) tabs.push(["practice", E.practiceTab || "Prática"]);
     const cur = view === "quiz" || view === "result" ? "setup" : view;
     $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
   }
-  function go(v) { view = v; render(); window.scrollTo(0, 0); }
+  // mostra uma tela (sem mexer no histórico); telas que dependem de uma sessão caem em "home" se ela não existe
+  function show(v) {
+    if (!VIEWS.includes(v)) v = "home";
+    if (v === "quiz" && (!S || S.done)) v = S && S.done ? "result" : "home";
+    if (v === "result" && !(S && S.done)) v = "home";
+    view = v; render(); window.scrollTo(0, 0);
+  }
+  // vai para uma tela e registra no histórico do navegador: o botão "voltar" (inclusive no celular) funciona
+  function go(v) { show(v); if (location.hash !== "#" + v) { try { location.hash = v; } catch (e) {} } }
+  window.addEventListener("hashchange", () => { const v = location.hash.slice(1) || "home"; if (v !== view) show(v); });
   function render() { nav(); const hi = $("#h-intro"); if (hi) hi.hidden = view !== "home"; ({ home, setup, quiz, result, cheat, practice })[view](); }
 
   // ---------- estatísticas ----------
@@ -80,13 +90,14 @@
         <div class="tc-foot"><span>${acc}</span><span class="go">Treinar &rarr;</span></div></div>`;
     };
     app.innerHTML = `
+    ${resumeBar()}
     ${E.notice ? `<div class="notice">${md(E.notice)}</div>` : ""}
     <div class="card stats">
       <div><b>${Q.length}</b><span>questões no banco</span></div>
       <div><b>${answered}</b><span>já respondidas</span></div>
       <div><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b><span>de acerto${answered ? ` · ${right} certas, ${answered - right} erradas` : ""}</span></div>
     </div>
-    <div class="sec"><h2>Por onde começar</h2><p>Ordenado por chance de cair e pelo quanto você ainda erra.</p></div>
+    <div class="sec"><h2>Por onde começar</h2><p>Ordenado por chance de cair e pelo quanto você ainda erra. Ao terminar um assunto, o simulado segue direto para o próximo e avisa a troca.</p></div>
     <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div>
     <div class="sec"><h2>Mapa de probabilidade por assunto</h2><p>A barra mostra a chance de cair; depois que você treina, ela passa a mostrar o seu acerto.</p></div>
     <div class="tgrid">${rows.map(card).join("")}</div>
@@ -96,61 +107,98 @@
     ${E.disclaimer ? `<div class="details-card"><details><summary>Como estimei a chance de cair</summary><p>${md(E.disclaimer)}</p></details></div>` : ""}`;
   }
 
+  // aviso "simulado em andamento" (home e setup)
+  function resumeBar() {
+    if (!S || S.done) return "";
+    const answered = S.list.filter((i) => S.ans[i] != null).length;
+    return `<div class="notice resume"><div><b>Simulado em andamento</b><div class="small muted">Questão ${S.p + 1} de ${S.list.length} · ${answered} respondidas · ${esc(S.label)}</div></div>
+      <div class="row"><button class="btn sm" data-act="resume">Retomar</button><button class="btn ghost sm" data-act="discard">Descartar</button></div></div>`;
+  }
+
   // ---------- MONTAR SIMULADO ----------
-  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true };
+  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true, chain: true, mix: false };
   function setup() {
     const wrongs = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
     const R = (name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
-    app.innerHTML = `<div class="card"><h2>Montar simulado</h2>
-      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, como numa prova de verdade.")}
+    app.innerHTML = `${resumeBar()}<div class="card"><h2>Montar simulado</h2>
+      <p class="muted small" style="margin:-4px 0 12px">O simulado segue em fluxo contínuo, assunto por assunto: ao terminar um, entra direto no próximo e avisa a troca.</p>
+      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, assunto por assunto, como numa prova de verdade.")}
       ${R("mode", "top", cfg.mode, "Rápido · as 20 mais prováveis", "Questões dos assuntos com maior chance de cair. Bom para a véspera.")}
-      ${R("mode", "topic", cfg.mode, "Por assunto", `<select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
+      ${R("mode", "topic", cfg.mode, "Por assunto", `Começa no assunto escolhido e segue para os próximos.<br><select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
       ${R("mode", "wrong", cfg.mode, `Só as que eu errei · ${wrongs}`, wrongs ? "Refaz apenas as questões que você errou da última vez." : "Nada para refazer ainda. Faça um simulado primeiro.")}
       <h3>Modo</h3>
       ${R("fb", "treino", cfg.feedback, "Treino", "Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.")}
       ${R("fb", "prova", cfg.feedback, "Prova", "Resultado e explicações só no final. Simula a pressão real.")}
-      <label class="check" style="margin-top:14px"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões</label>
+      <label class="check" style="margin-top:14px"><input type="checkbox" id="chain" ${cfg.chain ? "checked" : ""}> Em “Por assunto”, ao terminar seguir para o próximo assunto</label>
+      <label class="check"><input type="checkbox" id="mix" ${cfg.mix ? "checked" : ""}> Misturar as questões de todos os assuntos (sem blocos)</label>
+      <label class="check"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões dentro de cada assunto</label>
       <label class="check"><input type="checkbox" id="so" ${cfg.so ? "checked" : ""}> Embaralhar as alternativas (evita decorar a letra)</label>
       <div style="margin-top:18px"><button class="btn" data-act="start" ${cfg.mode === "wrong" && !wrongs ? "disabled" : ""}>Começar</button></div></div>`;
   }
 
+  // ordena as questões em blocos por assunto, na ordem do mapa (a partir de startId, dando a volta no fim)
+  function orderByTopic(qs, startId, byProb) {
+    let ids = E.topics.map((t) => t.id);
+    if (byProb) ids = E.topics.slice().sort((a, b) => b.prob - a.prob).map((t) => t.id);
+    else if (startId) { const k = ids.indexOf(startId); ids = ids.slice(k).concat(ids.slice(0, k)); }
+    const by = {}; qs.forEach((q) => (by[q.t] = by[q.t] || []).push(q));
+    let out = [];
+    ids.forEach((t) => { if (by[t]) out = out.concat(cfg.sq ? shuffle(by[t]) : by[t].slice().sort((a, b) => a.i - b.i)); });
+    return out;
+  }
   function buildList() {
-    let l;
+    let l, byProb = false, start = null;
     if (cfg.mode === "full") l = Q.slice();
-    else if (cfg.mode === "top") l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20);
-    else if (cfg.mode === "topic") l = Q.filter((q) => q.t === cfg.topic);
+    else if (cfg.mode === "top") { l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20); byProb = true; }
+    else if (cfg.mode === "topic") { l = cfg.chain ? Q.slice() : Q.filter((q) => q.t === cfg.topic); start = cfg.topic; }
     else l = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok);
-    return cfg.sq ? shuffle(l) : l.sort((a, b) => a.i - b.i);
+    return cfg.mix ? shuffle(l) : orderByTopic(l, start, byProb);
   }
   function startSession(list, label) {
-    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now() };
+    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now(), back: view === "setup" ? "setup" : "home", mixed: cfg.mix, segs: [] };
     S.list.forEach((i) => { const n = Q[i].o.length; const idx = [...Array(n).keys()]; S.ord[i] = cfg.so ? shuffle(idx) : idx; });
+    // blocos por assunto (um bloco = sequência de questões do mesmo assunto)
+    S.list.forEach((i, p) => { const t = Q[i].t, last = S.segs[S.segs.length - 1]; if (!last || last.t !== t) S.segs.push({ t, from: p, to: p }); else last.to = p; });
     go("quiz");
   }
+  const segOf = (p) => S.segs.findIndex((s) => p >= s.from && p <= s.to);
+  const segDone = (sg) => { let n = 0; for (let p = sg.from; p <= sg.to; p++) if (S.ans[S.list[p]] != null) n++; return n; };
+  const segRight = (sg) => { let n = 0; for (let p = sg.from; p <= sg.to; p++) if (S.ans[S.list[p]] === Q[S.list[p]].a) n++; return n; };
 
   // ---------- QUESTÃO ----------
   function quiz() {
     const i = S.list[S.p], q = Q[i], ord = S.ord[i], picked = S.ans[i];
     const locked = S.fb === "treino" && picked != null;
     const [cls, lab] = lvl(T[q.t].prob);
-    const n = S.list.length;
+    const n = S.list.length, k = segOf(S.p), sg = S.segs[k], m = S.segs.length;
+    const mixed = S.mixed || m < 2;
+    const newTopic = !mixed && S.p === sg.from;
+    const prev = k > 0 ? S.segs[k - 1] : null;
+    const nextIsNew = !mixed && S.p === sg.to && S.p < n - 1;
+    const banner = newTopic ? `<div class="newtopic"><div class="label">${k === 0 ? "Começando" : "Novo assunto"} · ${k + 1} de ${m}</div><b>${esc(T[q.t].name)}</b>
+        <div class="small muted">${sg.to - sg.from + 1} ${sg.to === sg.from ? "questão" : "questões"} · chance de cair: ${lab.toLowerCase()}${prev && S.fb === "treino" ? ` · você concluiu <b>${esc(T[prev.t].name)}</b> com ${segRight(prev)}/${prev.to - prev.from + 1} certas` : ""}</div></div>` : "";
+    const chips = mixed ? "" : `<div class="segs">${S.segs.map((s, j) => { const d = segDone(s), sz = s.to - s.from + 1; return `<button class="segchip ${j === k ? "on" : ""} ${d === sz ? "done" : ""}" data-seg="${j}" title="${esc(T[s.t].name)}"><span>${esc(T[s.t].name)}</span><i>${d}/${sz}</i></button>`; }).join("")}</div>`;
     app.innerHTML = `<div class="card">
-      <div class="qhead"><span>Questão ${S.p + 1} de ${n} · ${esc(S.label)}</span><span id="clock"></span></div>
+      <div class="row sp" style="margin-bottom:6px"><button class="btn ghost sm" data-act="leave">&larr; Sair</button><span class="qhead"><span id="clock"></span></span></div>
+      <div class="qhead"><span>Questão ${S.p + 1} de ${n} · ${esc(S.label)}</span></div>
       <div class="progress"><i style="width:${(S.p / n) * 100}%"></i></div>
+      ${chips}${banner}
       <div class="tags"><span class="tag">${esc(T[q.t].name)}</span><span class="tag"><span class="lvl ${cls}">Chance ${lab.toLowerCase()}</span></span>${q.bonus ? '<span class="tag">bônus</span>' : ""}</div>
       <div class="qtext">${md(q.q)}</div>
       ${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}
-      <div id="opts">${ord.map((oi, k) => {
+      <div id="opts">${ord.map((oi, kk) => {
         let c = "opt";
         if (locked) { c += " lock"; if (oi === q.a) c += " ok"; else if (oi === picked) c += " no"; }
         else if (picked === oi) c += " sel";
-        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[k]}</span><span>${md(q.o[oi])}</span></button>`;
+        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[kk]}</span><span>${md(q.o[oi])}</span></button>`;
       }).join("")}</div>
       <div class="fb" id="fb">${locked ? explain(q, picked) : ""}</div>
       <div class="row sp" style="margin-top:22px">
         <button class="btn ghost" data-act="prev" ${S.p === 0 ? "disabled" : ""}>Anterior</button>
-        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar" : "Próxima"}</button>
-      </div></div>`;
+        <div class="row">${S.fb === "treino" && picked == null && S.p < n - 1 ? '<button class="btn ghost" data-act="skip">Pular</button>' : ""}
+        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar" : nextIsNew ? "Próximo assunto" : "Próxima"}</button></div>
+      </div>
+      <div class="endrow"><button class="linkbtn" data-act="end">Encerrar agora e ver o resultado</button></div></div>`;
     tick();
   }
   let clockT;
@@ -183,9 +231,11 @@
     } else { S.ans[i] = oi; quiz(); }
   }
 
-  function finish() {
+  function finish(early) {
     clearInterval(clockT);
-    if (S.fb === "prova") S.list.forEach((i) => record(i, S.ans[i] === Q[i].a));
+    if (early) S.list = S.list.filter((i) => S.ans[i] != null);          // só conta o que foi respondido
+    if (!S.list.length) { S = null; go("home"); return; }
+    if (S.fb === "prova") S.list.forEach((i) => { if (S.ans[i] != null) record(i, S.ans[i] === Q[i].a); });
     const s = S.list.filter((i) => S.ans[i] === Q[i].a).length;
     store.hist.push({ d: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }), s, n: S.list.length, m: S.label });
     save(); S.done = true; go("result");
@@ -218,17 +268,28 @@
   }
 
   // ---------- eventos ----------
+  const startTopic = (id) => { cfg.mode = "topic"; cfg.topic = id; startSession(buildList(), (cfg.chain ? "A partir de: " : "Assunto: ") + T[id].name); };
   document.addEventListener("click", (ev) => {
-    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic]");
+    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic],[data-seg]");
     if (!b) return;
     if (b.dataset.go) return go(b.dataset.go);
-    if (b.dataset.topic) { cfg.mode = "topic"; cfg.topic = b.dataset.topic; const l = buildList(); return startSession(l, "Assunto: " + T[cfg.topic].name); }
+    if (b.dataset.topic) return startTopic(b.dataset.topic);
     if (b.dataset.opt != null) return answer(+b.dataset.opt);
+    if (b.dataset.seg != null) {                                          // pular para outro assunto da sessão
+      const sg = S.segs[+b.dataset.seg]; let p = sg.from;
+      for (let x = sg.from; x <= sg.to; x++) if (S.ans[S.list[x]] == null) { p = x; break; }
+      S.p = p; quiz(); window.scrollTo(0, 0); return;
+    }
     const a = b.dataset.act;
-    if (a === "start") { const l = buildList(); const lab = { full: "Completo", top: "Rápido", topic: "Assunto: " + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(l, lab + (cfg.feedback === "prova" ? " · prova" : "")); }
+    if (a === "start") { const lab = { full: "Completo", top: "Rápido", topic: (cfg.chain ? "A partir de: " : "Assunto: ") + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(buildList(), lab + (cfg.feedback === "prova" ? " · prova" : "")); }
     if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
+    if (a === "skip") { if (S.p < S.list.length - 1) { S.p++; quiz(); window.scrollTo(0, 0); } }
     if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
-    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
+    if (a === "leave") { clearInterval(clockT); go(S && S.back === "setup" ? "setup" : "home"); }
+    if (a === "end") { if (S.list.some((i) => S.ans[i] != null) ? confirm("Encerrar agora e ver o resultado do que você já respondeu?") : confirm("Você ainda não respondeu nada. Sair do simulado?")) finish(true); }
+    if (a === "resume") go("quiz");
+    if (a === "discard") { if (confirm("Descartar o simulado em andamento?")) { clearInterval(clockT); S = null; render(); } }
+    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; cfg.mode = "wrong"; startSession(cfg.mix ? shuffle(l) : orderByTopic(l, null, false), "Refazendo erradas"); }
     if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [], v: 2 }; save(); render(); } }
   });
   document.addEventListener("keydown", (ev) => {
@@ -241,6 +302,8 @@
     else if (t.id === "tsel") cfg.topic = t.value;
     else if (t.id === "sq") cfg.sq = t.checked;
     else if (t.id === "so") cfg.so = t.checked;
+    else if (t.id === "chain") cfg.chain = t.checked;
+    else if (t.id === "mix") cfg.mix = t.checked;
   });
 
   // ---------- início ----------
@@ -249,5 +312,5 @@
   $("#h-title").textContent = E.title;
   $("#h-sub").textContent = E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
-  render();
+  show(location.hash.slice(1) || "home");
 })();

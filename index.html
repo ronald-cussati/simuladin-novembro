@@ -133,6 +133,24 @@ table.topics td:last-child,table.topics th:last-child{padding-right:0;text-align
 .sec p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
 .notice{border:1px solid var(--line);border-left:3px solid var(--accent-fg);border-radius:var(--radius);background:var(--surface);padding:16px 20px;margin-bottom:16px;color:var(--ink2);font-size:.95rem}
 
+.notice.resume{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+
+/* fluxo contínuo: aviso de novo assunto, atalhos entre assuntos, sair/encerrar */
+.newtopic{border-left:3px solid var(--accent-fg);background:var(--soft);border-radius:10px;padding:14px 18px;margin:0 0 18px}
+.newtopic .label{color:var(--accent-fg);display:block;margin-bottom:2px}
+.newtopic>b{display:block;font-size:1.08rem;font-weight:620;letter-spacing:-.01em}
+.newtopic .small b{font-weight:600;color:var(--ink2)}
+.segs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 0 10px;scrollbar-width:thin}
+.segchip{flex:none;display:inline-flex;align-items:center;gap:8px;max-width:210px;background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:4px 11px;font:inherit;font-size:.78rem;font-weight:500;cursor:pointer;white-space:nowrap}
+.segchip span{overflow:hidden;text-overflow:ellipsis}
+.segchip i{font-style:normal;font-variant-numeric:tabular-nums;opacity:.8}
+.segchip:hover{border-color:var(--line2);color:var(--ink)}
+.segchip.on{border-color:var(--accent-fg);color:var(--ink)}
+.segchip.done{color:var(--ok)}
+.endrow{text-align:center;margin-top:16px}
+.linkbtn{background:none;border:0;color:var(--muted);font:inherit;font-size:.85rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkbtn:hover{color:var(--ink)}
+
 /* assuntos em cartões (mesma linguagem dos cartões do index) */
 .tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 @media (max-width:700px){.tgrid{grid-template-columns:1fr}}
@@ -270,7 +288,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 </a>
 
 </div>
-<div class="howto"><b>Como estudar.</b> Abra a matéria e veja as Prioridades. Faça o simulado em modo treino e leia cada explicação. Depois refaça em modo prova e, por fim, só as erradas. Na véspera, apenas o Resumão. Seu progresso fica salvo neste navegador.</div>
+<div class="howto"><b>Como estudar.</b> Abra a matéria, escolha um assunto e comece: ao terminá-lo, o simulado segue direto para o próximo, avisando a troca de assunto. Faça em modo treino e leia cada explicação. Depois refaça em modo prova e, por fim, só as erradas. Na véspera, apenas o Resumão. Seu progresso fica salvo neste navegador.</div>
 </main>
 <script>
 document.querySelectorAll("a.subject").forEach(function (a) {
