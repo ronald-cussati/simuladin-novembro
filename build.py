@@ -29,7 +29,7 @@ TEMPLATE = """<!doctype html>
 <header class="bar"><div class="in"><a class="back" href="index.html">&larr; Matérias</a>
 <nav class="tabs" id="tabs"></nav>
 <button class="icon-btn" data-theme-toggle aria-label="Alternar modo claro e escuro" title="Alternar modo claro/escuro">__ICONS__</button></div></header>
-<div class="hero"><div class="in"><h1 id="h-title"></h1><p id="h-sub"></p></div></div>
+<div class="hero"><div class="in"><h1 id="h-title"></h1><p class="sub" id="h-sub"></p><p class="lead" id="h-intro"></p></div></div>
 <main id="app"></main>
 <script>__DATA__</script>
 <script>__ENGINE__</script>

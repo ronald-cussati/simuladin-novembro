@@ -42,7 +42,7 @@
     $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
   }
   function go(v) { view = v; render(); window.scrollTo(0, 0); }
-  function render() { nav(); ({ home, setup, quiz, result, cheat, practice })[view](); }
+  function render() { nav(); const hi = $("#h-intro"); if (hi) hi.hidden = view !== "home"; ({ home, setup, quiz, result, cheat, practice })[view](); }
 
   // ---------- estatísticas ----------
   function topicStats(id) {
@@ -58,29 +58,32 @@
     const right = Object.values(store.q).filter((x) => x.ok).length;
     const rows = E.topics.map((t) => ({ t, s: topicStats(t.id) }));
     const prio = rows.slice().sort((a, b) => b.t.prob * (1 - (b.s.acc ?? 0) * 0.9) - a.t.prob * (1 - (a.s.acc ?? 0) * 0.9)).slice(0, 3);
+    const card = ({ t, s }) => {
+      const [cls, lab] = lvl(t.prob);
+      const acc = s.acc == null ? `${s.total} questões` : `${s.total} questões · ${s.ok}/${s.done} certas`;
+      return `<div class="tcard ${t.focus ? "focus" : ""}" data-topic="${t.id}" role="button" tabindex="0">
+        <div class="tc-top"><span class="lvl ${cls}">${lab}</span><span class="pct">~${t.prob}% de chance</span></div>
+        <h3>${t.name}</h3>
+        ${t.src ? `<div class="tc-src"><span class="src ${t.focus ? "focus" : ""}">${t.focus ? t.src + " · foco do professor" : t.src}</span></div>` : ""}
+        <p class="twhy">${md(t.why)}</p>
+        <div class="bar2 ${s.acc == null ? "" : s.acc >= 0.7 ? "acc" : "bad"}"><i style="width:${s.acc == null ? t.prob : s.acc * 100}%"></i></div>
+        <div class="tc-foot"><span>${acc}</span><span class="go">Treinar &rarr;</span></div></div>`;
+    };
     app.innerHTML = `
-    <div class="card"><p style="margin:0;color:var(--ink2)">${md(E.intro)}</p>
-      ${E.disclaimer ? `<div class="callout">${md(E.disclaimer)}</div>` : ""}</div>
+    ${E.notice ? `<div class="notice">${md(E.notice)}</div>` : ""}
     <div class="card stats">
       <div><b>${Q.length}</b><span>questões no banco</span></div>
       <div><b>${answered}</b><span>já respondidas</span></div>
       <div><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b><span>de acerto${answered ? ` · ${right} certas, ${answered - right} erradas` : ""}</span></div>
     </div>
-    <div class="card"><h2>Por onde começar</h2>
-      <p class="muted small" style="margin:-4px 0 14px">Ordenado por chance de cair e pelo quanto você ainda erra.</p>
-      <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div></div>
-    <div class="card"><h2>Mapa de probabilidade por assunto</h2>
-      <table class="topics"><tr><th>Assunto</th><th>Chance de cair</th><th class="hide-s">Seu acerto</th><th></th></tr>
-      ${rows.map(({ t, s }) => { const [cls, lab] = lvl(t.prob); return `
-        <tr><td><div class="tname">${t.name}${t.src ? `<span class="src ${t.focus ? "focus" : ""}">${t.focus ? t.src + " · foco do professor" : t.src}</span>` : ""}</div>
-          <div class="twhy">${md(t.why)}</div><div class="pct">${s.total} questões</div></td>
-        <td style="min-width:128px"><span class="lvl ${cls}">${lab}</span><div class="bar2"><i style="width:${t.prob}%"></i></div><div class="pct">~${t.prob}%</div></td>
-        <td class="hide-s" style="min-width:112px">${s.acc == null ? '<span class="pct">não feito</span>' : `<div class="bar2 ${s.acc >= 0.7 ? "acc" : "bad"}"><i style="width:${s.acc * 100}%"></i></div><div class="pct">${s.ok}/${s.done} certas</div>`}</td>
-        <td><button class="btn ghost sm" data-topic="${t.id}">Treinar</button></td></tr>`; }).join("")}
-      </table></div>
-    ${E.plan ? `<div class="card"><h2>Plano de estudo sugerido</h2><ol class="list">${E.plan.map((p) => `<li>${md(p)}</li>`).join("")}</ol></div>` : ""}
-    ${store.hist.length ? `<div class="card"><h2>Seus últimos simulados</h2><ul class="list">${store.hist.slice(-6).reverse().map((h) => `<li>${h.d} · <b>${h.s}/${h.n}</b> (${Math.round((h.s / h.n) * 100)}%) · ${esc(h.m)}</li>`).join("")}</ul>
-      <div style="margin-top:14px"><button class="btn ghost sm" data-act="reset">Apagar meu histórico</button></div></div>` : ""}`;
+    <div class="sec"><h2>Por onde começar</h2><p>Ordenado por chance de cair e pelo quanto você ainda erra.</p></div>
+    <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div>
+    <div class="sec"><h2>Mapa de probabilidade por assunto</h2><p>A barra mostra a chance de cair; depois que você treina, ela passa a mostrar o seu acerto.</p></div>
+    <div class="tgrid">${rows.map(card).join("")}</div>
+    ${E.plan ? `<div class="sec"><h2>Plano de estudo sugerido</h2></div><div class="card"><ol class="list" style="margin:0">${E.plan.map((p) => `<li>${md(p)}</li>`).join("")}</ol></div>` : ""}
+    ${store.hist.length ? `<div class="sec"><h2>Seus últimos simulados</h2></div><div class="card"><ul class="list" style="margin:0">${store.hist.slice(-6).reverse().map((h) => `<li>${h.d} · <b>${h.s}/${h.n}</b> (${Math.round((h.s / h.n) * 100)}%) · ${esc(h.m)}</li>`).join("")}</ul>
+      <div style="margin-top:14px"><button class="btn ghost sm" data-act="reset">Apagar meu histórico</button></div></div>` : ""}
+    ${E.disclaimer ? `<div class="details-card"><details><summary>Como estimei a chance de cair</summary><p>${md(E.disclaimer)}</p></details></div>` : ""}`;
   }
 
   // ---------- MONTAR SIMULADO ----------
@@ -218,6 +221,9 @@
     if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
     if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [] }; save(); render(); } }
   });
+  document.addEventListener("keydown", (ev) => {
+    if ((ev.key === "Enter" || ev.key === " ") && ev.target.matches && ev.target.matches(".tcard")) { ev.preventDefault(); ev.target.click(); }
+  });
   document.addEventListener("change", (ev) => {
     const t = ev.target;
     if (t.name === "mode") { cfg.mode = t.value; setup(); }
@@ -232,5 +238,6 @@
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
   $("#h-sub").textContent = E.subtitle;
+  $("#h-intro").innerHTML = md(E.intro);
   render();
 })();

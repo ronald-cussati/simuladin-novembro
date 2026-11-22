@@ -4,6 +4,7 @@ window.EXAM = {
   subtitle: "Prof. Rafael Altoé Frossard · Aulas 1, 2 e 3 + Listas 1, 2 e 3",
   color: "#0f766e",
   intro: "50 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
+  notice: "**Dica de prova:** as respostas certas quase sempre repetem o texto do slide; as erradas costumam usar “apenas”, “exclusivamente”, “ignorar” ou “evitar”.",
   disclaimer: "**Padrão do professor (pelas 3 listas):** cada lista tem 5 questões objetivas contextualizadas (“Imagine uma empresa brasileira de…”) que testam **a definição exata do slide**, mais 1 discursiva. As respostas certas quase sempre são as que repetem o texto do slide; as erradas costumam usar “apenas”, “ignorar”, “evitar”, “exclusivamente”. Não achei provas antigas da Multivix publicadas; as estimativas de chance vêm do peso de cada tema nos slides e nas listas.",
   topics: [
     { id: "oport", name: "Oportunidade e ação empreendedora", prob: 80, why: "Definição de Hisrich e Peters (Lista 1, questão 1). Percepção → avaliação → ação." },

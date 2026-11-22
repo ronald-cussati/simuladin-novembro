@@ -4,6 +4,7 @@ window.EXAM = {
   subtitle: "Prova prática · Prof. Antonio Izo Júnior · Aulas 1, 2 e 3",
   color: "#7c3aed",
   intro: "50 questões de leitura de código (o que imprime? onde está o erro? qual trecho completa o programa?) mais 8 exercícios de **escrever código** com solução, na aba Prática. A prova é prática: o que o professor construiu nas aulas é o que vai cair — média de notas, lista de tarefas com menu, `while`, `TryParse` e métodos.",
+  notice: "**Prova prática:** digite o código no compilador online, não só leia. O exercício mais importante é refazer do zero a lista de tarefas com menu e métodos.",
   disclaimer: "**Leitura dos materiais:** o fio condutor das 3 aulas é um só projeto crescendo — Aula 1 (variáveis, if, for, método simples, classe, média de notas) → Aula 2 (List, while, TryParse, try/catch, **lista de tarefas com menu**) → Aula 3 (**separar em métodos**: parâmetro x argumento, return, void, escopo). Espere pedido de: refazer a lista de tarefas e/ou adicionar uma função (ex.: “Concluir tarefa”, desafios do final de cada slide). Não achei provas antigas da Multivix publicadas; as estimativas vêm do peso de cada tema nos slides (Aula 3, a mais recente, tem o desafio final).",
   topics: [
     { id: "base", name: ".NET, C# e primeiro projeto", prob: 55, why: "dotnet new console, Program.cs, Console e `console` não são a mesma coisa. Mais conceitual." },

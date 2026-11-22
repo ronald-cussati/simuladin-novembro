@@ -4,6 +4,7 @@ window.EXAM = {
   subtitle: "Prof. Luiz Guilherme Spolador · Ordenação + Ponteiros + Alocação dinâmica",
   color: "#4f46e5",
   intro: "Banco de 50 questões montado em cima das Aulas 5, 6, 7 e 8 (Bubble/Selection, Ponteiros e malloc, Insertion/Merge, Quick). As questões de código usam os mesmos exemplos dos slides (vetor 23, 4, 67, -8, 21...).",
+  notice: "**Comece por:** alocação dinâmica, Quick Sort, ponteiros e complexidade dos algoritmos. São os assuntos com maior chance de cair.",
   disclaimer: "**Como estimei a “chance de cair”:** peso dado pelo professor no slide (quantidade de slides, se tem código/teste de mesa, se tem slide de resumo) + aulas mais recentes + o que é cobrado em provas de ED de outras instituições (teste de mesa, complexidade, ponteiros e malloc). É uma estimativa, não garantia. Não achei provas antigas da Multivix publicadas.",
   topics: [
     { id: "conc", name: "Conceitos de ordenação", prob: 60, why: "Chave, interna x externa, **estável** x não estável. Slides curtos, mas estabilidade é pergunta clássica." },
