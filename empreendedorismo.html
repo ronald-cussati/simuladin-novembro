@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulado</title>
+<script>/* Tema claro/escuro — roda no <head> para evitar "flash" de tema errado */
+(function () {
+  var K = "sim_theme", root = document.documentElement, t = null;
+  try { t = localStorage.getItem(K); } catch (e) {}
+  if (t !== "dark" && t !== "light") t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  root.setAttribute("data-theme", t);
+  document.addEventListener("click", function (ev) {
+    if (!ev.target.closest("[data-theme-toggle]")) return;
+    var n = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", n);
+    try { localStorage.setItem(K, n); } catch (e) {}
+  });
+})();
+</script>
+<style>/* ---------- tokens ---------- */
+:root{
+  --accent:#4f46e5;
+  --font:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
+  --bg:#fbfbfa;--surface:#ffffff;--soft:#f4f4f2;
+  --ink:#141416;--ink2:#3d3d45;--muted:#74747e;
+  --line:#e9e9e6;--line2:#d6d6d2;
+  --ok:#15803d;--ok-bg:#f1faf4;--no:#b42318;--no-bg:#fef3f2;
+  --accent-fg:var(--accent);
+  --radius:12px;
+  color-scheme:light;
+}
+html[data-theme="dark"]{
+  --bg:#0c0c0e;--surface:#141417;--soft:#1b1b1f;
+  --ink:#f3f3f5;--ink2:#cfcfd6;--muted:#8d8d98;
+  --line:#25252b;--line2:#35353d;
+  --ok:#4ade80;--ok-bg:#0e2217;--no:#f87171;--no-bg:#2a1315;
+  --accent-fg:color-mix(in srgb,var(--accent) 62%,#fff);
+  color-scheme:dark;
+}
+
+/* ---------- base ---------- */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+a{color:inherit}
+h1,h2,h3{letter-spacing:-.015em;margin:0}
+.wrap,.in{max-width:900px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---------- barra superior ---------- */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.bar .in{display:flex;align-items:center;gap:14px;height:56px}
+.back{color:var(--muted);text-decoration:none;font-size:.875rem;white-space:nowrap}
+.back:hover{color:var(--ink)}
+.brand{font-weight:650;letter-spacing:-.01em}
+nav.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;height:100%}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;color:var(--muted);font:inherit;font-size:.9rem;font-weight:500;padding:0 12px;cursor:pointer;white-space:nowrap;position:relative;height:100%}
+nav.tabs button:hover{color:var(--ink)}
+nav.tabs button.on{color:var(--ink)}
+nav.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--accent-fg);border-radius:2px}
+.icon-btn{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink2);cursor:pointer;flex:none;margin-left:auto}
+.icon-btn:hover{border-color:var(--line2);color:var(--ink)}
+.icon-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn .i-sun{display:none}
+html[data-theme="dark"] .icon-btn .i-sun{display:block}
+html[data-theme="dark"] .icon-btn .i-moon{display:none}
+nav.tabs + .icon-btn{margin-left:0}
+
+/* ---------- topo da página ---------- */
+.hero{padding:44px 0 8px}
+.hero h1{font-size:clamp(1.65rem,3.6vw,2.3rem);font-weight:650;line-height:1.15}
+.hero p{margin:10px 0 0;color:var(--muted);max-width:62ch}
+main{max-width:900px;margin:0 auto;padding:24px 20px 96px}
+#app>*{animation:rise .28s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#app>*{animation:none}html{scroll-behavior:auto}}
+
+/* ---------- blocos ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.card h2{font-size:1.05rem;font-weight:620;margin-bottom:12px}
+.card h3{font-size:.95rem;font-weight:620;margin:20px 0 8px}
+.label{font-size:.72rem;font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.callout{border-left:2px solid var(--line2);padding:2px 0 2px 16px;margin:16px 0 0;color:var(--ink2);font-size:.93rem}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);padding:0}
+.stats>div{padding:20px 24px}
+.stats>div+div{border-left:1px solid var(--line)}
+.stats b{display:block;font-size:1.9rem;font-weight:600;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.stats span{color:var(--muted);font-size:.85rem}
+@media (max-width:560px){.stats>div{padding:16px 14px}.stats b{font-size:1.4rem}}
+
+/* ---------- botões ---------- */
+.btn{background:var(--accent);color:#fff;border:1px solid transparent;border-radius:9px;padding:10px 18px;font:inherit;font-size:.92rem;font-weight:550;cursor:pointer;transition:opacity .15s,transform .05s}
+html[data-theme="dark"] .btn{background:color-mix(in srgb,var(--accent) 78%,#fff);color:#0c0c0e}
+.btn:hover{opacity:.9}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line2)}
+html[data-theme="dark"] .btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{border-color:var(--ink2);opacity:1}
+.btn.sm{padding:6px 12px;font-size:.82rem;border-radius:8px}
+.btn[disabled]{opacity:.38;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.sp{justify-content:space-between}
+
+/* ---------- mapa de prioridade ---------- */
+table.topics{width:100%;border-collapse:collapse}
+table.topics th{font-size:.7rem;font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
+table.topics td{padding:16px 12px 16px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.topics tr:last-child td{border-bottom:0;padding-bottom:0}
+table.topics td:last-child,table.topics th:last-child{padding-right:0;text-align:right}
+.tname{font-weight:600}
+.twhy{color:var(--muted);font-size:.85rem;margin-top:2px}
+.src{display:inline-block;font-size:.72rem;font-weight:550;color:var(--muted);border:1px solid var(--line2);border-radius:99px;padding:0 8px;margin-left:8px;vertical-align:1px;white-space:nowrap}
+.src.focus{color:var(--accent-fg);border-color:var(--accent-fg)}
+.lvl{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;color:var(--ink2);white-space:nowrap}
+.lvl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--muted))}
+.lvl.hot{--c:#e5484d}.lvl.high{--c:#e9a23b}.lvl.mid{--c:#4c8bf5}.lvl.low{--c:var(--muted)}
+.bar2{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px;min-width:96px}
+.bar2 i{display:block;height:100%;background:var(--accent-fg);border-radius:99px}
+.bar2.acc i{background:var(--ok)}
+.bar2.bad i{background:var(--no)}
+.pct{font-size:.75rem;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+@media (max-width:640px){table.topics .hide-s{display:none}}
+
+/* ---------- configuração do simulado ---------- */
+.opt-row{display:flex;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;margin:8px 0;cursor:pointer;align-items:flex-start;background:var(--surface);transition:border-color .15s,background .15s}
+.opt-row:hover{border-color:var(--line2)}
+.opt-row.on{border-color:var(--accent-fg);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.opt-row input{margin-top:4px;accent-color:var(--accent)}
+.opt-row b{font-weight:600}
+.check{display:flex;gap:10px;align-items:center;font-size:.9rem;color:var(--ink2);margin:8px 0;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+select{font:inherit;font-size:.9rem;padding:7px 10px;border-radius:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);margin-top:8px}
+
+/* ---------- questão ---------- */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.progress{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0 20px}
+.progress i{display:block;height:100%;background:var(--accent-fg);transition:width .3s}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tag{font-size:.75rem;font-weight:550;color:var(--ink2);background:var(--soft);border-radius:6px;padding:2px 9px}
+.qtext{font-size:1.1rem;font-weight:550;line-height:1.5;margin:0 0 16px;letter-spacing:-.005em}
+.opt{display:flex;gap:14px;width:100%;text-align:left;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin:8px 0;font:inherit;font-size:.97rem;cursor:pointer;align-items:flex-start;transition:border-color .15s,background .15s}
+.opt:hover:not(.lock){border-color:var(--line2);background:var(--soft)}
+.opt .l{flex:none;width:24px;height:24px;border-radius:6px;border:1px solid var(--line2);display:grid;place-items:center;font-size:.72rem;font-weight:650;color:var(--muted);margin-top:1px}
+.opt.sel{border-color:var(--accent-fg);background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.opt.sel .l{background:var(--accent-fg);border-color:var(--accent-fg);color:var(--bg)}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.ok .l{background:var(--ok);border-color:var(--ok);color:var(--bg)}
+.opt.no{border-color:var(--no);background:var(--no-bg)}
+.opt.no .l{background:var(--no);border-color:var(--no);color:var(--bg)}
+.opt.lock{cursor:default}
+
+/* feedback */
+.fb{margin-top:22px}
+.why{border-left:2px solid var(--c);padding:2px 0 2px 16px;margin:16px 0}
+.why .label{color:var(--c);display:block;margin-bottom:4px}
+.why p{margin:0;color:var(--ink2)}
+.why.good{--c:var(--ok)}
+.why.bad{--c:var(--no)}
+.why .ans{font-weight:600;color:var(--ink);margin-bottom:6px}
+.an{background:var(--soft);border-radius:10px;padding:14px 16px;margin:16px 0;color:var(--ink2);font-size:.95rem}
+.an .label{display:block;margin-bottom:4px}
+
+/* código */
+pre.code{background:var(--soft);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:14px 16px;overflow:auto;font:.84rem/1.6 var(--mono);margin:12px 0;white-space:pre;tab-size:4}
+code{background:var(--soft);color:var(--ink);padding:1px 6px;border-radius:5px;font:.88em var(--mono);border:1px solid var(--line)}
+pre.code code{background:none;border:0;padding:0}
+
+details{margin:10px 0}
+details>summary{cursor:pointer;font-size:.9rem;font-weight:550;color:var(--ink2);list-style:none;display:flex;gap:8px;align-items:baseline}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:6px;height:6px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:rotate(-45deg);flex:none;transition:transform .15s;margin-right:2px;position:relative;top:-1px}
+details[open]>summary::before{transform:rotate(45deg)}
+details>summary:hover{color:var(--ink)}
+details ul{margin:.6rem 0 0 6px;padding-left:16px;color:var(--ink2);font-size:.92rem}
+details ul li{margin:.5rem 0}
+.list{padding-left:20px;margin:0;color:var(--ink2)}
+.list li{margin:.5rem 0}
+
+/* ---------- resultado ---------- */
+.score{font-size:3.4rem;font-weight:600;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.rev>details{padding:14px 0;border-top:1px solid var(--line);margin:0}
+.rev>details:first-of-type{border-top:0}
+
+/* ---------- hub (index) ---------- */
+.subjects{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px}
+@media (max-width:700px){.subjects{grid-template-columns:1fr}}
+a.subject{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;transition:border-color .15s,transform .15s}
+a.subject:hover{border-color:var(--line2);transform:translateY(-2px)}
+a.subject .top{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted);font-weight:550}
+a.subject .dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+a.subject h2{font-size:1.2rem;font-weight:620;margin:6px 0 0}
+a.subject .desc{color:var(--muted);font-size:.9rem}
+a.subject .most{font-size:.86rem;color:var(--ink2);margin-top:8px}
+a.subject .most b{font-weight:600}
+a.subject .prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:auto}
+a.subject .prog i{display:block;height:100%;width:0;background:var(--c);border-radius:99px}
+a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
+.howto{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem;max-width:68ch}
+.howto b{color:var(--ink2);font-weight:600}
+</style></head>
+<body>
+<header class="bar"><div class="in"><a class="back" href="index.html">&larr; Matérias</a>
+<nav class="tabs" id="tabs"></nav>
+<button class="icon-btn" data-theme-toggle aria-label="Alternar modo claro e escuro" title="Alternar modo claro/escuro"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button></div></header>
+<div class="hero"><div class="in"><h1 id="h-title"></h1><p id="h-sub"></p></div></div>
+<main id="app"></main>
+<script>window.EXAM = {
+  id: "emp",
+  title: "Empreendedorismo",
+  subtitle: "Prof. Rafael Altoé Frossard · Aulas 1, 2 e 3 + Listas 1, 2 e 3",
+  color: "#0f766e",
+  intro: "50 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
+  disclaimer: "**Padrão do professor (pelas 3 listas):** cada lista tem 5 questões objetivas contextualizadas (“Imagine uma empresa brasileira de…”) que testam **a definição exata do slide**, mais 1 discursiva. As respostas certas quase sempre são as que repetem o texto do slide; as erradas costumam usar “apenas”, “ignorar”, “evitar”, “exclusivamente”. Não achei provas antigas da Multivix publicadas; as estimativas de chance vêm do peso de cada tema nos slides e nas listas.",
+  topics: [
+    { id: "oport", name: "Oportunidade e ação empreendedora", prob: 80, why: "Definição de Hisrich e Peters (Lista 1, questão 1). Percepção → avaliação → ação." },
+    { id: "pens", name: "Pensamento: estrutural, bricolagem, efetuação", prob: 93, why: "3 das 6 questões da Lista 1. Slide com 3 exemplos (NASA, fazenda de metano, Zé das Couves). **Quase certo.**" },
+    { id: "adapt", name: "Mentalidade e adaptabilidade cognitiva", prob: 75, why: "Definição + 4 etapas (conhecimento, conexão, estratégicas, reflexão). Questão 4 da Lista 1." },
+    { id: "perfil", name: "Perfil do empreendedor e redes de apoio", prob: 70, why: "Educação, idade (22–45), experiência, modelos de conduta, apoio moral x profissional, sustentável." },
+    { id: "intra", name: "Intraempreendedorismo e cultura empreendedora", prob: 96, why: "Lista 2 **inteira** é sobre isso (5 questões + discursiva). Aula 2 inteira. Prioridade máxima." },
+    { id: "estrat", name: "Estratégia empreendedora, recursos e conhecimentos", prob: 90, why: "Lista 3 quase inteira: nova entrada, recursos (valiosos/raros/inimitáveis), conhecimento empírico/mercado/tecnológico." },
+    { id: "janela", name: "Janela de oportunidade e pioneirismo", prob: 78, why: "Aula 3, slides 9–13: erro de comissão/omissão, vantagens e desvantagens de ser pioneiro." },
+    { id: "extra", name: "Bônus: SWOT, Porter, BSC (fora dos slides)", prob: 25, why: "Não estão nos slides das Aulas 1–3, mas o enunciado da AV cita SWOT, Porter e Balanced Scorecard. Só 3 questões, por segurança." }
+  ],
+  plan: [
+    "**Prioridade 1:** Intraempreendedorismo (96%) e Pensamento estrutural/bricolagem/efetuação (93%). Faça o simulado por assunto nesses dois.",
+    "**Prioridade 2:** Estratégia empreendedora (recursos e 3 tipos de conhecimento) e Janela de oportunidade/pioneiro.",
+    "**Truque de prova:** nas alternativas, desconfie de “apenas”, “exclusivamente”, “ignorar”, “evitar”, “proibir”. Quase sempre são as erradas.",
+    "**Discursiva:** treine as 4 da aba Prática — o professor sempre fecha a lista com uma."
+  ],
+  questions: [
+    // ========== OPORTUNIDADE ==========
+    ["oport", "De acordo com Hisrich e Peters (slides da Aula 1), o que caracteriza uma **oportunidade empreendedora**?",
+      ["Ideias inovadoras que se realizam sozinhas, sem depender de qualquer ação", "Situações em que novos bens, serviços, matérias-primas e métodos organizacionais podem ser introduzidos e vendidos por um valor maior que o custo de produção", "Projetos que dependem exclusivamente de financiamento externo", "Iniciativas que priorizam apenas o lucro imediato", "Qualquer ideia criativa, mesmo sem mercado"], 1,
+      "O slide define oportunidade como a situação em que se pode introduzir e **vender por valor maior que o custo de produção**. Repare: é uma *situação*, ainda não é o negócio.",
+      "Ver que as pessoas pagariam R$ 10 por um sanduíche que custa R$ 4 para fazer: a oportunidade é a diferença, ainda falta alguém fazer o sanduíche.",
+      ["Sem ação nenhuma ideia se realiza — o slide diz o contrário.", "", "“Exclusivamente” é a palavra-pista de alternativa errada.", "“Apenas lucro imediato” não está no conceito.", "Precisa haver possibilidade de vender por mais que o custo."]],
+    ["oport", "Segundo a aula, oportunidades empreendedoras “não significam nada isoladamente”. Por quê?",
+      ["Porque só existem em mercados já estabelecidos", "Porque precisam da ação empreendedora para serem materializadas", "Porque só grandes empresas conseguem explorá-las", "Porque dependem apenas de sorte", "Porque são sempre óbvias para todos"], 1,
+      "Uma oportunidade só vira realidade quando **alguém age**. Sem a ação empreendedora ela fica só “no ar”.",
+      "Uma semente sozinha não vira árvore: precisa de quem plante e regue.",
+      ["Podem surgir em mercados novos também.", "", "Não é exclusividade de grandes empresas.", "Não depende apenas de sorte.", "Muitas não são óbvias (como no pensamento estrutural)."]],
+    ["oport", "Uma desenvolvedora percebe que escolas pequenas não têm um sistema de matrícula acessível (mudança no ambiente externo). Ela avalia se a ideia é viável e se está disposta a executá-la. Segundo o modelo da aula, quando surge uma oportunidade **para ela própria**?",
+      ["Quando recebe financiamento externo", "Quando avalia a viabilidade da ideia e sua predisposição de executá-la", "Quando um concorrente lança o mesmo produto", "Quando consegue vender a ideia para uma empresa maior", "Quando ignora os riscos para agir mais rápido"], 1,
+      "A aula descreve: mudanças no ambiente são percebidas por indivíduos motivados; **quando o indivíduo avalia a viabilidade e sua predisposição de executar, surge uma oportunidade para ele próprio**.",
+      "Ver uma vaga de emprego é uma coisa; decidir que aquela vaga é para você é outra.",
+      ["Financiamento não é o critério do slide.", "", "A concorrência não define a oportunidade pessoal.", "Vender a ideia não é o que o slide descreve.", "Ignorar riscos não faz parte do modelo."]],
+    ["oport", "Quem tende a perceber as mudanças do ambiente externo como oportunidades, segundo a aula?",
+      ["Qualquer pessoa, sem diferença de motivação", "Indivíduos motivados, mais atentos ao processamento dessas informações", "Apenas especialistas em tecnologia", "Apenas quem já tem capital", "Somente quem tem curso superior"], 1,
+      "Os slides dizem que as mudanças do ambiente são percebidas por indivíduos que, **se estiverem motivados, estarão mais atentos** ao processamento das informações.",
+      "Quando você está querendo comprar um carro, vê carros do modelo que gosta em toda esquina.",
+      ["Se fosse qualquer um, não haveria diferença entre empreendedores e os demais.", "", "Não é exclusivo de especialistas em tecnologia.", "O capital não é a condição citada.", "A formação não é a condição citada."]],
+
+    // ========== PENSAMENTO ==========
+    ["pens", "O **pensamento estrutural** do empreendedor consiste em:",
+      ["Seguir rigidamente um plano de negócios estruturado", "Identificar correspondências entre os mecanismos fundamentais de uma tecnologia e os de um mercado, mesmo sem semelhança superficial", "Adaptar recursos que já se tem a novos problemas", "Começar pelo resultado desejado e escolher os meios", "Organizar a empresa em departamentos"], 1,
+      "Há **semelhança estrutural** quando os mecanismos fundamentais da tecnologia correspondem aos do mercado-alvo. Essa correspondência é uma **oportunidade** e **não é óbvia**; conhecer bem a tecnologia/mercado ajuda a enxergá-la.",
+      "Perceber que o mecanismo da “fila de espera da padaria” é o mesmo do atendimento do pronto-socorro, mesmo sendo negócios totalmente diferentes na aparência.",
+      ["“Estrutural” não significa estruturar uma empresa.", "", "Isso é bricolagem.", "Isso é o processo causal (o oposto da efetuação).", "Nada a ver com organograma."]],
+    ["pens", "No exemplo do simulador de voo da NASA, que passou a ser usado por pais que buscam tratamentos alternativos para o TDAH dos filhos, qual característica explica a oportunidade?",
+      ["Alta semelhança superficial com o mercado de estudantes", "Alta semelhança estrutural entre a tecnologia (melhora foco e concentração) e a necessidade do mercado-alvo", "Baixo custo de produção", "Uso de recursos jogados fora por outras empresas", "Início pelo que o empreendedor já tinha (quem é, o que conhece)"], 1,
+      "O simulador tem **baixa** semelhança superficial com o mercado escolar, mas **alta semelhança estrutural**: ele aprimora foco e concentração, justamente o que os pais procuram. Surge a oportunidade.",
+      "Uma ferramenta feita para pilotos de ônibus espacial que, por dentro, treina a atenção — e é isso que o pai de uma criança com TDAH quer.",
+      ["O slide diz que a semelhança superficial com o mercado de estudantes é **baixa**.", "", "Custo não é o ponto do exemplo.", "Isso descreve bricolagem.", "Isso descreve efetuação."]],
+    ["pens", "Qual conceito se refere à **adaptação de recursos já disponíveis a novos problemas e oportunidades** (“se a vida te der limões, faça uma limonada”)?",
+      ["Efetuação", "Pensamento estrutural", "Adaptabilidade cognitiva", "Mentalidade empreendedora", "Bricolagem"], 4,
+      "**Bricolagem** = usar o que se tem à mão para resolver novos problemas ou aproveitar oportunidades. O lema dos limões e da limonada é a ilustração do slide.",
+      "Mecânico que improvisa uma peça com o que tem na oficina em vez de esperar a encomenda chegar.",
+      ["Efetuação parte do que se tem (quem sou, o que sei, quem conheço) para escolher resultados.", "Pensamento estrutural liga tecnologia e mercado por semelhança de mecanismos.", "Adaptabilidade cognitiva é a capacidade de lidar com mudanças.", "Mentalidade empreendedora é detectar, agir e se movimentar sob incerteza.", ""]],
+    ["pens", "Donos de uma fazenda queimaram o metano das minas abandonadas num gerador a diesel e venderam a eletricidade. A água quente do gerador aqueceu uma estufa de tomates hidropônicos e depois tanques de tilápias. Esse caso ilustra principalmente:",
+      ["Pensamento estrutural", "Bricolagem", "Efetuação", "Janela de oportunidade", "Intraempreendedorismo"], 1,
+      "Eles pegaram **problemas e recursos que já tinham** (minas, metano, calor residual) e os transformaram em negócios: é **bricolagem**.",
+      "Fazer limonada de cada limão: o “lixo” de um processo vira insumo do próximo.",
+      ["Não há correspondência tecnologia–mercado escondida no caso.", "", "Efetuação seria o exemplo do Zé das Couves, que parte de quem é e do que tem para ir redefinindo o resultado.", "Não há discussão de tempo/janela.", "Não envolve funcionário dentro de empresa."]],
+    ["pens", "A **efetuação** é caracterizada por:",
+      ["Começar com um resultado almejado e concentrar-se nos meios para gerá-lo", "Começar com o que se tem (quem são, o que conhecem e quem conhecem) e selecionar entre os possíveis resultados", "Esperar a janela de oportunidade se fechar", "Realizar apenas pesquisa de mercado antes de agir", "Evitar parcerias para não dividir resultados"], 1,
+      "Efetuação: “o que eu **posso** fazer com os recursos que tenho?”. Parte dos **meios** disponíveis (quem sou / o que sei / quem conheço) e escolhe entre resultados possíveis.",
+      "Abrir a geladeira e decidir o jantar com o que tem, em vez de escolher a receita e ir ao mercado.",
+      ["Isso é o processo **causal** (o oposto da efetuação).", "", "Não tem relação com esperar a janela fechar.", "“Apenas pesquisa de mercado” não é o conceito.", "Na efetuação as parcerias costumam ser parte do caminho (caso do Zé das Couves)."]],
+    ["pens", "Qual a diferença central entre efetuação e o processo causal?",
+      ["A efetuação parte dos meios disponíveis; o causal parte de um resultado almejado e foca nos meios para chegar a ele", "A efetuação usa tecnologia; o causal não", "A efetuação é só para empresas grandes; o causal para pequenas", "Ambos partem do resultado almejado", "O causal ignora completamente os recursos"], 0,
+      "**Causal:** resultado almejado → busco os meios. **Efetuação:** meios disponíveis → escolho entre resultados possíveis.",
+      "Causal = escolher a receita e ir ao mercado. Efetuação = ver o que tem na geladeira e decidir o prato.",
+      ["", "Tecnologia não é o critério.", "Porte da empresa não é o critério.", "Só o causal parte do resultado.", "O causal usa recursos, mas começa pelo resultado."]],
+    ["pens", "Zé das Couves tinha R$ 10 mil para montar um negócio de legumes, descobriu que não bastava, fez parceria com um mercadinho, um legume viralizou, ele deu entrevista e acabou abrindo um mercado muito maior que o previsto. Esse caso ilustra:",
+      ["Processo causal", "Efetuação", "Erro de omissão", "Vantagem de custo do pioneiro", "Cultura empreendedora corporativa"], 1,
+      "Ele partiu do que tinha (dinheiro, conhecimento, contatos) e foi **redefinindo os resultados possíveis** ao longo do caminho: **efetuação**. O resultado final foi diferente do planejado.",
+      "Plantar uma horta pequena e ir descobrindo no caminho que dá para virar um mercado.",
+      ["Causal teria um objetivo fixo desde o início.", "", "Não envolve deixar de agir.", "O caso não trata de pioneirismo.", "Ele é empreendedor independente, não funcionário."]],
+    ["pens", "Uma rede social não tem semelhança superficial com o mercado de pais de crianças autistas, mas pode formar comunidades virtuais de apoio. Isso é um exemplo de:",
+      ["Semelhança superficial", "Semelhança estrutural", "Erro de comissão", "Intraempreendedorismo", "Pesquisa de mercado"], 1,
+      "O mecanismo fundamental da tecnologia (conectar pessoas em comunidades) **corresponde a uma necessidade** do mercado (redes de apoio): **semelhança estrutural** → oportunidade. (É o gabarito da Lista 1, questão 6.)",
+      "A ferramenta não “parece” de saúde, mas por dentro faz o que esses pais precisam: conectar quem vive a mesma situação.",
+      ["Superficial seria quando os elementos visíveis se parecem.", "", "Não se trata de erro de ação.", "Não é funcionário dentro de empresa.", "O exemplo não é sobre pesquisa de mercado."]],
+
+    // ========== ADAPTABILIDADE ==========
+    ["adapt", "A **mentalidade empreendedora** é a capacidade de:",
+      ["Seguir um plano fixo, mesmo com incerteza", "Detectar, agir e se movimentar rapidamente, mesmo sob condições incertas", "Evitar riscos a qualquer custo", "Trabalhar apenas em equipe", "Obter capital de investidores"], 1,
+      "Slide: abrange **detectar, agir e se movimentar rapidamente, mesmo sob condições incertas**. Para tê-la, é preciso desenvolver a **adaptabilidade cognitiva**.",
+      "Surfista: não controla a onda, mas lê, reage e se ajusta com rapidez.",
+      ["O contexto é de imprevisibilidade — plano fixo não é o conceito.", "", "Empreender envolve incerteza e riscos calculados.", "Equipe não é o critério.", "Capital não é o critério."]],
+    ["adapt", "Segundo os slides, o que é **adaptabilidade cognitiva** no contexto empreendedor?",
+      ["Capacidade de ignorar mudanças no ambiente", "Habilidade de seguir rigidamente um plano pré-definido", "Capacidade de ser dinâmico, flexível e autorregulador para identificar e processar mudanças no ambiente e se guiar por elas", "Uso exclusivo de conhecimento técnico, sem adaptação", "Foco em resultados sem considerar os recursos disponíveis"], 2,
+      "É o quanto o empreendedor é **dinâmico, flexível, autorregulador** e engajado em gerar estruturas de decisão para **identificar e processar mudanças** e se guiar por elas. (Lista 1, questão 4.)",
+      "Um GPS que recalcula a rota toda vez que o trânsito muda.",
+      ["É o contrário: o empreendedor percebe a mudança.", "Rigidez é o oposto de adaptabilidade.", "", "“Exclusivo” + “sem adaptação” — contradiz o conceito.", "Os recursos são considerados."]],
+    ["adapt", "Na sequência para aumentar a adaptabilidade cognitiva, qual etapa estimula o empreendedor a pensar na situação atual em termos de **semelhanças e diferenças** com situações anteriores já enfrentadas e resolvidas?",
+      ["Perguntas de conhecimento", "Tarefas para conexão", "Tarefas estratégicas", "Tarefas para reflexão", "Tarefas de controle"], 1,
+      "As 4 etapas são: (1) **perguntas de conhecimento** (natureza do ambiente), (2) **tarefas para conexão** (semelhanças/diferenças com situações anteriores), (3) **tarefas estratégicas** (quais estratégias e por quê), (4) **tarefas para reflexão** (entendimento e sentimentos).",
+      "Conexão = “isso me lembra aquele problema do ano passado; em que é igual e em que é diferente?”.",
+      ["Conhecimento: entender a natureza do ambiente.", "", "Estratégicas: escolher estratégias adequadas e por quê.", "Reflexão: pensar no próprio entendimento e sentimentos.", "Não existe esta etapa."]],
+    ["adapt", "As **tarefas estratégicas**, na construção da adaptabilidade cognitiva, servem para:",
+      ["Estimular a refletir sobre os próprios sentimentos", "Estimular a discernir quais estratégias são adequadas para resolver o problema (e por quê) ou buscar a oportunidade (e como)", "Aumentar o conhecimento sobre o ambiente", "Comparar a situação atual com anteriores", "Substituir a pesquisa de mercado"], 1,
+      "Tarefas estratégicas: **discernir qual estratégia usar, por quê e como**. Reflexão = sentimentos; Conhecimento = ambiente; Conexão = comparar com o passado.",
+      "É o momento do “plano de jogo” no intervalo da partida.",
+      ["Isso é reflexão.", "", "Isso é perguntas de conhecimento.", "Isso é conexão.", "Não substitui pesquisa."]],
+    ["adapt", "Empreendedores que aumentam a adaptabilidade cognitiva têm mais possibilidade de (1) se adaptar a novas situações, (2) ser criativos e (3) transmitir o raciocínio por trás de uma resposta. Qual das opções **NÃO** é um desses benefícios?",
+      ["Adaptar-se a novas situações usando conhecimento e experiência anteriores", "Chegar a ideias, soluções ou insights originais e adaptáveis", "Explicar o raciocínio por trás de determinada resposta", "Seguir rigidamente um único método para qualquer situação", "Aprender ou resolver problemas em contextos novos"], 3,
+      "Os benefícios são: **adaptar-se, ser criativo e comunicar o raciocínio**. Seguir um único método rigidamente é o oposto de adaptabilidade.",
+      "Quem só sabe uma receita não se vira quando falta um ingrediente.",
+      ["É benefício (1).", "É benefício (2).", "É benefício (3).", "", "É consequência do benefício (1)."]],
+
+    // ========== PERFIL ==========
+    ["perfil", "Sobre a **educação** do empreendedor, segundo a Aula 1, o ideal é:",
+      ["Evitar a formação superior para não perder tempo", "Uma formação generalista, com domínio de finanças, planejamento estratégico, marketing, comunicação e administração", "Formação exclusivamente técnica", "Formação só em marketing", "A educação não faz diferença"], 1,
+      "Embora haja empreendedores de sucesso com pouco estudo, a educação tem papel relevante. O ideal é uma **formação generalista**, que ajude a **se adaptar** conforme o cenário.",
+      "Um canivete suíço: várias ferramentas para situações diferentes.",
+      ["A educação tem papel relevante.", "", "“Exclusivamente técnica” é pista de errada.", "“Só marketing” é restrito demais.", "Contradiz o slide."]],
+    ["perfil", "De acordo com os slides, a maior parte dos empreendedores inicia a carreira em que faixa etária?",
+      ["18 a 22 anos", "22 a 45 anos", "45 a 60 anos", "60 a 70 anos", "Não há relação com a idade"], 1,
+      "Maior parte começa **entre 22 e 45 anos**: exige experiência, apoio financeiro e alto grau de energia. Idades “marcantes” (25, 30, 35, 40, 45) incentivam abrir um negócio; homens começam por volta dos 30, mulheres por volta dos 35.",
+      "Nem muito cedo (falta experiência e capital), nem muito tarde (falta energia): a janela é dos 22 aos 45.",
+      ["Muito jovem: falta experiência e apoio financeiro.", "", "Já passou da faixa mais comum.", "Fora da faixa.", "O slide trata a idade como característica relevante."]],
+    ["perfil", "Sobre a **experiência profissional** do empreendedor, os slides afirmam que:",
+      ["É irrelevante para quem quer empreender", "Experiência em finanças, desenvolvimento de produtos/serviços, produção e canais de distribuição é relevante, e a experiência com outros empreendimentos catalisa novas ideias", "Só vale experiência em empresa familiar", "Só vale experiência anterior fracassada", "Apenas a experiência em vendas conta"], 1,
+      "Experiência em **finanças, desenvolvimento de produto, produção e canais de distribuição** é relevante; experiência com **outros empreendimentos catalisa** novos empreendimentos.",
+      "Quem já abriu uma padaria reconhece rápido os erros ao abrir uma cafeteria.",
+      ["O slide diz que é importante.", "", "Não restringe a empresa familiar.", "Não exige fracasso.", "“Apenas” é pista de errada."]],
+    ["perfil", "Os **modelos de conduta** são:",
+      ["Regras da empresa sobre comportamento dos funcionários", "Indivíduos cujo exemplo o empreendedor pode se inspirar — empreendedores de sucesso ou até pessoas próximas", "Apenas investidores que financiam a empresa", "Concorrentes diretos", "Leis que regulam a atividade empresarial"], 1,
+      "Modelo de conduta = **quem serve de inspiração** (empreendedor de sucesso ou alguém próximo). Junto com as redes de apoio, ajuda na formação do novo empreendimento.",
+      "O ídolo que você segue e quer imitar.",
+      ["Não é código de conduta interno.", "", "Não se restringe a financiadores.", "Concorrentes não são o conceito.", "Não são leis."]],
+    ["perfil", "Qual é a **rede de apoio moral** do empreendedor?",
+      ["Contadores e advogados contratados", "Familiares e amigos que dão apoio psicológico em momentos difíceis e solitários (os cônjuges costumam ser os maiores defensores)", "Fornecedores e clientes", "Associações comerciais", "Consultores especializados"], 1,
+      "Apoio **moral** = apoio **psicológico**, dado por familiares e amigos (com quem se pode conversar sem medo de críticas). Cônjuges costumam ser os maiores defensores.",
+      "A torcida que te abraça depois de um jogo ruim.",
+      ["São apoio profissional.", "", "Fornecedores e clientes são apoio profissional.", "Associações comerciais são apoio profissional.", "Especialistas são apoio profissional."]],
+    ["perfil", "Uma empreendedora consulta seu contador, conversa com fornecedores e participa de uma associação comercial para tirar dúvidas do negócio. Isso exemplifica:",
+      ["Rede de apoio moral", "Rede de apoio profissional", "Bricolagem", "Pensamento estrutural", "Erro de omissão"], 1,
+      "**Rede de apoio profissional**: indivíduos que ajudam nas atividades empresariais — especialistas, clientes, sócios, fornecedores, associações comerciais e afiliações pessoais.",
+      "Os “consultores de bairro” do seu negócio.",
+      ["Apoio moral é família e amigos.", "", "Bricolagem = adaptar recursos.", "Pensamento estrutural = ligar tecnologia e mercado.", "Omissão = deixar de agir."]],
+    ["perfil", "O **empreendedorismo sustentável** busca:",
+      ["Maximizar o lucro e ignorar efeitos ambientais", "Preservar a natureza, o suporte de vida e a comunidade, ao perceber oportunidades de criar produtos, processos e serviços que geram ganho econômico e não econômico para indivíduos, economia e sociedade", "Reduzir o número de funcionários", "Copiar produtos já existentes", "Evitar qualquer inovação tecnológica"], 1,
+      "Focado em **preservar natureza, suporte de vida e comunidade** na busca de oportunidades que gerem **ganhos econômicos e não econômicos** (indivíduo, economia e sociedade). Exige conhecer a fundo o meio ambiente.",
+      "Negócio que dá lucro para o dono e deixa o rio mais limpo.",
+      ["Ignorar ambiente é o oposto.", "", "Não tem relação com número de funcionários.", "Não é cópia.", "Não evita inovação."]],
+
+    // ========== INTRAEMPREENDEDORISMO ==========
+    ["intra", "Na Xerox dos anos 1970, talentos como Steve Jobs sentiam falta de liberdade para inovar e saíram para fundar suas próprias empresas. Qual conceito representa a estratégia de aproveitar as ideias criativas internas para evitar perda de produtividade e de talentos?",
+      ["Orientação estratégica focada em minimizar recursos", "Intraempreendedorismo, que cultiva o espírito empreendedor dentro da organização", "Controle burocrático de recursos alheios", "Filosofia de recompensas baseada na hierarquia tradicional", "Estrutura administrativa sem redes informais"], 1,
+      "**Intraempreendedorismo** = aproveitar as ideias criativas dos colaboradores, cultivando o espírito empreendedor **dentro** da organização. Sem isso: perda de produtividade ou saída da empresa. (Lista 2, questão 1.)",
+      "É dar ao funcionário um “cantinho” para tocar o próprio projeto, para ele não sair e abrir o dele na porta ao lado.",
+      ["Isso é uma dimensão da decisão, não o conceito.", "", "Controle burocrático é o contrário.", "Recompensa deve ser por contribuição à descoberta/exploração de oportunidades.", "A estrutura empreendedora é orgânica **com** redes informais."]],
+    ["intra", "Para não perder as ideias de seus funcionários, a Xerox criou a:",
+      ["Xerox Innovation Labs", "Xerox Technology Ventures (XTV), para investir nas ideias dos funcionários", "PlayStation Division", "Apple Labs", "Xerox Capital Partners"], 1,
+      "Depois que Jobs saiu para fundar sua empresa, a Xerox criou a **Xerox Technology Ventures (XTV)**: braço para **investir nas ideias dos funcionários**.",
+      "XTV = “X” de Xerox + Ventures: fundo interno para apostar nos funcionários.",
+      ["Nome inventado.", "", "PlayStation é case da Sony.", "Não é case citado.", "Nome inventado."]],
+    ["intra", "Por que a falta de espaço para expressão individual e de mais liberdade é um problema para as organizações, segundo a Aula 2?",
+      ["Porque aumenta a lucratividade", "Porque pode desanimar os colaboradores, gerando perda de produtividade ou saída da empresa em busca de outra que ofereça significado maior", "Porque diminui o número de concorrentes", "Porque reduz custos de pessoal", "Porque impede a criação de metas"], 1,
+      "Muitos querem criar algo “seu” ou buscar **significado maior** no que fazem; se a organização não oferece, o indivíduo **perde motivação ou vai embora**.",
+      "Ninguém fica muito tempo num emprego em que não pode propor nada.",
+      ["Seria o contrário.", "", "Não tem relação com concorrentes.", "O efeito é perda de talentos, não redução de custos.", "Não é o que o slide diz."]],
+    ["intra", "Qual alternativa descreve a **orientação empreendedora à oportunidade**, na comparação entre tomada de decisão administrativa e empreendedora?",
+      ["Foco apenas nos fatores inseridos na formulação da estratégia", "Comprometimento em agir com relação às possíveis oportunidades", "Foco em controlar os recursos já possuídos", "Preferência por manter o crescimento lento", "Evitar qualquer risco"], 1,
+      "Orientação empreendedora à oportunidade = **comprometimento em agir** diante de possíveis oportunidades. A **orientação estratégica** é que foca nos fatores da formulação da estratégia.",
+      "Administrador pergunta “o que meu plano prevê?”. Empreendedor pergunta “qual oportunidade eu agarro agora?”.",
+      ["Isso é a orientação **estratégica**.", "", "O slide fala em acessar recursos **alheios** (controle de recursos).", "A orientação é para o crescimento **rápido**.", "Não é o que o slide diz."]],
+    ["intra", "Na tomada de decisão empreendedora, o **comprometimento de recursos** e o **controle de recursos** referem-se, respectivamente, a:",
+      ["Maximizar os recursos próprios / vender recursos ociosos", "Minimizar os recursos necessários para perseguir uma oportunidade / acessar recursos alheios", "Concentrar capital / evitar parcerias", "Gastar o máximo possível / trabalhar sozinho", "Reduzir funcionários / aumentar o estoque"], 1,
+      "**Comprometimento de recursos** = como **minimizar** os recursos necessários para uma oportunidade. **Controle de recursos** = como **acessar recursos de terceiros**.",
+      "Empreendedor não precisa ser dono do carro: ele aluga, pega emprestado, faz parceria.",
+      ["Está invertido.", "", "Parceria é justamente uma forma de acessar recursos alheios.", "Não é o conceito.", "Não é o conceito."]],
+    ["intra", "Em empresas com mentalidade empreendedora, a **estrutura administrativa** e a **filosofia de recompensas** são, respectivamente:",
+      ["Hierárquica, com muitas camadas / recompensa por tempo de casa", "Orgânica, com menos camadas de burocracia e várias redes informais / recompensa pela contribuição à descoberta e exploração de oportunidades", "Rígida e centralizada / recompensa só para a diretoria", "Orgânica / recompensa por obedecer processos", "Burocrática / sem recompensas"], 1,
+      "**Estrutura orgânica** (menos burocracia entre alta administração e cliente; redes informais) e **recompensa baseada na contribuição** para descobrir/explorar oportunidades.",
+      "Time de startup: pouca hierarquia, e o bônus vai para quem trouxe a boa ideia.",
+      ["Descreve o modelo administrativo tradicional.", "", "Centralização é o oposto.", "Recompensar obediência não é o critério.", "Contradiz o slide."]],
+    ["intra", "A **cultura empreendedora**, segundo a Aula 2, é aquela que:",
+      ["Evita experimentos para proteger a operação", "Estimula os funcionários a gerar ideias, fazer experimentos e participar de atividades que possam produzir oportunidades", "Define parâmetros rígidos de oportunidade", "Concentra decisões em poucos gestores", "Foca apenas no curto prazo"], 1,
+      "Cultura empreendedora = foco em **estimular os funcionários a gerar ideias, experimentos** e outras atividades que possam produzir oportunidades.",
+      "Escola que deixa o aluno montar o próprio projeto, em vez de só copiar a lição.",
+      ["Experimentar é o núcleo da cultura empreendedora.", "", "Uma característica é justamente **não** ter parâmetros rígidos de oportunidade.", "A cultura é de equipe e liberdade.", "Um traço é o **horizonte de longo prazo**."]],
+    ["intra", "Uma startup brasileira de software, ao crescer, formalizou processos e percebeu que isso inibe a inovação. Qual ação melhor fomenta uma **cultura empreendedora** interna?",
+      ["Limitar o planejamento ao curto prazo para evitar riscos", "Proibir fracassos para manter a eficiência", "Estimular novas ideias nas fronteiras da tecnologia, permitindo experimentos, tentativa e erro", "Exigir parâmetros rígidos para todas as oportunidades", "Centralizar decisões numa estrutura de múltiplas camadas"], 2,
+      "Entre as características: opera nas **fronteiras da tecnologia**, estimula novas ideias, **incentiva tentativa e erro**, **permite fracassos**, sem parâmetros rígidos, recursos acessíveis, equipe multidisciplinar, longo prazo, voluntariado, recompensa adequada, patrocinadores e apoio da alta administração. (Lista 2, questão 2.)",
+      "Laboratório de pesquisa que aceita que 9 experimentos deem errado para o 10º dar certo.",
+      ["O horizonte da cultura é de **longo** prazo.", "Fracassos são **permitidos**.", "", "Característica é **ausência** de parâmetros de oportunidade.", "Burocracia é o oposto da cultura empreendedora."]],
+    ["intra", "Qual das alternativas descreve corretamente o **empreendedor corporativo**?",
+      ["Evita trabalho em equipe para manter o controle", "Conhece o ambiente, é visionário e flexível, cria opções administrativas, encoraja o trabalho em equipe, estimula a discussão aberta, constrói uma coalizão de patrocinadores e é persistente", "Rejeita patrocinadores para agir isolado", "Ignora as opções administrativas", "Limita-se a projetos de curto prazo"], 1,
+      "As 7 características do slide: **conhece o ambiente; visionário e flexível; cria opções administrativas; encoraja o trabalho em equipe; estimula a discussão aberta; constrói coalizão de patrocinadores; é persistente.** (Lista 2, questão 4.)",
+      "Funcionário que vira “embaixador” do seu projeto: conhece a empresa, junta aliados e não desiste.",
+      ["O slide diz o contrário: encoraja a equipe.", "", "Constrói **coalizão de patrocinadores**.", "Cria opções administrativas.", "É persistente (visão de longo prazo)."]],
+    ["intra", "Estudos mostram que empreendimentos corporativos têm sucesso **menor** que os iniciados de forma independente. Qual julgamento reflete melhor os problemas identificados?",
+      ["Empreendimentos corporativos são sempre mais lucrativos por causa do apoio da alta administração", "Negócios independentes demoram mais para ser lucrativos", "Ambientes restritivos não afetam a lucratividade", "A falta de liberdade para decisões autônomas, a dificuldade de manter projetos de longo prazo e o ambiente restritivo reduzem o sucesso corporativo", "A ausência de liberdade beneficia a inovação nas grandes empresas"], 3,
+      "Problemas: falta de liberdade para decidir, dificuldade de manter projetos de longo prazo, ambiente restritivo. E os **independentes se tornam lucrativos duas vezes mais rápido e são duas vezes mais lucrativos**. (Lista 2, questão 5.)",
+      "Criar um projeto dentro de uma empresa grande é como correr com o freio de mão puxado.",
+      ["Contradiz o slide (“sempre”).", "Independentes lucram **duas vezes mais rápido**.", "Afetam sim.", "", "A falta de liberdade prejudica, não beneficia."]],
+    ["intra", "No caso do **PlayStation**, qual sequência de fatos está correta?",
+      ["A Sony lançou o PlayStation em 1994 com cartuchos, após parceria bem-sucedida com a Nintendo", "O funcionário Ken Kutaragi propôs uma entrada CD-ROM para o SNES; a Nintendo aceitou, mas horas após o anúncio voltou atrás e fez parceria com a Philips; Kutaragi convenceu os executivos da Sony a criar um console próprio, lançado em 1994 com CDs", "A Nintendo comprou a Sony e lançou o PlayStation", "A Philips criou o PlayStation em 1994", "A Sony nunca teve receio de entrar no mercado de games"], 1,
+      "Sony tinha receio de entrar em games; Kutaragi propôs CD-ROM para o SNES; Nintendo aceitou e depois **voltou atrás (Philips)**; executivos, irritados, deram o sinal verde para o console próprio; **1994, com CDs em vez de cartuchos**. É o case de **intraempreendedorismo** do slide.",
+      "Funcionário insistente + chefes irritados com um parceiro que deu o cano = nasce um produto que mudou a empresa.",
+      ["A parceria foi frustrada e o console usou CDs, não cartuchos.", "", "Isso não aconteceu.", "A parceria da Nintendo com a Philips é parte da história, mas o PlayStation é da Sony.", "O slide diz que a Sony tinha receio inicialmente."]],
+
+    // ========== ESTRATÉGIA ==========
+    ["estrat", "Jovens empreendedores brasileiros querem abrir um food truck. Segundo os conceitos de estratégia empreendedora, o que é uma **nova entrada**?",
+      ["Limitar-se a criar uma organização sem considerar mercados", "Oferecer um novo produto a um mercado estabelecido ou novo, oferecer um produto estabelecido a um mercado novo, ou criar uma nova organização", "Focar apenas em recombinações de recursos sem ações", "Ignorar o conhecimento de mercado para priorizar tecnologia", "Evitar janelas de oportunidade para minimizar riscos"], 1,
+      "**Nova entrada** = (1) novo produto em mercado estabelecido ou novo; (2) produto estabelecido em mercado novo; ou (3) criação de nova organização. (Lista 3, questão 1.)",
+      "Entrar na festa: com um prato novo, com um prato conhecido para outra turma, ou abrindo a sua própria festa.",
+      ["Considera mercados.", "", "Envolve ações.", "Ignorar mercado é o oposto.", "Evitar janelas é o oposto."]],
+    ["estrat", "A **estratégia empreendedora** é:",
+      ["O planejamento financeiro anual", "O conjunto de decisões, ações e reações que primeiramente geram e, depois, exploram uma nova entrada", "A escolha do nome da empresa", "A cópia da estratégia do concorrente", "A redução de custos operacionais"], 1,
+      "Estratégia empreendedora = conjunto de **decisões, ações e reações** que **primeiro geram e depois exploram** uma nova entrada.",
+      "Tudo o que você decide e faz para entrar no mercado e depois se manter nele.",
+      ["Não é planejamento financeiro.", "", "Não é nome.", "Não é cópia.", "Não é só corte de custos."]],
+    ["estrat", "Uma fabricante de bicicletas adota modificações sugeridas por ciclistas off-road para atender um nicho. Aplicando o conceito de recursos, quando os insumos geram **vantagem competitiva**?",
+      ["Quando são comuns e fáceis de copiar", "Quando são valiosos, raros e inimitáveis", "Quando não são usados no processo produtivo", "Quando ignoram o conhecimento empírico dos usuários", "Quando focam apenas em custo"], 1,
+      "Recursos (insumos do processo produtivo) trazem vantagem competitiva quando são **valiosos, raros e inimitáveis**. (Lista 3, questão 2.)",
+      "A receita secreta do restaurante: boa, que poucos têm e que ninguém consegue copiar.",
+      ["Se são comuns e copiáveis, não geram vantagem.", "", "Recurso é o que é usado na produção.", "O conhecimento empírico ajuda a formar o recurso empreendedor.", "Custo isolado não define vantagem."]],
+    ["estrat", "O **recurso empreendedor** é formado por:",
+      ["Apenas capital financeiro", "A soma de recursos e/ou recombinações de recursos; a melhor forma de combiná-los é através da experiência e do conhecimento de mercado", "Apenas tecnologia de ponta", "Apenas mão de obra barata", "A ausência de concorrentes"], 1,
+      "Recurso empreendedor = soma e/ou **recombinação** de recursos. Combinar e recombinar bem exige **experiência e conhecimento de mercado**.",
+      "Legos: o poder está em combinar as peças de um jeito novo, não nas peças isoladas.",
+      ["“Apenas” — pista de errada.", "", "“Apenas” — pista de errada.", "“Apenas” — pista de errada.", "Não está no slide."]],
+    ["estrat", "Pilotos de trilha incorporam mudanças em suas motos que só depois serão incorporadas pelas montadoras, atendendo a um nicho. Isso exemplifica o conhecimento:",
+      ["Tecnológico", "Empírico (de quem conhece muito um produto como consumidor aficionado)", "De mercado, por pesquisa formal", "Burocrático", "Estrutural"], 1,
+      "**Conhecimento empírico**: conhecer muito um produto como consumidor aficionado ajuda a ver **onde estão as falhas** e como melhorar. (Lista 3, questão 6.)",
+      "Quem anda de moto todo fim de semana sabe melhor que o engenheiro onde a moto falha.",
+      ["Tecnológico é sobre know-how e tecnologia aplicável a outras áreas.", "", "Aqui não há pesquisa formal.", "Não é conceito da aula.", "Estrutural é o pensamento ligando tecnologia e mercado."]],
+    ["estrat", "Qual afirmação reflete o papel do **conhecimento de mercado** e as limitações da pesquisa de mercado?",
+      ["A pesquisa de mercado supera qualquer limitação ao prever inovações", "Entender o problema do consumidor, com informações, tecnologia e know-how, aumenta a probabilidade de sucesso, apesar de as pessoas terem dificuldade de articular necessidade de algo que não existe", "Ignorar o mercado favorece inovações puramente tecnológicas", "Recursos raros eliminam a necessidade de analisar clientes", "Janelas de oportunidade só se fecham sem pesquisas extensas"], 1,
+      "Conhecimento de mercado = **informações, tecnologia, know-how e competência** para analisar mercado e clientes; entender o problema do consumidor aumenta a chance de sucesso. **Limitação:** as pessoas têm dificuldade de dizer que precisam de algo que ainda não existe. (Lista 3, questão 3.)",
+      "Antes do smartphone ninguém pedia um smartphone — a pesquisa de mercado não captaria isso.",
+      ["“Supera todas” — exagero.", "", "Ignorar mercado reduz a chance de sucesso.", "Raridade não elimina a análise de clientes.", "Quanto mais tempo se gasta pesquisando, maior a chance de a janela fechar."]],
+    ["estrat", "Ao ver a tecnologia do computador sendo usada em diversas indústrias, qual é o impacto do **conhecimento tecnológico** no empreendedorismo?",
+      ["Reduz inovações ao limitar aplicações", "Facilita o aproveitamento em outras áreas, mesmo que a aplicabilidade não seja óbvia, gerando novos conhecimentos", "Aumenta erros de omissão", "Torna recursos inimitáveis obsoletos", "Evita recombinações para dar estabilidade"], 1,
+      "Estar atento e dispor de informações, tecnologia, know-how e competência **facilita a geração de novos conhecimentos**; a tecnologia pode ser aproveitada em outras áreas, ainda que **não óbvia**. (Lista 3, questão 5.)",
+      "A mesma tecnologia do computador virou calculadora, carro, celular, geladeira…",
+      ["Amplia as aplicações.", "", "Não tem relação com omissão.", "Não torna nada obsoleto.", "Estimula recombinações."]],
+
+    // ========== JANELA / PIONEIRO ==========
+    ["janela", "O que é a **janela de oportunidade**?",
+      ["O período em que o ambiente é favorável para os empreendedores explorarem determinada oportunidade de negócio", "O tempo que a empresa leva para pagar investimentos", "Um tipo de pesquisa de mercado", "O prazo para registrar uma marca", "A fase de saída de uma empresa do mercado"], 0,
+      "Janela de oportunidade = **período em que o ambiente é favorável** à exploração de uma oportunidade. Ela **abre e fecha**.",
+      "A promoção de passagens: existe por tempo limitado, quem hesita perde.",
+      ["", "Não é prazo de retorno.", "Não é pesquisa.", "Não é registro de marca.", "Não é saída de mercado."]],
+    ["janela", "Em uma empresa brasileira de apps, qual medida equilibra obter informações prévias com o risco de **fechar a janela de oportunidade**?",
+      ["Gastar tempo excessivo em pesquisas para evitar qualquer risco", "Agir rapidamente, aceitando possíveis erros de comissão em vez de erros de omissão", "Ignorar conhecimentos empíricos para priorizar tecnologia", "Limitar os recursos a itens não valiosos", "Evitar novas entradas"], 1,
+      "Quanto mais tempo se gasta obtendo informações, **maior a chance de a janela se fechar**. A lista aponta o equilíbrio de agir rápido, aceitando erro de comissão. (Lista 3, questão 4.)",
+      "Esperar a promoção virar certeza e descobrir que os ingressos acabaram.",
+      ["Pesquisa excessiva fecha a janela.", "", "Ignorar conhecimento empírico não resolve o dilema.", "Recursos valiosos são desejáveis.", "Evitar novas entradas é omissão."]],
+    ["janela", "Um empreendedor lança um produto e fracassa (**erro de comissão**); outro desiste e vê um concorrente ocupar o mercado (**erro de omissão**). Qual é a definição correta desses termos?",
+      ["Comissão: resultado negativo da falta de atuação; omissão: resultado negativo da atuação", "Comissão: resultado negativo da atuação; omissão: resultado negativo da falta de atuação", "Ambos significam fracasso por falta de capital", "Comissão é erro de contabilidade; omissão é erro de marketing", "Ambos são erros de pesquisa"], 1,
+      "**Erro de comissão** = resultado negativo de **agir**. **Erro de omissão** = resultado negativo de **não agir**. O slide pergunta: qual é melhor?",
+      "Comissão: pisou na bola e perdeu. Omissão: nem entrou em campo e perdeu o jogo.",
+      ["Está invertido.", "", "Não tem relação com capital.", "Não são erros contábeis.", "Não são erros de pesquisa."]],
+    ["janela", "Qual das alternativas **NÃO** é uma vantagem de ser o pioneiro?",
+      ["Vantagem de custo: o aumento da escala reduz o custo por unidade", "Menos rivalidade competitiva: um mercado em crescimento compensa a perda de fatia", "Garantir canais importantes: escolher fornecedores e canais de distribuição", "Incerteza quanto à demanda, ao tamanho e à rapidez de crescimento do mercado", "Adquirir conhecimento aprendendo com erros e monitorando mudanças"], 3,
+      "Vantagens: **custo, menos rivalidade, canais importantes, melhor posição para atender clientes, adquirir conhecimento**. A incerteza quanto à demanda é **desvantagem**.",
+      "O primeiro a chegar escolhe a melhor mesa, mas ainda não sabe quantos vão aparecer para jantar.",
+      ["É vantagem.", "É vantagem.", "É vantagem.", "", "É vantagem."]],
+    ["janela", "Uma startup pioneira tem dificuldade para avaliar se sua tecnologia terá bom desempenho e se tecnologias alternativas vão surgir e avançar sobre as atuais. Esse risco é:",
+      ["Incerteza quanto à demanda", "Incerteza tecnológica", "Incerteza dos clientes", "Vantagem de custo", "Erro de comissão"], 1,
+      "**Incerteza tecnológica**: dificuldade de avaliar se a tecnologia terá bom desempenho e se tecnologias alternativas surgirão. As três incertezas do pioneiro: **demanda, tecnológica e clientes**.",
+      "Apostar na fita VHS sem saber se o DVD vai chegar.",
+      ["Demanda é sobre tamanho e crescimento do mercado.", "", "Clientes: dificuldade de saber se o produto agrega valor para eles.", "É vantagem, não incerteza.", "Comissão é um tipo de erro de ação."]],
+
+    // ========== BÔNUS ==========
+    ["extra", "Na análise **SWOT** (FOFA), forças e fraquezas referem-se ao ambiente ______, e oportunidades e ameaças ao ambiente ______.",
+      ["externo / interno", "interno / externo", "interno / interno", "externo / externo", "financeiro / jurídico"], 1,
+      "**Forças e Fraquezas = internas** (da organização). **Oportunidades e Ameaças = externas** (do ambiente).",
+      "Time de futebol: forças/fraquezas = seu elenco; oportunidades/ameaças = adversário, clima, campo.",
+      ["Está invertido.", "", "Oportunidades e ameaças são externas.", "Forças e fraquezas são internas.", "Não é o critério."]],
+    ["extra", "As cinco forças de Porter analisam a competitividade de um setor. Qual **NÃO** é uma delas?",
+      ["Ameaça de novos entrantes", "Poder de barganha dos fornecedores", "Poder de barganha dos clientes", "Ameaça de produtos substitutos", "Tamanho do capital social da empresa"], 4,
+      "As 5 forças: **rivalidade entre concorrentes, ameaça de novos entrantes, ameaça de substitutos, poder de barganha dos fornecedores e dos clientes**.",
+      "É o “raio-x” do campeonato: quem joga, quem pode entrar, quem pode substituir, quem manda no preço.",
+      ["É uma das forças.", "É uma das forças.", "É uma das forças.", "É uma das forças.", ""]],
+    ["extra", "As quatro perspectivas do **Balanced Scorecard** são:",
+      ["Financeira, clientes, processos internos e aprendizado e crescimento", "Forças, fraquezas, oportunidades e ameaças", "Produto, preço, praça e promoção", "Rivalidade, entrantes, substitutos e fornecedores", "Missão, visão, valores e metas"], 0,
+      "BSC: **financeira, clientes, processos internos, aprendizado e crescimento**. Serve para medir a efetividade da estratégia (KPIs, metas, indicadores) — item do pitch da AV.",
+      "Painel de controle do carro: velocímetro, combustível, temperatura, óleo — vários indicadores, não só um.",
+      ["", "Isso é o SWOT.", "Isso é o mix de marketing (4Ps).", "Isso é Porter.", "Isso é identidade organizacional, não o BSC."]]
+  ],
+  cheat: [
+    { h: "Aula 1 — Introdução", items: [
+      "**Oportunidade empreendedora** = situação em que novos bens/serviços/matérias-primas/métodos podem ser vendidos por valor **maior que o custo de produção**. Sozinha não significa nada: precisa da **ação empreendedora**.",
+      "**Pensamento estrutural** → semelhança **estrutural** (mecanismos) entre tecnologia e mercado; não é óbvio. Ex.: simulador NASA → TDAH; rede social → pais de autistas.",
+      "**Bricolagem** → adaptar recursos disponíveis (limões → limonada). Ex.: fazenda de metano/tomates/tilápia.",
+      "**Efetuação** → parte do que tem (quem sou, o que sei, quem conheço) e escolhe entre resultados. ≠ **causal** (começa pelo resultado). Ex.: Zé das Couves.",
+      "**Mentalidade empreendedora** → detectar, agir e se movimentar rápido sob incerteza. Requer **adaptabilidade cognitiva** (dinâmico, flexível, autorregulador). 4 etapas: **conhecimento → conexão → estratégicas → reflexão**.",
+      "**Perfil:** educação generalista · idade **22–45** (homens ~30, mulheres ~35) · experiência (finanças, produto, produção, distribuição) · modelos de conduta · **apoio moral** (família/amigos/cônjuge) x **apoio profissional** (especialistas, clientes, sócios, fornecedores, associações).",
+      "**Sustentável:** preservar natureza, suporte de vida e comunidade + ganho econômico e não econômico."
+    ]},
+    { h: "Aula 2 — Intraempreendedorismo (a mais cobrada)", items: [
+      "**Conceito:** cultivar o espírito empreendedor **dentro** da organização e aproveitar ideias dos colaboradores. Ex.: Jobs saiu da Xerox → Xerox criou a **XTV**.",
+      "**Decisão empreendedora:** orientação à **oportunidade** (compromisso em agir) · **minimizar** recursos necessários · **acessar recursos alheios** · estrutura **orgânica** (menos camadas, redes informais) · recompensa pela **contribuição** · foco em **crescimento rápido** · cultura que estimula ideias e experimentos.",
+      "**Cultura empreendedora (12):** fronteiras da tecnologia · novas ideias · tentativa e erro · fracassos permitidos · sem parâmetros rígidos de oportunidade · recursos acessíveis · equipe multidisciplinar · longo prazo · voluntariado · recompensa adequada · patrocinadores · apoio da alta administração.",
+      "**Empreendedor corporativo (7):** conhece o ambiente · visionário e flexível · cria opções administrativas · encoraja equipe · estimula discussão aberta · coalizão de patrocinadores · persistente.",
+      "**Problemas:** sucesso menor que independentes (falta de autonomia, dificuldade de longo prazo, ambiente restritivo). Independentes: **2× mais rápidos e 2× mais lucrativos**.",
+      "**Case PlayStation:** Kutaragi (Sony) → CD-ROM p/ SNES → Nintendo voltou atrás (Philips) → Sony fez console próprio → **1994**, CDs."
+    ]},
+    { h: "Aula 3 — Estratégia empreendedora", items: [
+      "**Nova entrada** = novo produto em mercado (novo ou estabelecido) · produto estabelecido em mercado novo · nova organização. **Estratégia empreendedora** = decisões, ações e reações que **geram** e depois **exploram** a nova entrada.",
+      "**Recursos** = insumos do processo produtivo. Vantagem competitiva: **valiosos, raros, inimitáveis**. Recurso empreendedor = soma/recombinação de recursos (experiência + conhecimento de mercado).",
+      "**3 conhecimentos:** **empírico** (consumidor aficionado, pilotos de trilha) · **de mercado** (informação, know-how; pesquisa tem limite: ninguém pede o que não existe) · **tecnológico** (aplicável a outras áreas, mesmo sem ser óbvio).",
+      "**Janela de oportunidade:** período favorável; **quanto mais pesquisa, maior chance de fechar**. **Erro de comissão** (agiu e deu errado) x **omissão** (não agiu e perdeu).",
+      "**Pioneiro — vantagens:** custo (escala) · menos rivalidade · canais · melhor posição com clientes · conhecimento.",
+      "**Pioneiro — desvantagens (incertezas):** de **demanda** · **tecnológica** · dos **clientes**."
+    ]},
+    { h: "Dicas de leitura de alternativa", items: [
+      "Alternativas com **“apenas”, “exclusivamente”, “sempre”, “ignorar”, “evitar”, “proibir”, “rígido”** → quase sempre erradas.",
+      "A certa costuma **repetir quase literalmente** o texto do slide.",
+      "Em questão de caso (“Imagine uma empresa brasileira de…”), ignore o contexto e ache **qual conceito do slide** o enunciado descreve."
+    ]}
+  ],
+  practiceName: "Discursivas",
+  practiceTab: "Discursivas",
+  practiceIntro: "As listas do professor sempre terminam com uma discursiva. Escreva a sua resposta antes de abrir o modelo. Respostas curtas e diretas, usando os termos dos slides.",
+  practice: [
+    { t: "Pensamento estrutural (Lista 1)", q: "Explique como o conceito de **Pensamento Estrutural** pode ser aplicado para identificar uma oportunidade empreendedora, utilizando um exemplo diferente dos apresentados em sala.",
+      hint: "Defina (semelhança estrutural x superficial) → dê o exemplo → mostre por que é estrutural.",
+      a: "O pensamento estrutural consiste em perceber **semelhanças estruturais** — isto é, correspondência entre os **mecanismos fundamentais** de uma tecnologia e os do mercado-alvo — mesmo quando não há semelhança superficial. Essa correspondência não é óbvia e forma uma oportunidade.\n\n**Exemplo:** uma plataforma de redes sociais não tem semelhança superficial com o mercado de pais de crianças com autismo; porém, estruturalmente, ela pode ser usada para criar **comunidades virtuais de apoio** entre esses pais. Conhecer bem a tecnologia e o mercado ajuda a enxergar essa oportunidade." },
+    { t: "Plano de intraempreendedorismo (Lista 2)", q: "Você é consultor de uma empresa brasileira de eletrônicos que quer fomentar o intraempreendedorismo para competir com gigantes internacionais. Crie uma proposta de plano estratégico que integre características de **cultura empreendedora** com soluções para **falta de autonomia** e **restrições ambientais**, justificando como isso levaria a um case de sucesso.",
+      hint: "Estrutura: diagnóstico (problema) → ações de cultura → ações de autonomia → resultado esperado (case PlayStation).",
+      a: "**Diagnóstico:** a empresa corre o risco de perder talentos e ideias por falta de liberdade (como a Xerox perdeu Jobs). Empreendimentos corporativos costumam ter menos sucesso que os independentes por falta de autonomia, dificuldade de manter projetos de longo prazo e ambiente restritivo.\n\n**Plano:**\n1. **Cultura empreendedora:** atuar nas fronteiras da tecnologia; estimular novas ideias; incentivar tentativa e erro e **permitir fracassos**; não impor parâmetros rígidos de oportunidade; disponibilizar recursos acessíveis; formar **equipes multidisciplinares**; adotar **horizonte de longo prazo**; criar **programa de voluntariado** (tempo para projetos próprios); **sistema de recompensa** por contribuição; ter **patrocinadores** e **apoio da alta administração**.\n2. **Autonomia:** descentralizar processos e dar mais autonomia às equipes; estrutura orgânica, com menos camadas entre a alta administração e o cliente.\n3. **Empreendedores corporativos:** incentivar que conheçam o ambiente, sejam persistentes e construam coalizões de patrocinadores.\n4. **Fundo interno** nos moldes da XTV da Xerox.\n\n**Resultado esperado:** como no PlayStation (Kutaragi persistiu e a alta administração apoiou o console próprio), a empresa retém talentos e transforma ideias internas em novos produtos." },
+    { t: "Conhecimento empírico (Lista 3)", q: "Analise como o conhecimento empírico de usuários, como pilotos de trilha que modificam motos, contribui para a estratégia empreendedora, comparando com as limitações do conhecimento de mercado e o impacto em nichos. Dê exemplos e pelo menos duas vantagens sociais.",
+      a: "O **conhecimento empírico** vem de quem conhece muito um produto como consumidor aficionado: ele enxerga **falhas** e **melhorias** antes dos fabricantes. Pilotos de trilha adaptam suas motos para andar fora do asfalto; depois as montadoras incorporam essas mudanças para atender um **nicho**. A estratégia empreendedora pode, assim, focar em um nicho ou **criar novos mercados** a partir da experiência.\n\nO **conhecimento de mercado** (informações, know-how, análise de clientes) é importante, mas a pesquisa tem limite: as pessoas têm dificuldade de dizer que precisam de algo que ainda não existe. O empírico complementa essa limitação.\n\n**Vantagens sociais:** (1) produtos mais adequados às necessidades reais de comunidades específicas; (2) geração de empregos e renda em nichos antes ignorados; (3) inclusão de usuários como coautores da inovação." },
+    { t: "Pitch estratégico (AV — 18/12)", q: "Monte a estrutura do pitch de 5 minutos da atividade avaliativa (valor 3,0) e diga o que colocar em cada bloco.",
+      a: "São 6 blocos de 0,5 ponto:\n1. **Apresentação da organização:** nome, setor, breve histórico, **missão, visão e valores**.\n2. **Diagnóstico estratégico:** **SWOT** (forças, fraquezas, oportunidades, ameaças) e o **problema estratégico** identificado.\n3. **Objetivo central:** meta principal, de curto ou médio prazo.\n4. **Estratégias propostas:** corporativas, competitivas ou funcionais, **justificadas com modelos estudados** (SWOT, Porter, Balanced Scorecard etc.).\n5. **Indicadores de sucesso e resultados esperados:** KPIs, metas, como medir a efetividade.\n6. **Mensagem final:** por que a estratégia é viável e merece ser implementada.\n\n**Atenção:** slides obrigatórios; 5 minutos; pode ser em grupo de até 5; apresentação presencial em **18/12/2026**; plágio = nota zero." }
+  ]
+};
+</script>
+<script>/* Motor de simulado — compartilhado pelos 4 sites */
+(function () {
+  const E = window.EXAM;
+  const LET = "ABCDEFG";
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const md = (s) =>
+    esc(s == null ? "" : s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/\n/g, "<br>");
+
+  // normaliza perguntas: [topico, enunciado, opcoes, correta, explicacao, analogia, porQueErrado[], codigo]
+  // gira as alternativas de forma fixa por questão, para a letra certa não ficar sempre na mesma posição
+  const Q = E.questions.map((a, i) => {
+    let o = a[2], ans = a[3], w = a[6] || [];
+    const n = o.length, r = (i * 7 + 3) % n;
+    if (r) { const rot = (arr) => arr.map((_, k) => arr[(k + r) % n]); o = rot(o); w = w.length ? rot(w) : w; ans = (ans - r + n) % n; }
+    return { i, t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
+  });
+  const T = {};
+  E.topics.forEach((t) => (T[t.id] = t));
+  const lvl = (p) => (p >= 85 ? ["hot", "Muito alta"] : p >= 70 ? ["high", "Alta"] : p >= 50 ? ["mid", "Média"] : ["low", "Baixa"]);
+
+  // ---------- persistência ----------
+  const KEY = "sim_" + E.id;
+  let store = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || { q: {}, hist: [] }; } catch (e) { return { q: {}, hist: [] }; } })();
+  const save = () => { store.total = Q.length; try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+  const record = (i, ok) => { const p = store.q[i] || { n: 0 }; store.q[i] = { ok, n: p.n + 1 }; save(); };
+
+  // ---------- estado ----------
+  let view = "home";
+  let S = null; // sessão do quiz
+  const app = $("#app");
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  // ---------- navegação ----------
+  function nav() {
+    const tabs = [["home", "Prioridades"], ["setup", "Simulado"], ["cheat", "Resumão"]];
+    if (E.practice) tabs.push(["practice", E.practiceTab || "Prática"]);
+    const cur = view === "quiz" || view === "result" ? "setup" : view;
+    $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
+  }
+  function go(v) { view = v; render(); window.scrollTo(0, 0); }
+  function render() { nav(); ({ home, setup, quiz, result, cheat, practice })[view](); }
+
+  // ---------- estatísticas ----------
+  function topicStats(id) {
+    const qs = Q.filter((q) => q.t === id);
+    const done = qs.filter((q) => store.q[q.i]);
+    const ok = done.filter((q) => store.q[q.i].ok).length;
+    return { total: qs.length, done: done.length, ok, acc: done.length ? ok / done.length : null };
+  }
+
+  // ---------- INÍCIO ----------
+  function home() {
+    const answered = Object.keys(store.q).length;
+    const right = Object.values(store.q).filter((x) => x.ok).length;
+    const rows = E.topics.map((t) => ({ t, s: topicStats(t.id) }));
+    const prio = rows.slice().sort((a, b) => b.t.prob * (1 - (b.s.acc ?? 0) * 0.9) - a.t.prob * (1 - (a.s.acc ?? 0) * 0.9)).slice(0, 3);
+    app.innerHTML = `
+    <div class="card"><p style="margin:0;color:var(--ink2)">${md(E.intro)}</p>
+      ${E.disclaimer ? `<div class="callout">${md(E.disclaimer)}</div>` : ""}</div>
+    <div class="card stats">
+      <div><b>${Q.length}</b><span>questões no banco</span></div>
+      <div><b>${answered}</b><span>já respondidas</span></div>
+      <div><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b><span>de acerto${answered ? ` · ${right} certas, ${answered - right} erradas` : ""}</span></div>
+    </div>
+    <div class="card"><h2>Por onde começar</h2>
+      <p class="muted small" style="margin:-4px 0 14px">Ordenado por chance de cair e pelo quanto você ainda erra.</p>
+      <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div></div>
+    <div class="card"><h2>Mapa de probabilidade por assunto</h2>
+      <table class="topics"><tr><th>Assunto</th><th>Chance de cair</th><th class="hide-s">Seu acerto</th><th></th></tr>
+      ${rows.map(({ t, s }) => { const [cls, lab] = lvl(t.prob); return `
+        <tr><td><div class="tname">${t.name}${t.src ? `<span class="src ${t.focus ? "focus" : ""}">${t.focus ? t.src + " · foco do professor" : t.src}</span>` : ""}</div>
+          <div class="twhy">${md(t.why)}</div><div class="pct">${s.total} questões</div></td>
+        <td style="min-width:128px"><span class="lvl ${cls}">${lab}</span><div class="bar2"><i style="width:${t.prob}%"></i></div><div class="pct">~${t.prob}%</div></td>
+        <td class="hide-s" style="min-width:112px">${s.acc == null ? '<span class="pct">não feito</span>' : `<div class="bar2 ${s.acc >= 0.7 ? "acc" : "bad"}"><i style="width:${s.acc * 100}%"></i></div><div class="pct">${s.ok}/${s.done} certas</div>`}</td>
+        <td><button class="btn ghost sm" data-topic="${t.id}">Treinar</button></td></tr>`; }).join("")}
+      </table></div>
+    ${E.plan ? `<div class="card"><h2>Plano de estudo sugerido</h2><ol class="list">${E.plan.map((p) => `<li>${md(p)}</li>`).join("")}</ol></div>` : ""}
+    ${store.hist.length ? `<div class="card"><h2>Seus últimos simulados</h2><ul class="list">${store.hist.slice(-6).reverse().map((h) => `<li>${h.d} · <b>${h.s}/${h.n}</b> (${Math.round((h.s / h.n) * 100)}%) · ${esc(h.m)}</li>`).join("")}</ul>
+      <div style="margin-top:14px"><button class="btn ghost sm" data-act="reset">Apagar meu histórico</button></div></div>` : ""}`;
+  }
+
+  // ---------- MONTAR SIMULADO ----------
+  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true };
+  function setup() {
+    const wrongs = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok).length;
+    const R = (name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
+    app.innerHTML = `<div class="card"><h2>Montar simulado</h2>
+      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, como numa prova de verdade.")}
+      ${R("mode", "top", cfg.mode, "Rápido · as 20 mais prováveis", "Questões dos assuntos com maior chance de cair. Bom para a véspera.")}
+      ${R("mode", "topic", cfg.mode, "Por assunto", `<select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
+      ${R("mode", "wrong", cfg.mode, `Só as que eu errei · ${wrongs}`, wrongs ? "Refaz apenas as questões que você errou da última vez." : "Nada para refazer ainda. Faça um simulado primeiro.")}
+      <h3>Modo</h3>
+      ${R("fb", "treino", cfg.feedback, "Treino", "Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.")}
+      ${R("fb", "prova", cfg.feedback, "Prova", "Resultado e explicações só no final. Simula a pressão real.")}
+      <label class="check" style="margin-top:14px"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões</label>
+      <label class="check"><input type="checkbox" id="so" ${cfg.so ? "checked" : ""}> Embaralhar as alternativas (evita decorar a letra)</label>
+      <div style="margin-top:18px"><button class="btn" data-act="start" ${cfg.mode === "wrong" && !wrongs ? "disabled" : ""}>Começar</button></div></div>`;
+  }
+
+  function buildList() {
+    let l;
+    if (cfg.mode === "full") l = Q.slice();
+    else if (cfg.mode === "top") l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20);
+    else if (cfg.mode === "topic") l = Q.filter((q) => q.t === cfg.topic);
+    else l = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok);
+    return cfg.sq ? shuffle(l) : l.sort((a, b) => a.i - b.i);
+  }
+  function startSession(list, label) {
+    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now() };
+    S.list.forEach((i) => { const n = Q[i].o.length; const idx = [...Array(n).keys()]; S.ord[i] = cfg.so ? shuffle(idx) : idx; });
+    go("quiz");
+  }
+
+  // ---------- QUESTÃO ----------
+  function quiz() {
+    const i = S.list[S.p], q = Q[i], ord = S.ord[i], picked = S.ans[i];
+    const locked = S.fb === "treino" && picked != null;
+    const [cls, lab] = lvl(T[q.t].prob);
+    const n = S.list.length;
+    app.innerHTML = `<div class="card">
+      <div class="qhead"><span>Questão ${S.p + 1} de ${n} · ${esc(S.label)}</span><span id="clock"></span></div>
+      <div class="progress"><i style="width:${(S.p / n) * 100}%"></i></div>
+      <div class="tags"><span class="tag">${esc(T[q.t].name)}</span><span class="tag"><span class="lvl ${cls}">Chance ${lab.toLowerCase()}</span></span>${q.bonus ? '<span class="tag">bônus</span>' : ""}</div>
+      <div class="qtext">${md(q.q)}</div>
+      ${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}
+      <div id="opts">${ord.map((oi, k) => {
+        let c = "opt";
+        if (locked) { c += " lock"; if (oi === q.a) c += " ok"; else if (oi === picked) c += " no"; }
+        else if (picked === oi) c += " sel";
+        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[k]}</span><span>${md(q.o[oi])}</span></button>`;
+      }).join("")}</div>
+      <div class="fb" id="fb">${locked ? explain(q, picked) : ""}</div>
+      <div class="row sp" style="margin-top:22px">
+        <button class="btn ghost" data-act="prev" ${S.p === 0 ? "disabled" : ""}>Anterior</button>
+        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar" : "Próxima"}</button>
+      </div></div>`;
+    tick();
+  }
+  let clockT;
+  function tick() {
+    clearInterval(clockT);
+    const f = () => { const el = $("#clock"); if (!el || !S) return clearInterval(clockT); const s = Math.floor((Date.now() - S.t0) / 1000); el.textContent = String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+    f(); clockT = setInterval(f, 1000);
+  }
+
+  function explain(q, picked) {
+    const ord = S.ord[q.i] || q.o.map((_, k) => k);
+    const L = (oi) => LET[ord.indexOf(oi)];
+    let h = "";
+    if (picked == null) h += `<div class="why bad"><span class="label">Sem resposta</span></div>`;
+    else if (picked !== q.a) h += `<div class="why bad"><span class="label">Incorreta · você marcou ${L(picked)}</span><p>${md(q.w[picked] || "Não é a alternativa que o conteúdo da aula sustenta.")}</p></div>`;
+    else h += `<div class="why good"><span class="label">Correta</span></div>`;
+    h += `<div class="why good"><span class="label">Resposta certa</span><p class="ans">${L(q.a)}) ${md(q.o[q.a])}</p><p>${md(q.e)}</p></div>`;
+    if (q.an) h += `<div class="an"><span class="label">Para fixar</span>${md(q.an)}</div>`;
+    const others = q.o.map((_, k) => k).filter((k) => k !== q.a && k !== picked && q.w[k]);
+    if (others.length) h += `<details><summary>Por que as outras alternativas estão erradas</summary><ul>${others.map((k) => `<li><b>${L(k)})</b> ${md(q.o[k])}<br><span class="muted">${md(q.w[k])}</span></li>`).join("")}</ul></details>`;
+    return h;
+  }
+
+  function answer(oi) {
+    const i = S.list[S.p], q = Q[i];
+    if (S.fb === "treino") {
+      if (S.ans[i] != null) return;
+      S.ans[i] = oi; record(i, oi === q.a); quiz();
+      const f = $("#fb"); if (f) f.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } else { S.ans[i] = oi; quiz(); }
+  }
+
+  function finish() {
+    clearInterval(clockT);
+    if (S.fb === "prova") S.list.forEach((i) => record(i, S.ans[i] === Q[i].a));
+    const s = S.list.filter((i) => S.ans[i] === Q[i].a).length;
+    store.hist.push({ d: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }), s, n: S.list.length, m: S.label });
+    save(); S.done = true; go("result");
+  }
+
+  // ---------- RESULTADO ----------
+  function result() {
+    const n = S.list.length, s = S.list.filter((i) => S.ans[i] === Q[i].a).length, pct = Math.round((s / n) * 100);
+    const byT = {};
+    S.list.forEach((i) => { const t = Q[i].t; byT[t] = byT[t] || { n: 0, s: 0 }; byT[t].n++; if (S.ans[i] === Q[i].a) byT[t].s++; });
+    const wrongs = S.list.filter((i) => S.ans[i] !== Q[i].a);
+    const msg = pct >= 90 ? "Excelente. Você está pronto." : pct >= 70 ? "Muito bom. Revise só os erros abaixo." : pct >= 50 ? "No caminho. Foque nos assuntos com barra vermelha." : "É para isso que serve o simulado. Leia as explicações e refaça só os erros.";
+    app.innerHTML = `<div class="card"><div class="row" style="gap:28px;align-items:flex-end"><div><div class="score">${pct}%</div><div class="muted small" style="margin-top:6px">${s} de ${n} certas · ${Math.max(1, Math.round((Date.now() - S.t0) / 60000))} min</div></div><div style="flex:1;min-width:220px"><h2 style="margin:0;font-size:1.15rem">${msg}</h2></div></div>
+      <hr class="hr"><div class="row"><button class="btn" data-act="redoWrong" ${wrongs.length ? "" : "disabled"}>Refazer só as erradas · ${wrongs.length}</button><button class="btn ghost" data-go="setup">Novo simulado</button><button class="btn ghost" data-go="home">Prioridades</button></div></div>
+      <div class="card"><h2>Desempenho por assunto</h2><table class="topics">${Object.entries(byT).sort((a, b) => a[1].s / a[1].n - b[1].s / b[1].n).map(([t, v]) => `<tr><td style="padding:12px 12px 12px 0">${esc(T[t].name)}</td><td style="width:40%;padding:12px 12px 12px 0"><div class="bar2 ${v.s / v.n >= 0.7 ? "acc" : "bad"}" style="margin:0"><i style="width:${(v.s / v.n) * 100}%"></i></div></td><td style="text-align:right;padding:12px 0" class="tnum">${v.s}/${v.n}</td></tr>`).join("")}</table></div>
+      ${wrongs.length ? `<div class="card rev"><h2>Revise o que você errou · ${wrongs.length}</h2>${wrongs.map((i) => { const q = Q[i]; return `<details open><summary>${esc(T[q.t].name)} · ${esc(q.q.slice(0, 90))}${q.q.length > 90 ? "…" : ""}</summary><div class="qtext" style="margin-top:14px">${md(q.q)}</div>${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}${explain(q, S.ans[i])}</details>`; }).join("")}</div>` : `<div class="card"><h2>Gabarito perfeito</h2><p class="muted" style="margin:0">Nenhum erro neste simulado.</p></div>`}`;
+  }
+
+  // ---------- RESUMÃO ----------
+  function cheat() {
+    app.innerHTML = `<div class="card"><h2>Resumão para a véspera</h2><p class="muted small" style="margin:0">Tudo que mais cai, em uma página. Leia antes de dormir e de novo antes da prova.</p></div>` +
+      E.cheat.map((s) => `<div class="card"><h2>${s.h}</h2>${s.pre ? `<pre class="code">${esc(s.pre)}</pre>` : ""}${(s.items || []).length ? `<ul class="list">${s.items.map((x) => `<li>${typeof x === "string" ? md(x) : x.html}</li>`).join("")}</ul>` : ""}</div>`).join("");
+  }
+
+  // ---------- PRÁTICA ----------
+  function practice() {
+    app.innerHTML = `<div class="card"><h2>${E.practiceName || "Prática"}</h2><p class="muted" style="margin:0">${md(E.practiceIntro || "")}</p></div>` +
+      E.practice.map((p, k) => `<div class="card"><h3 style="margin-top:0">${k + 1}. ${md(p.t)}</h3><div style="color:var(--ink2)">${md(p.q)}</div>${p.pre ? `<pre class="code">${esc(p.pre)}</pre>` : ""}${p.hint ? `<details><summary>Dica</summary><p class="muted" style="margin:.5rem 0 0 14px">${md(p.hint)}</p></details>` : ""}
+      <details><summary>Ver resolução</summary><div style="margin:.6rem 0 0 14px;color:var(--ink2)">${p.a ? `<p style="margin:0 0 8px">${md(p.a)}</p>` : ""}${p.code ? `<pre class="code">${esc(p.code)}</pre>` : ""}${p.after ? `<p style="margin:8px 0 0">${md(p.after)}</p>` : ""}</div></details></div>`).join("");
+  }
+
+  // ---------- eventos ----------
+  document.addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic]");
+    if (!b) return;
+    if (b.dataset.go) return go(b.dataset.go);
+    if (b.dataset.topic) { cfg.mode = "topic"; cfg.topic = b.dataset.topic; const l = buildList(); return startSession(l, "Assunto: " + T[cfg.topic].name); }
+    if (b.dataset.opt != null) return answer(+b.dataset.opt);
+    const a = b.dataset.act;
+    if (a === "start") { const l = buildList(); const lab = { full: "Completo", top: "Rápido", topic: "Assunto: " + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(l, lab + (cfg.feedback === "prova" ? " · prova" : "")); }
+    if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
+    if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
+    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
+    if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [] }; save(); render(); } }
+  });
+  document.addEventListener("change", (ev) => {
+    const t = ev.target;
+    if (t.name === "mode") { cfg.mode = t.value; setup(); }
+    else if (t.name === "fb") { cfg.feedback = t.value; setup(); }
+    else if (t.id === "tsel") cfg.topic = t.value;
+    else if (t.id === "sq") cfg.sq = t.checked;
+    else if (t.id === "so") cfg.so = t.checked;
+  });
+
+  // ---------- início ----------
+  document.title = E.title + " · Simulado";
+  document.documentElement.style.setProperty("--accent", E.color);
+  $("#h-title").textContent = E.title;
+  $("#h-sub").textContent = E.subtitle;
+  render();
+})();
+</script>
+</body></html>
