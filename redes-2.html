@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simulado</title><style>:root{
+  --bg:#f5f6fa;--card:#fff;--ink:#1d2433;--muted:#667085;--line:#e4e7ee;
+  --accent:#4f46e5;--accent-soft:#eef0ff;--good:#16a34a;--good-soft:#e8f8ee;--bad:#dc2626;--bad-soft:#fdecec;--warn:#d97706;--warn-soft:#fff4e0;
+  --code-bg:#161b26;--code-ink:#e6edf7;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#10131a;--card:#181c26;--ink:#e8ecf4;--muted:#9aa4b8;--line:#2a3040;--accent-soft:#232744;
+  --good-soft:#12301f;--bad-soft:#3a1717;--warn-soft:#3a2b10;--code-bg:#0b0e14}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header.top{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#000));color:#fff;padding:22px 20px 0}
+header.top .in{max-width:980px;margin:0 auto}
+header.top h1{margin:0;font-size:1.55rem}
+header.top p{margin:.2rem 0 14px;opacity:.9}
+header.top a.back{color:#fff;opacity:.85;text-decoration:none;font-size:.9rem}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap}
+nav.tabs button{background:rgba(255,255,255,.14);color:#fff;border:0;padding:10px 16px;border-radius:10px 10px 0 0;font:inherit;font-weight:600;cursor:pointer}
+nav.tabs button.on{background:var(--bg);color:var(--accent)}
+main{max-width:980px;margin:0 auto;padding:22px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+h2{margin:.2rem 0 .8rem;font-size:1.25rem}
+h3{margin:1rem 0 .4rem;font-size:1.05rem}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.grid{display:grid;gap:12px}
+.g3{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.stat{background:var(--accent-soft);border-radius:14px;padding:14px 16px}
+.stat b{display:block;font-size:1.7rem;color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:11px 20px;font:inherit;font-weight:650;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn.sm{padding:6px 12px;font-size:.88rem;border-radius:9px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+table.topics{width:100%;border-collapse:collapse}
+table.topics th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+table.topics td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.bar{height:9px;background:var(--line);border-radius:99px;overflow:hidden;min-width:90px}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.bar.hot i{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+.bar.acc i{background:var(--good)}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:650;background:var(--accent-soft);color:var(--accent)}
+.chip.hot{background:#ffe4e0;color:#b42318}
+.chip.high{background:var(--warn-soft);color:var(--warn)}
+.chip.mid{background:var(--accent-soft);color:var(--accent)}
+.chip.low{background:var(--line);color:var(--muted)}
+@media (prefers-color-scheme:dark){.chip.hot{background:#4a1a16;color:#ff9b8f}}
+.opt{display:flex;gap:12px;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font:inherit;cursor:pointer;align-items:flex-start}
+.opt:hover:not(.lock){border-color:var(--accent);background:var(--accent-soft)}
+.opt .l{flex:none;width:28px;height:28px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .l{background:var(--accent);color:#fff}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.ok .l{background:var(--good);color:#fff}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.no .l{background:var(--bad);color:#fff}
+.opt.lock{cursor:default}
+.qtext{font-size:1.08rem;font-weight:550;margin:.6rem 0 .8rem}
+pre.code{background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:14px 16px;overflow:auto;font:.88rem/1.5 ui-monospace,Consolas,"Cascadia Mono",monospace;margin:.6rem 0;white-space:pre}
+code{background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:6px;font:.9em ui-monospace,Consolas,monospace}
+.why{border-radius:12px;padding:12px 16px;margin:10px 0}
+.why.good{background:var(--good-soft);border-left:5px solid var(--good)}
+.why.bad{background:var(--bad-soft);border-left:5px solid var(--bad)}
+.why p{margin:.3rem 0 0}
+.an{background:var(--warn-soft);border-left:5px solid var(--warn);border-radius:12px;padding:12px 16px;margin:10px 0}
+details{margin:8px 0}
+details summary{cursor:pointer;font-weight:600;color:var(--accent)}
+details ul{margin:.4rem 0}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.sp{justify-content:space-between}
+.radio{display:flex;gap:10px;padding:12px;border:1.5px solid var(--line);border-radius:12px;margin:8px 0;cursor:pointer;align-items:flex-start}
+.radio.on{border-color:var(--accent);background:var(--accent-soft)}
+.radio input{margin-top:5px}
+select{font:inherit;padding:8px;border-radius:9px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)}
+.score{font-size:3rem;font-weight:800;color:var(--accent);line-height:1}
+.list li{margin:.35rem 0}
+.tag{font-size:.75rem;color:var(--muted)}
+.note{background:var(--warn-soft);border-radius:12px;padding:10px 14px;font-size:.9rem;margin:10px 0}
+@media (max-width:600px){header.top h1{font-size:1.25rem}.opt{padding:10px}table.topics .hide-s{display:none}}
+</style></head>
+<body>
+<header class="top"><div class="in"><a class="back" href="index.html">← todas as matérias</a>
+<h1 id="h-title"></h1><p id="h-sub"></p><nav class="tabs" id="tabs"></nav></div></header>
+<main id="app"></main>
+<script>window.EXAM = {
+  id: "redes",
+  title: "Redes de Computadores II",
+  subtitle: "Prova: quinta-feira (26/11) · Prof. Luiz Guilherme Spolador · Endereçamento IP, máscara, CIDR e sub-redes",
+  color: "#0369a1",
+  intro: "50 questões em cima da Aula 5 (IP, máscara, gateway, classes, CIDR) e da Aula 6 (Sub-redes — o professor nomeou o arquivo “SLIDE_IMPORTANTE”). Quase metade do simulado é cálculo de sub-rede, porque é o que mais vai pesar.",
+  disclaimer: "**O que o slide “IMPORTANTE” indica:** o método do **salto** (256 − octeto da máscara), a tabela de consulta rápida (/24 a /30), rede/broadcast/faixa de hosts, as “3 regras de ouro” (não existe sub-rede ímpar, broadcast nunca é par na parte que varia, rede e broadcast não são atribuíveis) e os desafios de IP 192.168.0.20/26 e 172.16.40.30/255.255.192.0. As questões repetem esses cenários. Prova de redes costuma pedir: rede, broadcast, faixa de hosts, nº de sub-redes e nº de hosts. Não achei provas antigas da Multivix publicadas; usei o padrão de bancos de questões de redes/concursos.",
+  topics: [
+    { id: "bin", name: "Binário e octetos", prob: 70, why: "Pesos 128, 64, 32, 16, 8, 4, 2, 1. Slide “aquecimento binário”. Base de tudo." },
+    { id: "ipbase", name: "Endereço IPv4: conceitos básicos", prob: 60, why: "32 bits, 4 octetos, ID de rede x ID de host, DHCP." },
+    { id: "mask", name: "Máscara, gateway e roteador", prob: 80, why: "Muitos slides com exemplos (192.168.1.10 → Google 8.8.8.8; Rede A x Rede B)." },
+    { id: "class", name: "Classes, IPs privados e tipos de comunicação", prob: 70, why: "Faixas A–E, privados (10/172.16–31/192.168), unicast/broadcast/multicast, multihomed." },
+    { id: "cidr", name: "CIDR e máscaras (/n)", prob: 85, why: "Por que existe, /24 ↔ 255.255.255.0, exemplo longo da /23 (255.255.254.0)." },
+    { id: "sub", name: "Cálculo de sub-redes", prob: 98, why: "Slide “IMPORTANTE”: salto, rede, broadcast, faixa, nº de sub-redes e hosts, desafios. **Quase certo.**" }
+  ],
+  plan: [
+    "**Hoje:** leia o Resumão e decore a **tabela /24 a /30**. Depois faça a aba **Prática** (5 exercícios resolvidos passo a passo) com lápis e papel.",
+    "**Amanhã:** simulado **por assunto** em “Cálculo de sub-redes” até acertar 90%. Depois o completo em modo prova.",
+    "**Na prova:** sempre faça nesta ordem — (1) prefixo → máscara, (2) octeto misto, (3) salto = 256 − máscara, (4) em qual bloco o IP cai, (5) rede, broadcast = próxima rede − 1, hosts = rede+1 até broadcast−1."
+  ],
+  questions: [
+    // ============ BINÁRIO ============
+    ["bin", "Qual é o valor decimal do octeto `11100000`?",
+      ["192", "224", "240", "248"], 1,
+      "Some os pesos dos bits 1: 128 + 64 + 32 = **224**. Os três primeiros bits valem 1; os demais 0. É um octeto muito comum em máscaras (255.255.255.224 = /27).",
+      "Cada bit é uma “chave” com um peso: 128, 64, 32, 16, 8, 4, 2, 1. Ligou, soma.",
+      ["192 = 11000000 (só dois bits ligados).", "", "240 = 11110000 (quatro bits).", "248 = 11111000 (cinco bits)."]],
+    ["bin", "Qual é a representação binária do octeto decimal 130?",
+      ["10000010", "10000001", "11000010", "10100010"], 0,
+      "130 = 128 + 2 → bits do 128 e do 2 ligados: **10000010**. (É o último octeto de 192.168.10.130 do slide.)",
+      "Pergunte “cabe o 128? sim → sobra 2. Cabe 64, 32, 16, 8, 4? não. Cabe 2? sim.”",
+      ["", "= 128 + 1 = 129.", "= 128 + 64 + 2 = 194.", "= 128 + 32 + 2 = 162."]],
+    ["bin", "No IP 192.168.1.1, o segundo octeto (168) em binário é:",
+      ["10101000", "10100100", "11000100", "10101100"], 0,
+      "168 = 128 + 32 + 8 → **10101000**. O IP completo fica 11000000.10101000.00000001.00000001.",
+      "Decompor em potências de 2 é como dar troco com as notas maiores primeiro.",
+      ["", "= 128+32+4 = 164.", "= 128+64+4 = 196.", "= 128+32+8+4 = 172."]],
+    ["bin", "Por que cada número de um endereço IPv4 só varia de 0 a 255?",
+      ["Porque o IP tem 255 hosts", "Porque cada octeto tem 8 bits, o que dá 2⁸ = 256 valores (0 a 255)", "Porque 255 é o número de redes possíveis", "Porque os roteadores só aceitam até 255 conexões"], 1,
+      "Cada grupo é um **octeto (byte) de 8 bits**: 00000000 (0) até 11111111 (255).",
+      "Um odômetro de 8 casas binárias: vai de tudo desligado a tudo ligado.",
+      ["Nada a ver com quantidade de hosts.", "", "Não é número de redes.", "Não é limite de conexões."]],
+    ["bin", "O valor decimal de `11111000` é:",
+      ["240", "248", "252", "254"], 1,
+      "128 + 64 + 32 + 16 + 8 = **248**. É o último octeto da máscara 255.255.255.248 (/29).",
+      "Cinco chaves ligadas da esquerda: 128+64+32+16+8.",
+      ["240 = 11110000.", "", "252 = 11111100.", "254 = 11111110."]],
+
+    // ============ IP BASE ============
+    ["ipbase", "O endereço IPv4 é um número inteiro de ____ bits, o que permite aproximadamente ____ endereços.",
+      ["16 bits / 65 mil", "32 bits / 4,3 bilhões", "64 bits / 18 quintilhões", "128 bits / 340 undecilhões"], 1,
+      "IPv4 = **32 bits** → 2³² ≈ **4,3 bilhões** de endereços. (128 bits é o IPv6.)",
+      "32 chaves ligadas/desligadas: cada combinação é um endereço único.",
+      ["Isso seria 2¹⁶.", "", "Não é IPv4.", "Isso é IPv6."]],
+    ["ipbase", "Qual dos endereços abaixo **NÃO** é um IPv4 válido?",
+      ["10.0.0.1", "172.16.254.1", "192.168.1.256", "8.8.8.8"], 2,
+      "Cada octeto vai de 0 a 255. **256 é inválido** (precisaria de 9 bits).",
+      "Um relógio que marca 25 horas: não existe.",
+      ["Válido.", "Válido.", "", "Válido (DNS do Google do slide)."]],
+    ["ipbase", "Todo endereço IP é dividido em duas partes. Na analogia do slide, o **ID de rede** e o **ID de host** correspondem, respectivamente, a:",
+      ["Número da casa / CEP da rua", "CEP da rua / número da casa", "Nome do bairro / nome do morador", "Telefone / endereço"], 1,
+      "**ID de rede = CEP (rua):** todos na mesma rede compartilham. **ID de host = número da casa:** identifica o dispositivo dentro da rede.",
+      "192.168.1 é a rua; o “.10” é a casa.",
+      ["Está invertido.", "", "Não é a analogia do slide.", "Não é a analogia do slide."]],
+    ["ipbase", "Como um endereço IP pode ser configurado em um dispositivo?",
+      ["Somente manualmente", "Somente pelo provedor de internet", "Manualmente ou automaticamente (via DHCP)", "Somente por cabo"], 2,
+      "O IP pode ser configurado **manual ou automaticamente (DHCP)** nas configurações de rede de qualquer dispositivo.",
+      "Receber o número do quarto no hotel: ou você escolhe (manual) ou a recepção atribui (DHCP).",
+      ["“Somente” é pista de errada.", "“Somente” é pista de errada.", "", "Não tem relação com o meio físico."]],
+
+    // ============ MÁSCARA / GATEWAY / ROTEADOR ============
+    ["mask", "Qual a função da **máscara de sub-rede**?",
+      ["Criptografar o endereço IP", "Informar qual parte do IP é o ID de rede (bits 1) e qual é o ID de host (bits 0)", "Atribuir IPs automaticamente", "Limitar a velocidade da rede"], 1,
+      "A máscara tem 32 bits como o IP e funciona como um **filtro/gabarito**: bits **1 = rede**, bits **0 = host**. Assim o dispositivo sabe quem está na sua “vizinhança”.",
+      "Gabarito de prova: onde tem 255, o número do IP é “da rua”; onde tem 0, é “da casa”.",
+      ["Não criptografa.", "", "Isso é o DHCP.", "Não controla velocidade."]],
+    ["mask", "Um host tem IP 192.168.1.10 e máscara 255.255.255.0. Qual é o ID de rede e qual é o ID de host?",
+      ["Rede 192.168.1 / host .10", "Rede 192 / host 168.1.10", "Rede 192.168 / host 1.10", "Rede 192.168.1.10 / host nenhum"], 0,
+      "A máscara tem 255 nos três primeiros octetos → rede = **192.168.1**. O 0 no quarto octeto → host = **.10**.",
+      "255 “trava” o octeto como parte da rede.",
+      ["", "Só um octeto seria de rede (máscara 255.0.0.0).", "Dois octetos seria máscara 255.255.0.0.", "Sem bits de host a rede não teria máquinas."]],
+    ["mask", "Um PC tem IP 192.168.1.10, máscara 255.255.255.0 e gateway 192.168.1.1. Ao enviar um pacote para 8.8.8.8, o que ele faz?",
+      ["Envia diretamente para 8.8.8.8, pois a máscara permite", "Percebe que 8.8.8.8 não está na rede 192.168.1.0 e envia o pacote ao gateway 192.168.1.1", "Descarta o pacote", "Envia o pacote por broadcast a toda a rede"], 1,
+      "Pela máscara, o PC vê que 8.8.8.8 é de **outra rede** → entrega ao **gateway padrão**, que sabe encaminhá-lo para a internet.",
+      "Carta para outra cidade: você não entrega, deixa na agência dos Correios (gateway).",
+      ["8.8.8.8 não pertence à rede local.", "", "O gateway existe justamente para isso.", "Broadcast é só para a própria rede."]],
+    ["mask", "O **gateway padrão** é:",
+      ["O servidor DNS da rede", "O endereço IP do roteador na rede local, que serve de porta de saída para outras redes, inclusive a internet", "O endereço de broadcast", "A máscara de sub-rede"], 1,
+      "Gateway padrão = **IP do roteador na rede local**; é para ele que o host envia pacotes cujo destino está fora da rede.",
+      "A portaria do condomínio: tudo que sai ou entra passa por ela.",
+      ["DNS traduz nomes em IPs.", "", "Broadcast é o último IP da rede.", "A máscara é outra configuração."]],
+    ["mask", "O PC 192.168.1.5/24 (Rede A) quer falar com o PC 192.168.2.10/24 (Rede B). Qual afirmação está correta?",
+      ["Eles se comunicam diretamente, pois ambos estão na rede 192.168", "Estão em sub-redes diferentes e só se comunicam através de um roteador", "Precisam de um switch, e não de roteador", "Só se comunicam se o DHCP estiver desligado"], 1,
+      "Com /24, as redes são 192.168.1.0 e 192.168.2.0 — **redes lógicas diferentes**. A comunicação entre elas só ocorre via **roteador**, que tem uma interface em cada rede (ex.: .1.1 e .2.1) e consulta sua tabela de roteamento.",
+      "Ruas diferentes: para ir de uma à outra você precisa passar pela esquina (roteador).",
+      ["Só o 192.168 é igual; o terceiro octeto também faz parte da rede (máscara /24).", "", "Um switch só liga dispositivos da mesma rede.", "DHCP não é o fator."]],
+    ["mask", "O PC 192.168.1.10 tem máscara **255.255.255.128** (configurada errada; o correto era 255.255.255.0). Ele tenta falar diretamente com o vizinho 192.168.1.200. O que acontece?",
+      ["Funciona normalmente", "Com /25, o .200 fica em outra sub-rede (128–255); o PC acha que o destino está fora da rede e envia ao gateway em vez de falar diretamente", "O IP do PC deixa de existir", "O PC passa a ser Classe B"], 1,
+      "Com 255.255.255.128 (/25), o bloco do .10 é 0–127. O .200 pertence ao bloco 128–255, ou seja, **outra sub-rede**. A máscara errada muda a decisão “é local ou vai para o gateway?”.",
+      "Como colocar a fronteira da vizinhança no lugar errado: seu vizinho de porta vira “estrangeiro”.",
+      ["A máscara errada muda quem é vizinho.", "", "O IP continua, mas a leitura de rede muda.", "A classe é determinada pelo primeiro octeto; a máscara não muda isso."]],
+
+    // ============ CLASSES ============
+    ["class", "O IP 130.45.2.9 pertence a qual classe e qual a máscara padrão dessa classe?",
+      ["Classe A — 255.0.0.0", "Classe B — 255.255.0.0", "Classe C — 255.255.255.0", "Classe D — 255.255.255.255"], 1,
+      "A classe vem do **primeiro octeto**: A 0–127, **B 128–191**, C 192–223, D 224–239, E 240–255. 130 → **B**, máscara padrão 255.255.0.0.",
+      "Decore: A < 128 ≤ B < 192 ≤ C < 224 ≤ D < 240 ≤ E.",
+      ["A vai até 127.", "", "C começa em 192.", "D é multicast e não tem máscara padrão de rede."]],
+    ["class", "Qual dos IPs abaixo é de **Classe C**?",
+      ["10.0.0.1", "172.16.0.1", "200.10.5.1", "230.1.1.1"], 2,
+      "Classe C: primeiro octeto de 192 a 223 → **200.10.5.1**. 10 é A; 172 é B; 230 é D.",
+      "O primeiro octeto é o “crachá” da classe.",
+      ["Classe A.", "Classe B.", "", "Classe D (multicast)."]],
+    ["class", "Um endereço como 230.0.0.5 é de qual classe e para que serve?",
+      ["Classe C, para redes pequenas", "Classe D, reservada para multicast (comunicação de um para muitos)", "Classe E, uso experimental", "Classe A, redes gigantes"], 1,
+      "**Classe D = 224–239 = multicast**: um host envia um pacote que é entregue a todos que “assinaram” aquele endereço (streaming, jogos online, atualização de rotas). **Classe E (240–255)** = experimental.",
+      "Canal de TV: a emissora transmite uma vez e só quem sintonizou recebe.",
+      ["C é 192–223.", "", "E começa em 240.", "A é 0–127."]],
+    ["class", "Qual dos endereços abaixo está dentro de uma faixa de **IP privado**?",
+      ["172.32.0.1", "192.169.1.1", "172.20.4.5", "11.0.0.1"], 2,
+      "Faixas privadas: **10.0.0.0–10.255.255.255**, **172.16.0.0–172.31.255.255** e **192.168.0.0–192.168.255.255**. 172.20.4.5 está entre 172.16 e 172.31.",
+      "Memorize “10 inteiro, 172 de 16 a 31, 192.168 inteiro”.",
+      ["172.32 já saiu da faixa (vai só até 172.31).", "Só 192.168 é privado, não 192.169.", "", "Só 10 é privado, não 11."]],
+    ["class", "Um PC envia uma requisição ARP para 192.168.1.255, que é entregue a todos os dispositivos da rede. Esse tipo de comunicação é:",
+      ["Unicast", "Broadcast", "Multicast", "Multihomed"], 1,
+      "**Broadcast** = para todos da rede (ex.: ARP para o último endereço da sub-rede). **Unicast** = ponto a ponto (PC1 → PC2). **Multicast** = para um grupo específico (IPTV).",
+      "Unicast = ligação; broadcast = grito na sala; multicast = grupo de WhatsApp.",
+      ["Unicast é de um para um.", "", "Multicast é só para quem assinou o grupo.", "Multihomed é um dispositivo com várias interfaces, não um tipo de envio."]],
+    ["class", "Um servidor tem uma placa de rede ligada à rede interna (192.168.1.100) e outra ligada a outra rede, para redundância ou balanceamento de carga. Esse dispositivo é chamado:",
+      ["Multicast", "Multihomed", "Gateway padrão", "Broadcast"], 1,
+      "**Multihomed** = dispositivo (servidor/roteador) com **múltiplas interfaces** ligadas a redes diferentes; usado para redundância ou balanceamento.",
+      "Prédio com duas portarias em ruas diferentes: se uma fecha, entra pela outra.",
+      ["Multicast é tipo de envio.", "", "Gateway é a saída da rede.", "Broadcast é tipo de envio."]],
+
+    // ============ CIDR ============
+    ["cidr", "Por que o CIDR foi criado, segundo a aula?",
+      ["Para criptografar o tráfego", "Porque o sistema de classes era rígido e ineficiente: uma empresa que precisasse de 500 endereços recebia um bloco Classe B (65.534) e desperdiçava mais de 65 mil, acelerando o esgotamento do IPv4", "Para aumentar o número de octetos do IP", "Para substituir o DHCP"], 1,
+      "Classes A/B/C só ofereciam blocos de tamanhos fixos. O **CIDR** aboliu as classes e permitiu **máscaras de tamanho variável (VLSM)**, alocando blocos conforme a necessidade real.",
+      "Alugar um galpão de 65 mil m² só porque você precisa de 500: o CIDR permite alugar o tamanho certo.",
+      ["Nada a ver com criptografia.", "", "O IP continua com 4 octetos.", "Não substitui o DHCP."]],
+    ["cidr", "A máscara 255.255.255.192 equivale, em notação CIDR, a:",
+      ["/24", "/25", "/26", "/27"], 2,
+      "255.255.255 = 24 bits; o octeto 192 = 11000000 = 2 bits 1. Total = **26 bits** → **/26**.",
+      "Conte os “1” da máscara em binário.",
+      ["/24 é 255.255.255.0.", "/25 é 255.255.255.128.", "", "/27 é 255.255.255.224."]],
+    ["cidr", "Qual é a máscara decimal correspondente a **/27**?",
+      ["255.255.255.192", "255.255.255.224", "255.255.255.240", "255.255.255.248"], 1,
+      "/27 = 24 + 3 bits no último octeto → 11100000 = **224**: **255.255.255.224**.",
+      "/25 → 128, /26 → 192, /27 → 224, /28 → 240, /29 → 248, /30 → 252.",
+      ["Isso é /26.", "", "Isso é /28.", "Isso é /29."]],
+    ["cidr", "Qual a quantidade de hosts utilizáveis em uma rede com máscara **255.255.254.0 (/23)**?",
+      ["254", "510", "512", "1022"], 1,
+      "/23 → 9 bits de host → 2⁹ = 512 endereços − 2 (rede e broadcast) = **510**. (Em /24: 2⁸ − 2 = 254.)",
+      "A /23 é como juntar duas ruas vizinhas num único condomínio: dobra o tamanho.",
+      ["Isso é de um /24.", "", "512 é o total de endereços, não os utilizáveis.", "Isso seria /22."]],
+    ["cidr", "Com a máscara 255.255.254.0, dois computadores 192.168.0.50 e 192.168.1.100 podem se comunicar sem roteador?",
+      ["Não, pois o terceiro octeto é diferente", "Sim, pois a máscara /23 une 192.168.0.0/24 e 192.168.1.0/24 em uma única rede lógica", "Não, pois são IPs de classes diferentes", "Sim, mas só se estiverem no mesmo switch e com DHCP"], 1,
+      "Com /23, a rede é 192.168.0.0 com hosts de 192.168.0.1 a 192.168.1.254 e broadcast 192.168.1.255. Os dois IPs estão **na mesma rede** → comunicação direta.",
+      "A máscara “pega emprestado” um bit da rede e entrega ao host, alargando a rua.",
+      ["Em /24 seria verdade; em /23 o último bit do 3º octeto virou host.", "", "Ambos são Classe C pelo 1º octeto.", "O motivo é a máscara, não o switch/DHCP."]],
+    ["cidr", "Qual é o endereço de broadcast da rede 192.168.0.0 com máscara 255.255.254.0?",
+      ["192.168.0.255", "192.168.1.255", "192.168.255.255", "192.168.2.255"], 1,
+      "/23 junta 0.0 e 1.0: rede **192.168.0.0**, hosts 192.168.0.1 → 192.168.1.254, broadcast **192.168.1.255** (último endereço antes da próxima rede, 192.168.2.0).",
+      "Broadcast = “última casa da rua grande”.",
+      ["Seria de um /24.", "", "Seria de um /16.", "Já pertence à rede seguinte."]],
+    ["cidr", "O que é o **VLSM** associado ao CIDR?",
+      ["Um protocolo de roteamento da camada física", "O uso de máscaras de sub-rede de tamanho variável, definindo bit a bit a porção de rede", "Uma classe de endereços IP", "Um tipo de cabo"], 1,
+      "CIDR aboliu as classes e introduziu máscaras de **tamanho variável (VLSM)**, ex.: /24, /26, /23, em vez de apenas 255.0.0.0, 255.255.0.0 e 255.255.255.0.",
+      "Antes, só havia camisas P, M e G (classes). Com CIDR, a roupa é feita sob medida.",
+      ["Não é protocolo físico.", "", "Não é classe.", "Não é cabo."]],
+    ["cidr", "Quantos bits de **host** existem em uma máscara 255.255.254.0?",
+      ["8", "9", "10", "23"], 1,
+      "32 − 23 = **9 bits de host** (a máscara tem 23 bits 1). Isso dá 2⁹ = 512 endereços totais.",
+      "Prefixo + bits de host = 32 sempre.",
+      ["Isso é de /24.", "", "Isso é de /22.", "23 é o número de bits de **rede**."]],
+
+    // ============ SUB-REDES ============
+    ["sub", "Quantos hosts **utilizáveis** existem em uma sub-rede /26?",
+      ["64", "62", "60", "30"], 1,
+      "h = 32 − 26 = 6 bits de host → 2⁶ = 64 endereços totais. Menos rede e broadcast = **62**.",
+      "Prédio de 64 apartamentos em que 2 são da administração (rede e broadcast).",
+      ["64 é o total de endereços, não os utilizáveis.", "", "Descontou demais.", "30 é o de /27."]],
+    ["sub", "Quantos hosts **utilizáveis** tem uma sub-rede /27?",
+      ["32", "30", "28", "62"], 1,
+      "h = 5 → 2⁵ = 32 endereços; utilizáveis = 32 − 2 = **30**. (Pegadinha clássica: confundir 32 com 30.)",
+      "Sempre descontar os 2 “intocáveis”.",
+      ["32 é o total.", "", "Descontou 4.", "62 é de /26."]],
+    ["sub", "Quantos hosts utilizáveis (e qual o incremento/salto) em uma sub-rede /28 (255.255.255.240)?",
+      ["16 hosts, salto 14", "14 hosts, salto 16", "30 hosts, salto 32", "6 hosts, salto 8"], 1,
+      "h = 4 → 16 endereços → **14 hosts**; salto = 256 − 240 = **16**.",
+      "Salto = tamanho do bloco = 2^h.",
+      ["Trocou os valores.", "", "É de /27.", "É de /29."]],
+    ["sub", "Para ligar dois roteadores por um link ponto a ponto, que precisa de apenas 2 endereços utilizáveis, qual prefixo desperdiça menos endereços?",
+      ["/28", "/29", "/30", "/24"], 2,
+      "/30 → h = 2 → 4 endereços, **2 utilizáveis**. Máscara 255.255.255.252, salto 4.",
+      "Mesa para dois: nem mais, nem menos.",
+      ["/28 tem 14 hosts.", "/29 tem 6 hosts.", "", "/24 tem 254."]],
+    ["sub", "Dividindo a rede 192.168.10.0/24 em sub-redes /26, obtêm-se quantas sub-redes e quantos hosts utilizáveis em cada uma?",
+      ["2 sub-redes com 126 hosts", "4 sub-redes com 62 hosts", "8 sub-redes com 30 hosts", "4 sub-redes com 64 hosts"], 1,
+      "Bits emprestados = 26 − 24 = 2 → 2² = **4 sub-redes**, cada uma com 64 endereços (**62 hosts**). Confira: 4 × 64 = 256.",
+      "Cortar uma barra de chocolate de 256 quadradinhos em 4 pedaços de 64.",
+      ["Isso é /25.", "", "Isso é /27.", "64 é total, não utilizáveis."]],
+    ["sub", "Dividindo uma rede /24 em sub-redes /27, quantas sub-redes são geradas?",
+      ["4", "8", "16", "32"], 1,
+      "27 − 24 = 3 bits emprestados → 2³ = **8 sub-redes** (de 32 endereços cada, 30 hosts).",
+      "Quantidade = 2^(prefixo novo − prefixo original).",
+      ["Isso é /26.", "", "Isso é /28.", "Isso é /29."]],
+    ["sub", "Qual é o tamanho do salto (incremento) para a máscara 255.255.255.224?",
+      ["16", "32", "64", "224"], 1,
+      "Salto = 256 − octeto da máscara = 256 − 224 = **32**. Redes começam em .0, .32, .64, .96, .128, .160, .192, .224.",
+      "Fórmula mágica do slide: 256 − [valor do octeto misto].",
+      ["É de /28 (240).", "", "É de /26 (192).", "224 é o octeto da máscara, não o salto."]],
+    ["sub", "Para o host 192.168.10.130/26, qual é o endereço de **broadcast** da sua sub-rede?",
+      ["192.168.10.127", "192.168.10.191", "192.168.10.190", "192.168.10.255"], 1,
+      "Salto 64 → blocos .0, .64, .128, .192. 130 está no bloco 128. Rede **.128**; próxima rede .192; broadcast = .192 − 1 = **.191**. Faixa de hosts: .129 a .190.",
+      "O broadcast é sempre “o último antes da próxima rede”.",
+      ["É o broadcast do bloco anterior (0–127).", "", "É o último **host**, não o broadcast.", "É o broadcast do /24 inteiro."]],
+    ["sub", "Um computador usa 192.168.0.20/26. Qual IP você pode atribuir a uma nova máquina **na mesma sub-rede, sem usar roteador**?",
+      ["192.168.0.140", "192.168.0.55", "192.168.0.99", "192.168.0.63"], 1,
+      "Máscara /26 → salto 64. 192.168.0.20 está na rede 0 (hosts .1 a .62, broadcast .63). Só **.55** cabe. .63 é o **broadcast** (não atribuível); .99 e .140 estão em outras sub-redes.",
+      "O vizinho precisa estar na mesma rua e não pode ocupar a casa da administração (.0 e .63).",
+      ["Está na sub-rede 128–191.", "", "Está na sub-rede 64–127.", "É o endereço de broadcast: não pode ser atribuído a um host."]],
+    ["sub", "O IP 172.16.40.30 com máscara 255.255.192.0 pertence a uma sub-rede cujo endereço de **broadcast** é:",
+      ["172.16.255.255", "172.16.127.255", "172.16.63.255", "172.16.40.255"], 2,
+      "Octeto misto = 3º (192). Salto = 256 − 192 = 64. Blocos do 3º octeto: 0, 64, 128, 192. O 40 cai no bloco 0–63 → rede 172.16.**0**.0; próxima rede 172.16.64.0; broadcast = **172.16.63.255**.",
+      "Mesmo método do /26, só que “subiu” um octeto.",
+      ["É o broadcast da rede /16 inteira.", "É o broadcast do bloco 64–127.", "", "Não é fim de bloco."]],
+    ["sub", "Para 172.16.40.30 com máscara 255.255.192.0, qual é a faixa de hosts **utilizáveis**?",
+      ["172.16.0.0 a 172.16.63.255", "172.16.0.1 a 172.16.63.254", "172.16.0.1 a 172.16.127.254", "172.16.40.1 a 172.16.40.254"], 1,
+      "Rede 172.16.0.0, broadcast 172.16.63.255. Hosts = rede+1 até broadcast−1: **172.16.0.1 a 172.16.63.254**.",
+      "Tire os dois “intocáveis” das pontas.",
+      ["Inclui rede e broadcast.", "", "Seria de uma /17.", "Não respeita o bloco."]],
+    ["sub", "Uma máscara de sub-rede termina com o octeto .192 (em uma rede Classe C). Quais são, respectivamente, o tamanho do bloco, o número de sub-redes e os hosts válidos por sub-rede?",
+      ["32, 8 e 30", "64, 4 e 62", "128, 2 e 126", "64, 4 e 64"], 1,
+      "Salto = 256 − 192 = **64**. Sub-redes = 256 ÷ 64 = **4** (ou 2² bits). Hosts válidos = 64 − 2 = **62**. (Desafio final do slide.)",
+      "Fórmulas de diagnóstico: Salto = 256 − octeto; Sub-redes = 256 ÷ salto; Hosts = salto − 2.",
+      ["Isso é /27.", "", "Isso é /25.", "Esqueceu de tirar rede e broadcast."]],
+    ["sub", "Em uma sub-rede /26 de 192.168.5.0/24, qual endereço abaixo pode ser um **endereço de rede** válido?",
+      ["192.168.5.65", "192.168.5.96", "192.168.5.64", "192.168.5.127"], 2,
+      "Redes de /26 começam em múltiplos de 64: .0, **.64**, .128, .192. Regra de ouro: não existe sub-rede ímpar (e .96 não é múltiplo de 64).",
+      "Se a prova oferecer rede terminada em número ímpar, elimine direto.",
+      ["Ímpar — não pode ser rede.", ".96 é par, mas não é múltiplo de 64 (seria endereço de host).", "", "É um possível broadcast (127 = 128 − 1)."]],
+    ["sub", "Em uma sub-rede /26 do bloco 192.168.1.0/24, qual endereço abaixo pode ser **broadcast**?",
+      ["192.168.1.100", "192.168.1.127", "192.168.1.128", "192.168.1.64"], 1,
+      "Broadcast = próxima rede − 1: .63, **.127**, .191, .255. Regra de ouro: o broadcast é sempre **ímpar** na parte que varia (63, 127, 191, 255).",
+      "Se a rede é par, o endereço logo antes dela é ímpar.",
+      ["Não é fim de bloco.", "", "É endereço de rede (começo do bloco).", "É endereço de rede."]],
+    ["sub", "Na sub-rede 10.0.0.0/24, quais endereços **não** podem ser atribuídos a computadores (“os 2 intocáveis”)?",
+      ["10.0.0.1 e 10.0.0.254", "10.0.0.0 e 10.0.0.255", "10.0.0.0 e 10.0.0.1", "10.0.0.254 e 10.0.0.255"], 1,
+      "O **primeiro IP (ID de rede)** e o **último (broadcast)** são reservados: **10.0.0.0** e **10.0.0.255**. O de rede dá nome à rede; o de broadcast envia mensagens em massa.",
+      "O 1º é a placa na entrada do condomínio; o último é o alto-falante.",
+      ["São hosts válidos.", "", ".1 é host válido.", ".254 é host válido."]],
+    ["sub", "Qual é o endereço de broadcast da sub-rede do host 192.168.10.77/28?",
+      ["192.168.10.64", "192.168.10.79", "192.168.10.78", "192.168.10.95"], 1,
+      "/28 → salto 16. Blocos: 64, 80, … 77 está no bloco 64–79. Rede **.64**, hosts .65 a .78, broadcast **.79**.",
+      "Passos: salto → em que bloco cai → próxima rede − 1.",
+      ["É o endereço de rede.", "", "É o último host.", "É o broadcast do bloco 80–95."]],
+    ["sub", "Qual é o endereço de **rede** do host 156.72.34.125 com máscara 255.255.255.224?",
+      ["156.72.34.64", "156.72.34.96", "156.72.34.112", "156.72.34.128"], 1,
+      "Salto = 256 − 224 = 32. Blocos: …, 64, 96, 128… O 125 está entre 96 e 127 → rede **156.72.34.96**, broadcast .127.",
+      "Divida 125 por 32 → 3 (96 = 3 × 32).",
+      ["64–95 é o bloco anterior.", "", "112 não é múltiplo de 32.", "128 é a rede seguinte (125 < 128)."]],
+    ["sub", "Para o IP 10.20.30.77/20, qual é o endereço de **broadcast** da sub-rede?",
+      ["10.20.16.255", "10.20.31.255", "10.20.30.255", "10.20.255.255"], 1,
+      "/20 → máscara 255.255.240.0; octeto misto = 3º, salto = 256 − 240 = 16. O 30 está no bloco 16–31 → rede **10.20.16.0**; broadcast **10.20.31.255**; hosts 10.20.16.1 a 10.20.31.254.",
+      "O mesmo método, mas o “quebra” fica no terceiro octeto.",
+      ["Não é fim de bloco.", "", "Não é fim de bloco.", "É broadcast de um /16."]],
+    ["sub", "Uma empresa precisa de uma única rede com **500 hosts**. Qual é o prefixo que atende com o menor desperdício?",
+      ["/24", "/23", "/22", "/25"], 1,
+      "/24 → 254 hosts (insuficiente). **/23 → 2⁹ − 2 = 510** (atende). /22 → 1022 (sobra demais). /25 → 126.",
+      "É exatamente o exemplo do CIDR: com classes você ganharia um /16 inteiro; com CIDR, um /23.",
+      ["254 < 500.", "", "Atende, mas desperdiça mais.", "126 < 500."]],
+    ["sub", "O PC 192.168.0.20/26 quer falar com 192.168.0.70. O que ocorre?",
+      ["Falam diretamente: o 3º octeto é igual", "O .70 está em outra sub-rede (64–127); a comunicação precisa passar pelo roteador/gateway", "É impossível, pois .70 é inválido", "Falam diretamente, pois ambos são Classe C"], 1,
+      "Com /26, o PC .20 está na rede 0–63. O .70 está na rede **64–127** → sub-redes diferentes → **precisa de roteador**.",
+      "Mesma rua principal, mas quarteirões diferentes.",
+      ["Com /26, o 4º octeto também define a rede.", "", ".70 é um host válido da rede .64.", "A classe não define a vizinhança; a máscara sim."]],
+    ["sub", "Qual é o **último host utilizável** da rede 172.16.64.0 com máscara 255.255.192.0?",
+      ["172.16.127.255", "172.16.127.254", "172.16.128.1", "172.16.64.254"], 1,
+      "Salto 64 no 3º octeto: a rede 172.16.64.0 vai até 172.16.127.255 (**broadcast**). O último host é broadcast − 1 = **172.16.127.254**. Hosts: 172.16.64.1 a 172.16.127.254.",
+      "Último endereço do bloco = broadcast; último que um computador pode usar = um antes.",
+      ["É o broadcast (não atribuível).", "", "Já é da rede seguinte (128.0).", "Não é fim de bloco."]]
+  ],
+  cheat: [
+    { h: "Binário (pesos)", pre: "128  64  32  16   8   4   2   1\n\n11100000 = 224     11000000 = 192     11110000 = 240\n11111000 = 248     11111100 = 252     10000000 = 128\n130 = 128+2 = 10000010       168 = 128+32+8 = 10101000", items: [] },
+    { h: "Tabela de consulta rápida (decore!)", pre: "CIDR  Máscara           Total  Hosts  Salto\n/24   255.255.255.0       256    254     —\n/25   255.255.255.128     128    126    128\n/26   255.255.255.192      64     62     64\n/27   255.255.255.224      32     30     32\n/28   255.255.255.240      16     14     16\n/29   255.255.255.248       8      6      8\n/30   255.255.255.252       4      2      4", items: [
+      "**h = 32 − prefixo** · Total = 2ʰ · Hosts = 2ʰ − 2 · Nº de sub-redes = 2^(prefixo novo − original)."
+    ]},
+    { h: "Método de 6 passos (slide IMPORTANTE)", items: [
+      "**1.** Converter o CIDR para máscara decimal (ex.: /26 → 255.255.255.192).",
+      "**2.** Achar o **octeto misto** (o que não é 255 nem 0).",
+      "**3.** **Salto = 256 − valor do octeto misto.**",
+      "**4.** Criar as redes somando o salto: .0, .64, .128, .192…",
+      "**5.** **Broadcast = próxima rede − 1.**",
+      "**6.** **Hosts = rede + 1 até broadcast − 1.**"
+    ]},
+    { h: "As 3 regras de ouro", items: [
+      "**Não existe sub-rede ímpar** (na parte que varia, a rede é par: 0, 64, 128…). Se a alternativa terminar em ímpar como rede → elimine.",
+      "**Não existe broadcast par** (na parte que varia: 63, 127, 191, 255).",
+      "**Os 2 intocáveis:** o 1º IP (rede) e o último (broadcast) não são atribuíveis a computadores."
+    ]},
+    { h: "Exemplos dos slides (decorar o resultado)", pre: "192.168.0.20/26  -> rede 192.168.0.0 | hosts .1–.62 | broadcast .63\n                    redes: .0 .64 .128 .192 (salto 64)\n192.168.10.130/26 -> rede .128 | hosts .129–.190 | broadcast .191\n172.16.40.30 / 255.255.192.0 -> rede 172.16.0.0 | broadcast 172.16.63.255\n                    redes: 172.16.0.0, .64.0, .128.0, .192.0\n/23 (255.255.254.0): 192.168.0.0 a 192.168.1.255 | hosts 510", items: [
+      "⚠️ **Erro no slide:** na tabela “Sub-redes Classe B”, as linhas 3 e 4 repetem 172.16.128.0. A 4ª deveria ser **172.16.192.0** (hosts 192.1 a 255.254, broadcast 172.16.255.255). Não copie o erro."
+    ]},
+    { h: "Endereçamento e classes", items: [
+      "IPv4 = **32 bits** = 4 octetos · 2³² ≈ **4,3 bilhões**. Notação decimal pontuada.",
+      "**Classes (1º octeto):** A 0–127 (255.0.0.0) · B 128–191 (255.255.0.0) · C 192–223 (255.255.255.0) · D 224–239 (**multicast**) · E 240–255 (**experimental**).",
+      "**Privados:** 10.0.0.0/8 · 172.16.0.0–172.31.255.255 · 192.168.0.0/16.",
+      "**Unicast** (1→1) · **Broadcast** (1→todos; ex.: ARP p/ 192.168.1.255) · **Multicast** (1→grupo; ex.: IPTV).",
+      "**Multihomed:** dispositivo com várias interfaces em redes diferentes (redundância/balanceamento).",
+      "As classes são **obsoletas**: o **CIDR/VLSM** usa máscaras de tamanho variável (/n)."
+    ]},
+    { h: "Máscara, gateway e roteador", items: [
+      "Máscara: bits **1 = rede**, bits **0 = host**. Serve para saber se o destino é **local** ou deve ir ao **gateway**.",
+      "**Gateway padrão** = IP do roteador na rede local (porta de saída).",
+      "**Roteador** conecta redes diferentes, mantém **tabela de roteamento** e encaminha ao próximo salto. Redes diferentes só conversam via roteador.",
+      "Máscara errada → o host “vê” a vizinhança errada (vizinho pode parecer de outra rede)."
+    ]}
+  ],
+  practiceName: "Prática de cálculo",
+  practiceIntro: "Resolva no papel com o método de 6 passos antes de abrir a resolução. Meta: cada exercício em menos de 2 minutos.",
+  practice: [
+    { t: "192.168.50.200/27", q: "Encontre: máscara, salto, endereço de rede, broadcast, faixa de hosts e nº de hosts.",
+      hint: "Salto = 256 − 224. Em qual múltiplo de 32 o 200 cai?",
+      a: "Máscara **255.255.255.224** · salto 256 − 224 = **32** · blocos .0, .32, …, .192, .224 · 200 está entre 192 e 223 → rede **192.168.50.192** · broadcast = .224 − 1 = **192.168.50.223** · hosts **.193 a .222** · 2⁵ − 2 = **30 hosts**." },
+    { t: "10.1.1.130/25", q: "Encontre: rede, broadcast, faixa de hosts e nº de hosts.",
+      a: "/25 = 255.255.255.128 · salto **128** · blocos .0 e .128 · 130 → rede **10.1.1.128** · broadcast **10.1.1.255** · hosts **.129 a .254** · 2⁷ − 2 = **126 hosts**." },
+    { t: "172.31.100.10/20", q: "Encontre: máscara, octeto misto, salto, rede, broadcast e faixa de hosts.",
+      hint: "/20 = 255.255.240.0 → o octeto misto é o 3º.",
+      a: "Máscara **255.255.240.0** · octeto misto = 3º (240) · salto 256 − 240 = **16** · blocos do 3º octeto: 0, 16, 32, …, 96, 112 · 100 cai em 96–111 → rede **172.31.96.0** · broadcast **172.31.111.255** · hosts **172.31.96.1 a 172.31.111.254** · 2¹² − 2 = **4094 hosts**." },
+    { t: "Dividir 192.168.1.0/24 em 4 sub-redes iguais", q: "Qual prefixo usar e quais são as 4 redes, os broadcasts e as faixas de hosts?",
+      hint: "4 = 2² → empreste 2 bits.",
+      a: "/24 + 2 bits = **/26** (255.255.255.192, salto 64, 62 hosts cada).\n• 192.168.1.0/26 → hosts .1–.62 · broadcast .63\n• 192.168.1.64/26 → hosts .65–.126 · broadcast .127\n• 192.168.1.128/26 → hosts .129–.190 · broadcast .191\n• 192.168.1.192/26 → hosts .193–.254 · broadcast .255" },
+    { t: "Desafio (VLSM): 100 hosts, 50 hosts e 1 link ponto a ponto", q: "A partir de 192.168.5.0/24, atribua blocos para uma rede com 100 hosts, outra com 50 hosts e um link entre roteadores (2 hosts). Comece pela maior.",
+      hint: "100 hosts → 2⁷ − 2 = 126 (/25). 50 hosts → 2⁶ − 2 = 62 (/26). Link → /30.",
+      a: "• **100 hosts → /25**: 192.168.5.0/25 · hosts .1–.126 · broadcast .127\n• **50 hosts → /26**: 192.168.5.128/26 · hosts .129–.190 · broadcast .191\n• **Link → /30**: 192.168.5.192/30 · hosts .193–.194 · broadcast .195\n\nSobra de .196 a .255 para crescimento. Regra: sempre aloque do **maior para o menor**, para os blocos ficarem alinhados." }
+  ]
+};
+</script>
+<script>/* Motor de simulado — compartilhado pelos 4 sites */
+(function () {
+  const E = window.EXAM;
+  const LET = "ABCDEFG";
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const md = (s) =>
+    esc(s == null ? "" : s)
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+      .replace(/\n/g, "<br>");
+
+  // normaliza perguntas: [topico, enunciado, opcoes, correta, explicacao, analogia, porQueErrado[], codigo]
+  // gira as alternativas de forma fixa por questão, para a letra certa não ficar sempre na mesma posição
+  const Q = E.questions.map((a, i) => {
+    let o = a[2], ans = a[3], w = a[6] || [];
+    const n = o.length, r = (i * 7 + 3) % n;
+    if (r) { const rot = (arr) => arr.map((_, k) => arr[(k + r) % n]); o = rot(o); w = w.length ? rot(w) : w; ans = (ans - r + n) % n; }
+    return { i, t: a[0], q: a[1], o, a: ans, e: a[4], an: a[5], w, c: a[7] || "", bonus: a[0] === "extra" };
+  });
+  const T = {};
+  E.topics.forEach((t) => (T[t.id] = t));
+  const probLabel = (p) => (p >= 85 ? ["hot", "🔥 Chance muito alta"] : p >= 70 ? ["high", "Chance alta"] : p >= 50 ? ["mid", "Chance média"] : ["low", "Chance baixa"]);
+
+  // ---------- persistência ----------
+  const KEY = "sim_" + E.id;
+  let store = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || { q: {}, hist: [] }; } catch (e) { return { q: {}, hist: [] }; } })();
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} };
+  const record = (i, ok) => { const p = store.q[i] || { n: 0 }; store.q[i] = { ok, n: p.n + 1 }; save(); };
+
+  // ---------- estado ----------
+  let view = "home";
+  let S = null; // sessão do quiz
+  const app = $("#app");
+
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  // ---------- chrome ----------
+  function nav() {
+    const tabs = [["home", "🎯 Mapa de prioridade"], ["setup", "📝 Simulado"], ["cheat", "📌 Resumão"]];
+    if (E.practice) tabs.push(["practice", "🧪 " + (E.practiceName || "Prática")]);
+    const cur = view === "quiz" || view === "result" ? "setup" : view;
+    $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
+  }
+  function go(v) { view = v; render(); window.scrollTo(0, 0); }
+  function render() { nav(); ({ home, setup, quiz, result, cheat, practice })[view](); }
+
+  // ---------- estatísticas ----------
+  function topicStats(id) {
+    const qs = Q.filter((q) => q.t === id);
+    const done = qs.filter((q) => store.q[q.i]);
+    const ok = done.filter((q) => store.q[q.i].ok).length;
+    return { total: qs.length, done: done.length, ok, acc: done.length ? ok / done.length : null };
+  }
+
+  // ---------- HOME ----------
+  function home() {
+    const answered = Object.keys(store.q).length;
+    const right = Object.values(store.q).filter((x) => x.ok).length;
+    const wrong = answered - right;
+    const rows = E.topics.map((t) => ({ t, s: topicStats(t.id) }));
+    const prio = rows.slice().sort((a, b) => b.t.prob * (1 - (b.s.acc ?? 0) * 0.9) - a.t.prob * (1 - (a.s.acc ?? 0) * 0.9)).slice(0, 3);
+    app.innerHTML = `
+    <div class="card"><h2>${E.title}</h2><p class="muted" style="margin:0">${E.intro}</p>
+      ${E.disclaimer ? `<div class="note">${md(E.disclaimer)}</div>` : ""}</div>
+    <div class="grid g3" style="margin-bottom:16px">
+      <div class="stat"><b>${Q.length}</b>questões no banco</div>
+      <div class="stat"><b>${answered}</b>já respondidas</div>
+      <div class="stat"><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b>de acerto (${right} ✔ / ${wrong} ✖)</div>
+    </div>
+    <div class="card"><h2>Por onde começar</h2>
+      <p class="muted small" style="margin:0 0 8px">Ordenado por <b>chance de cair × o quanto você ainda erra</b>. Comece pelos de cima.</p>
+      <div class="row">${prio.map((r) => `<button class="btn ghost" data-topic="${r.t.id}">${r.t.name}</button>`).join("")}</div></div>
+    <div class="card"><h2>Mapa de probabilidade por assunto</h2>
+      <table class="topics"><tr><th>Assunto</th><th>Chance de cair</th><th class="hide-s">Seu acerto</th><th></th></tr>
+      ${rows.map(({ t, s }) => { const [cls, lab] = probLabel(t.prob); return `
+        <tr><td><b>${t.name}</b><div class="small muted">${md(t.why)}</div><div class="tag">${s.total} questões</div></td>
+        <td style="min-width:130px"><span class="chip ${cls}">${lab}</span><div class="bar ${t.prob >= 85 ? "hot" : ""}" style="margin-top:6px"><i style="width:${t.prob}%"></i></div><div class="tag">~${t.prob}%</div></td>
+        <td class="hide-s" style="min-width:110px">${s.acc == null ? '<span class="tag">não feito</span>' : `<div class="bar acc"><i style="width:${s.acc * 100}%"></i></div><div class="tag">${s.ok}/${s.done} certas</div>`}</td>
+        <td><button class="btn sm" data-topic="${t.id}">Treinar</button></td></tr>`; }).join("")}
+      </table></div>
+    ${E.plan ? `<div class="card"><h2>Plano de estudo sugerido</h2><ol class="list">${E.plan.map((p) => `<li>${md(p)}</li>`).join("")}</ol></div>` : ""}
+    ${store.hist.length ? `<div class="card"><h2>Seus últimos simulados</h2><ul class="list">${store.hist.slice(-6).reverse().map((h) => `<li>${h.d} — <b>${h.s}/${h.n}</b> (${Math.round((h.s / h.n) * 100)}%) · ${esc(h.m)}</li>`).join("")}</ul>
+      <button class="btn ghost sm" data-act="reset">Apagar meu histórico</button></div>` : ""}`;
+  }
+
+  // ---------- SETUP ----------
+  let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true };
+  function setup() {
+    const wrongs = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok).length;
+    const top = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob).slice(0, 20).length;
+    const R = (k, title, desc) => `<label class="radio ${cfg.mode === k ? "on" : ""}"><input type="radio" name="mode" value="${k}" ${cfg.mode === k ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
+    app.innerHTML = `<div class="card"><h2>Montar simulado</h2>
+      ${R("full", `Simulado completo — ${Q.length} questões`, "Todas as questões, como numa prova de verdade.")}
+      ${R("top", "Rápido — as 20 mais prováveis", "Pega as questões dos assuntos com maior chance de cair. Bom para revisão de véspera.")}
+      ${R("topic", "Por assunto", `<select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
+      ${R("wrong", `Só as que eu errei (${wrongs})`, wrongs ? "Refaz apenas as questões que você errou na última vez." : "Nada para refazer ainda — faça um simulado primeiro.")}
+      <h3>Como quer fazer?</h3>
+      <label class="radio ${cfg.feedback === "treino" ? "on" : ""}"><input type="radio" name="fb" value="treino" ${cfg.feedback === "treino" ? "checked" : ""}><div><b>Modo treino</b><div class="small muted">Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.</div></div></label>
+      <label class="radio ${cfg.feedback === "prova" ? "on" : ""}"><input type="radio" name="fb" value="prova" ${cfg.feedback === "prova" ? "checked" : ""}><div><b>Modo prova</b><div class="small muted">Só mostra o resultado e as explicações no final. Simula a pressão real.</div></div></label>
+      <label class="row small" style="margin:10px 0 2px"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões</label>
+      <label class="row small"><input type="checkbox" id="so" ${cfg.so ? "checked" : ""}> Embaralhar as alternativas (evita decorar a letra)</label>
+      <div style="margin-top:14px"><button class="btn" data-act="start" ${cfg.mode === "wrong" && !wrongs ? "disabled" : ""}>Começar ▶</button></div></div>`;
+  }
+
+  function buildList() {
+    let l;
+    if (cfg.mode === "full") l = Q.slice();
+    else if (cfg.mode === "top") l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20);
+    else if (cfg.mode === "topic") l = Q.filter((q) => q.t === cfg.topic);
+    else l = Q.filter((q) => store.q[q.i] && !store.q[q.i].ok);
+    return cfg.sq ? shuffle(l) : l.sort((a, b) => a.i - b.i);
+  }
+  function startSession(list, label) {
+    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now() };
+    S.list.forEach((i) => { const n = Q[i].o.length; const idx = [...Array(n).keys()]; S.ord[i] = cfg.so ? shuffle(idx) : idx; });
+    go("quiz");
+  }
+
+  // ---------- QUIZ ----------
+  function quiz() {
+    const i = S.list[S.p], q = Q[i], ord = S.ord[i], picked = S.ans[i];
+    const locked = S.fb === "treino" && picked != null;
+    const [cls, lab] = probLabel(T[q.t].prob);
+    const n = S.list.length;
+    app.innerHTML = `<div class="card">
+      <div class="row sp"><span class="small muted">Questão <b>${S.p + 1}</b> de ${n} · ${S.label}</span><span class="small muted" id="clock"></span></div>
+      <div class="progress"><i style="width:${(S.p / n) * 100}%"></i></div>
+      <div class="row" style="gap:6px"><span class="chip">${esc(T[q.t].name)}</span><span class="chip ${cls}">${lab}</span>${q.bonus ? '<span class="chip low">bônus</span>' : ""}</div>
+      <div class="qtext">${md(q.q)}</div>
+      ${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}
+      <div id="opts">${ord.map((oi, k) => {
+        let c = "opt";
+        if (locked) { c += " lock"; if (oi === q.a) c += " ok"; else if (oi === picked) c += " no"; }
+        else if (picked === oi) c += " sel";
+        return `<button class="${c}" data-opt="${oi}"><span class="l">${LET[k]}</span><span>${md(q.o[oi])}</span></button>`;
+      }).join("")}</div>
+      <div id="fb">${locked ? explain(q, picked) : ""}</div>
+      <div class="row sp" style="margin-top:14px">
+        <button class="btn ghost" data-act="prev" ${S.p === 0 ? "disabled" : ""}>◀ Anterior</button>
+        <button class="btn" data-act="next" ${S.fb === "treino" && picked == null ? "disabled" : ""}>${S.p === n - 1 ? "Finalizar ✔" : "Próxima ▶"}</button>
+      </div></div>`;
+    tick();
+  }
+  let clockT;
+  function tick() {
+    clearInterval(clockT);
+    const f = () => { const el = $("#clock"); if (!el || !S) return clearInterval(clockT); const s = Math.floor((Date.now() - S.t0) / 1000); el.textContent = "⏱ " + String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+    f(); clockT = setInterval(f, 1000);
+  }
+
+  function explain(q, picked) {
+    const ord = S.ord[q.i] || q.o.map((_, k) => k);
+    const L = (oi) => LET[ord.indexOf(oi)];
+    let h = "";
+    if (picked == null) h += `<div class="why bad"><b>Você não respondeu esta.</b></div>`;
+    else if (picked !== q.a) h += `<div class="why bad"><b>❌ Por que a sua (${L(picked)}) está errada</b><p>${md(q.w[picked] || "Não é a alternativa que o conteúdo da aula sustenta.")}</p></div>`;
+    else h += `<div class="why good"><b>✅ Acertou!</b></div>`;
+    h += `<div class="why good"><b>Resposta certa: ${L(q.a)}) ${md(q.o[q.a])}</b><p>${md(q.e)}</p></div>`;
+    if (q.an) h += `<div class="an">💡 <b>Para fixar:</b> ${md(q.an)}</div>`;
+    const others = q.o.map((_, k) => k).filter((k) => k !== q.a && k !== picked && q.w[k]);
+    if (others.length) h += `<details><summary>Por que as outras alternativas estão erradas</summary><ul>${others.map((k) => `<li><b>${L(k)})</b> ${md(q.o[k])}<br><span class="muted">→ ${md(q.w[k])}</span></li>`).join("")}</ul></details>`;
+    return h;
+  }
+
+  function answer(oi) {
+    const i = S.list[S.p], q = Q[i];
+    if (S.fb === "treino") {
+      if (S.ans[i] != null) return;
+      S.ans[i] = oi; record(i, oi === q.a); quiz();
+      const f = $("#fb"); if (f) f.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } else { S.ans[i] = oi; quiz(); }
+  }
+
+  function finish() {
+    clearInterval(clockT);
+    if (S.fb === "prova") S.list.forEach((i) => record(i, S.ans[i] === Q[i].a));
+    const s = S.list.filter((i) => S.ans[i] === Q[i].a).length;
+    store.hist.push({ d: new Date().toLocaleDateString("pt-BR") + " " + new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }), s, n: S.list.length, m: S.label });
+    save(); S.done = true; go("result");
+  }
+
+  // ---------- RESULT ----------
+  function result() {
+    const n = S.list.length, s = S.list.filter((i) => S.ans[i] === Q[i].a).length, pct = Math.round((s / n) * 100);
+    const byT = {};
+    S.list.forEach((i) => { const t = Q[i].t; byT[t] = byT[t] || { n: 0, s: 0 }; byT[t].n++; if (S.ans[i] === Q[i].a) byT[t].s++; });
+    const wrongs = S.list.filter((i) => S.ans[i] !== Q[i].a);
+    const msg = pct >= 90 ? "Excelente! Você está pronto. 🚀" : pct >= 70 ? "Muito bom! Revise só os erros abaixo." : pct >= 50 ? "No caminho. Foque nos assuntos em vermelho." : "Calma — é para isso que serve o simulado. Leia as explicações e refaça só os erros.";
+    app.innerHTML = `<div class="card"><div class="row" style="gap:24px"><div><div class="score">${pct}%</div><div class="muted">${s} de ${n} certas</div></div><div><h2 style="margin:0">${msg}</h2><p class="muted small" style="margin:.3rem 0 0">Tempo: ${Math.floor((Date.now() - S.t0) / 60000)} min</p></div></div>
+      <div class="row" style="margin-top:14px"><button class="btn" data-act="redoWrong" ${wrongs.length ? "" : "disabled"}>Refazer só as erradas (${wrongs.length})</button><button class="btn ghost" data-go="setup">Novo simulado</button><button class="btn ghost" data-go="home">Mapa</button></div></div>
+      <div class="card"><h2>Desempenho por assunto</h2><table class="topics">${Object.entries(byT).sort((a, b) => a[1].s / a[1].n - b[1].s / b[1].n).map(([t, v]) => `<tr><td>${esc(T[t].name)}</td><td style="width:40%"><div class="bar ${v.s / v.n >= 0.7 ? "acc" : "hot"}"><i style="width:${(v.s / v.n) * 100}%"></i></div></td><td>${v.s}/${v.n}</td></tr>`).join("")}</table></div>
+      ${wrongs.length ? `<div class="card"><h2>Revise o que você errou (${wrongs.length})</h2>${wrongs.map((i) => { const q = Q[i]; return `<details open><summary>${esc(T[q.t].name)} — ${esc(q.q.slice(0, 90))}${q.q.length > 90 ? "…" : ""}</summary><div class="qtext">${md(q.q)}</div>${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}${explain(q, S.ans[i])}</details>`; }).join("<hr style='border:0;border-top:1px solid var(--line)'>")}</div>` : `<div class="card"><h2>Gabarito perfeito 🎉</h2></div>`}`;
+  }
+
+  // ---------- CHEAT ----------
+  function cheat() {
+    app.innerHTML = `<div class="card"><h2>Resumão para a véspera</h2><p class="muted small" style="margin:0">Tudo que mais cai, em uma página. Leia antes de dormir e de novo antes da prova.</p></div>` +
+      E.cheat.map((s) => `<div class="card"><h2>${s.h}</h2>${s.pre ? `<pre class="code">${esc(s.pre)}</pre>` : ""}<ul class="list">${(s.items || []).map((x) => `<li>${typeof x === "string" ? md(x) : x.html}</li>`).join("")}</ul></div>`).join("");
+  }
+
+  // ---------- PRACTICE ----------
+  function practice() {
+    app.innerHTML = `<div class="card"><h2>${E.practiceName || "Prática"}</h2><p class="muted" style="margin:0">${E.practiceIntro || ""}</p></div>` +
+      E.practice.map((p, k) => `<div class="card"><h3 style="margin-top:0">${k + 1}. ${md(p.t)}</h3><div>${md(p.q)}</div>${p.pre ? `<pre class="code">${esc(p.pre)}</pre>` : ""}${p.hint ? `<details><summary>💭 Dica</summary><p>${md(p.hint)}</p></details>` : ""}
+      <details><summary>✅ Ver resolução</summary>${p.a ? `<p>${md(p.a)}</p>` : ""}${p.code ? `<pre class="code">${esc(p.code)}</pre>` : ""}${p.after ? `<p>${md(p.after)}</p>` : ""}</details></div>`).join("");
+  }
+
+  // ---------- eventos ----------
+  document.addEventListener("click", (ev) => {
+    const b = ev.target.closest("[data-go],[data-act],[data-opt],[data-topic]");
+    if (!b) return;
+    if (b.dataset.go) return go(b.dataset.go);
+    if (b.dataset.topic) { cfg.mode = "topic"; cfg.topic = b.dataset.topic; const l = buildList(); return startSession(l, "Assunto: " + T[cfg.topic].name); }
+    if (b.dataset.opt != null) return answer(+b.dataset.opt);
+    const a = b.dataset.act;
+    if (a === "start") { const l = buildList(); const lab = { full: "Completo", top: "Rápido (20 mais prováveis)", topic: "Assunto: " + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(l, lab + (cfg.feedback === "prova" ? " · modo prova" : "")); }
+    if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
+    if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
+    if (a === "redoWrong") { const l = S.list.filter((i) => S.ans[i] !== Q[i].a).map((i) => Q[i]); cfg.feedback = "treino"; startSession(shuffle(l), "Refazendo erradas"); }
+    if (a === "reset") { if (confirm("Apagar todo o histórico desta matéria?")) { store = { q: {}, hist: [] }; save(); render(); } }
+  });
+  document.addEventListener("change", (ev) => {
+    const t = ev.target;
+    if (t.name === "mode") { cfg.mode = t.value; setup(); }
+    else if (t.name === "fb") { cfg.feedback = t.value; setup(); }
+    else if (t.id === "tsel") cfg.topic = t.value;
+    else if (t.id === "sq") cfg.sq = t.checked;
+    else if (t.id === "so") cfg.so = t.checked;
+  });
+
+  // ---------- boot ----------
+  document.title = E.title + " — Simulado";
+  document.documentElement.style.setProperty("--accent", E.color);
+  $("#h-title").textContent = E.title;
+  $("#h-sub").textContent = E.subtitle;
+  render();
+})();
+</script>
+</body></html>
