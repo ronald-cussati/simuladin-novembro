@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Simulado</title>
 <script>/* Tema claro/escuro — roda no <head> para evitar "flash" de tema errado */
+/* Prova encerrada: vale a partir do horário informado (hora local do navegador, formato AAAA-MM-DDTHH:MM) */
+window.examEnded = function (iso) {
+  var d = iso && new Date(iso);
+  return !!d && !isNaN(d) && Date.now() >= d.getTime();
+};
 (function () {
   var K = "sim_theme", root = document.documentElement, t = null;
   try { t = localStorage.getItem(K); } catch (e) {}
@@ -243,6 +248,9 @@ a.subject .most{font-size:.86rem;color:var(--ink2);margin-top:8px}
 a.subject .most b{font-weight:600}
 a.subject .prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:auto}
 a.subject .prog i{display:block;height:100%;width:0;background:var(--c);border-radius:99px}
+a.subject.done{opacity:.72}
+a.subject.done .top .when{color:var(--ink2)}
+a.subject.done .dot{background:var(--muted)}
 a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 .howto{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem;max-width:68ch}
 .howto b{color:var(--ink2);font-weight:600}
@@ -258,6 +266,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   title: "Empreendedorismo",
   subtitle: "Prof. Rafael Altoé Frossard · Aulas 1, 2 e 3 + Listas 1, 2 e 3",
   exam: "25/11",
+  examEnd: "2026-11-25T00:00", // prova já realizada (informado pelo aluno)
   color: "#0f766e",
   intro: "59 questões no formato das listas do professor (enunciado contextualizado, 5 alternativas A–E), cobrindo as três aulas. Mais 4 questões discursivas com resposta-modelo na aba Prática, porque as listas terminam sempre com uma discursiva.",
   notice: "**Foco provável: SWOT.** Comece pelo assunto “SWOT (diagnóstico estratégico)”. **Dica de prova:** as respostas certas quase sempre repetem o texto do slide; as erradas costumam usar “apenas”, “exclusivamente”, “ignorar” ou “evitar”.",
@@ -969,7 +978,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (window.examEnded(E.examEnd) ? "Prova encerrada" : E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();

@@ -3,6 +3,7 @@ window.EXAM = {
   title: "Redes de Computadores II",
   subtitle: "Prof. Luiz Guilherme Spolador · Endereçamento IP, máscara, CIDR e sub-redes",
   exam: "26/11",
+  examEnd: "2026-11-26T20:30",
   color: "#0369a1",
   intro: "60 questões em cima da Aula 5 (IP, máscara, gateway, classes, CIDR) e da Aula 6 (Sub-redes). Metade do simulado é cálculo de sub-rede, porque é o que mais vai pesar.",
   notice: "**Aviso do professor em aula:** focar principalmente no **slide 6 (sub-redes)**, que provavelmente vai cair, e também no **slide 5 (IP)**. Por isso 30 das 60 questões são só de cálculo de sub-rede.",

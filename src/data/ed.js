@@ -3,6 +3,7 @@ window.EXAM = {
   title: "Estrutura de Dados II",
   subtitle: "Prof. Luiz Guilherme Spolador · Ordenação + Ponteiros + Alocação dinâmica",
   exam: "01/12",
+  examEnd: "2026-12-01T20:30",
   color: "#4f46e5",
   intro: "Banco de 50 questões montado em cima das Aulas 5, 6, 7 e 8 (Bubble/Selection, Ponteiros e malloc, Insertion/Merge, Quick). As questões de código usam os mesmos exemplos dos slides (vetor 23, 4, 67, -8, 21...).",
   notice: "**Comece por:** alocação dinâmica, Quick Sort, ponteiros e complexidade dos algoritmos. São os assuntos com maior chance de cair.",

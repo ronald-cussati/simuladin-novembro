@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Simulados</title>
 <script>/* Tema claro/escuro — roda no <head> para evitar "flash" de tema errado */
+/* Prova encerrada: vale a partir do horário informado (hora local do navegador, formato AAAA-MM-DDTHH:MM) */
+window.examEnded = function (iso) {
+  var d = iso && new Date(iso);
+  return !!d && !isNaN(d) && Date.now() >= d.getTime();
+};
 (function () {
   var K = "sim_theme", root = document.documentElement, t = null;
   try { t = localStorage.getItem(K); } catch (e) {}
@@ -243,6 +248,9 @@ a.subject .most{font-size:.86rem;color:var(--ink2);margin-top:8px}
 a.subject .most b{font-weight:600}
 a.subject .prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:auto}
 a.subject .prog i{display:block;height:100%;width:0;background:var(--c);border-radius:99px}
+a.subject.done{opacity:.72}
+a.subject.done .top .when{color:var(--ink2)}
+a.subject.done .dot{background:var(--muted)}
 a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 .howto{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem;max-width:68ch}
 .howto b{color:var(--ink2);font-weight:600}
@@ -255,32 +263,32 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 <main>
 <div class="subjects">
 
-<a class="subject" href="empreendedorismo.html" style="--c:#0f766e" data-id="emp" data-total="59">
-  <div class="top"><span class="dot"></span>Prova · 25/11</div>
+<a class="subject" href="empreendedorismo.html" style="--c:#0f766e" data-id="emp" data-end="2026-11-25T00:00" data-total="59">
+  <div class="top"><span class="dot"></span><span class="when" data-label="Prova">Prova · 25/11</span></div>
   <h2>Empreendedorismo</h2>
   <div class="desc">Aulas 1 a 3 e Listas 1 a 3. Objetivas no formato A–E e 4 discursivas.</div>
   <div class="most"><b>Mais provável:</b> SWOT, intraempreendedorismo, pensamento estrutural, bricolagem e efetuação.</div>
   <div class="status">carregando…</div><div class="prog"><i></i></div>
 </a>
 
-<a class="subject" href="redes-2.html" style="--c:#0369a1" data-id="redes" data-total="60">
-  <div class="top"><span class="dot"></span>Prova · 26/11</div>
+<a class="subject" href="redes-2.html" style="--c:#0369a1" data-id="redes" data-end="2026-11-26T20:30" data-total="60">
+  <div class="top"><span class="dot"></span><span class="when" data-label="Prova">Prova · 26/11</span></div>
   <h2>Redes de Computadores II</h2>
   <div class="desc">Endereçamento IP, máscara, gateway, CIDR e sub-redes.</div>
   <div class="most"><b>Foco do professor:</b> slide 6 (sub-redes) e também o slide 5 (IP).</div>
   <div class="status">carregando…</div><div class="prog"><i></i></div>
 </a>
 
-<a class="subject" href="modelos-csharp.html" style="--c:#7c3aed" data-id="csharp" data-total="50">
-  <div class="top"><span class="dot"></span>Prova prática · 27/11</div>
+<a class="subject" href="modelos-csharp.html" style="--c:#7c3aed" data-id="csharp" data-end="2026-11-27T20:30" data-total="50">
+  <div class="top"><span class="dot"></span><span class="when" data-label="Prova prática">Prova prática · 27/11</span></div>
   <h2>Modelos e Linguagem de Programação III</h2>
   <div class="desc">C# e .NET: listas, laços, TryParse e métodos, com 8 exercícios de código.</div>
   <div class="most"><b>Mais provável:</b> métodos, List&lt;T&gt; e a lista de tarefas com menu.</div>
   <div class="status">carregando…</div><div class="prog"><i></i></div>
 </a>
 
-<a class="subject" href="estrutura-de-dados.html" style="--c:#4f46e5" data-id="ed" data-total="50">
-  <div class="top"><span class="dot"></span>Prova do 2º bimestre · 01/12</div>
+<a class="subject" href="estrutura-de-dados.html" style="--c:#4f46e5" data-id="ed" data-end="2026-12-01T20:30" data-total="50">
+  <div class="top"><span class="dot"></span><span class="when" data-label="Prova do 2º bimestre">Prova do 2º bimestre · 01/12</span></div>
   <h2>Estrutura de Dados II</h2>
   <div class="desc">Ordenação (Bubble, Selection, Insertion, Merge, Quick), ponteiros, malloc e free.</div>
   <div class="most"><b>Mais provável:</b> alocação dinâmica, Quick Sort, ponteiros e complexidade.</div>
@@ -293,6 +301,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 <script>
 document.querySelectorAll("a.subject").forEach(function (a) {
   var id = a.dataset.id, s = { q: {} };
+  if (window.examEnded(a.dataset.end)) { a.classList.add("done"); var w = a.querySelector(".when"); w.textContent = "Prova encerrada · " + w.textContent.split(" · ")[1]; }
   try { s = JSON.parse(localStorage.getItem("sim_" + id)) || s; } catch (e) {}
   var total = s.total || +a.dataset.total;
   var done = Object.keys(s.q).length, ok = Object.values(s.q).filter(function (x) { return x.ok; }).length;

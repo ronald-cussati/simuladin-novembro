@@ -3,6 +3,7 @@ window.EXAM = {
   title: "Modelos e Linguagem de Programação III — C# / .NET",
   subtitle: "Prof. Antonio Izo Júnior · Aulas 1, 2 e 3",
   exam: "27/11",
+  examEnd: "2026-11-27T20:30",
   examLabel: "Prova prática",
   color: "#7c3aed",
   intro: "50 questões de leitura de código (o que imprime? onde está o erro? qual trecho completa o programa?) mais 8 exercícios de **escrever código** com solução, na aba Prática. A prova é prática: o que o professor construiu nas aulas é o que vai cair — média de notas, lista de tarefas com menu, `while`, `TryParse` e métodos.",

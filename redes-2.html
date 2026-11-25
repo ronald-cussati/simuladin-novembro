@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Simulado</title>
 <script>/* Tema claro/escuro — roda no <head> para evitar "flash" de tema errado */
+/* Prova encerrada: vale a partir do horário informado (hora local do navegador, formato AAAA-MM-DDTHH:MM) */
+window.examEnded = function (iso) {
+  var d = iso && new Date(iso);
+  return !!d && !isNaN(d) && Date.now() >= d.getTime();
+};
 (function () {
   var K = "sim_theme", root = document.documentElement, t = null;
   try { t = localStorage.getItem(K); } catch (e) {}
@@ -243,6 +248,9 @@ a.subject .most{font-size:.86rem;color:var(--ink2);margin-top:8px}
 a.subject .most b{font-weight:600}
 a.subject .prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:auto}
 a.subject .prog i{display:block;height:100%;width:0;background:var(--c);border-radius:99px}
+a.subject.done{opacity:.72}
+a.subject.done .top .when{color:var(--ink2)}
+a.subject.done .dot{background:var(--muted)}
 a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 .howto{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem;max-width:68ch}
 .howto b{color:var(--ink2);font-weight:600}
@@ -258,6 +266,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   title: "Redes de Computadores II",
   subtitle: "Prof. Luiz Guilherme Spolador · Endereçamento IP, máscara, CIDR e sub-redes",
   exam: "26/11",
+  examEnd: "2026-11-26T20:30",
   color: "#0369a1",
   intro: "60 questões em cima da Aula 5 (IP, máscara, gateway, classes, CIDR) e da Aula 6 (Sub-redes). Metade do simulado é cálculo de sub-rede, porque é o que mais vai pesar.",
   notice: "**Aviso do professor em aula:** focar principalmente no **slide 6 (sub-redes)**, que provavelmente vai cair, e também no **slide 5 (IP)**. Por isso 30 das 60 questões são só de cálculo de sub-rede.",
@@ -964,7 +973,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   document.title = E.title + " · Simulado";
   document.documentElement.style.setProperty("--accent", E.color);
   $("#h-title").textContent = E.title;
-  $("#h-sub").textContent = (E.exam ? (E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
+  $("#h-sub").textContent = (E.exam ? (window.examEnded(E.examEnd) ? "Prova encerrada" : E.examLabel || "Prova") + " em " + E.exam + " · " : "") + E.subtitle;
   $("#h-intro").innerHTML = md(E.intro);
   show(location.hash.slice(1) || "home");
 })();

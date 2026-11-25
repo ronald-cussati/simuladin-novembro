@@ -225,6 +225,9 @@ a.subject .most{font-size:.86rem;color:var(--ink2);margin-top:8px}
 a.subject .most b{font-weight:600}
 a.subject .prog{height:3px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:auto}
 a.subject .prog i{display:block;height:100%;width:0;background:var(--c);border-radius:99px}
+a.subject.done{opacity:.72}
+a.subject.done .top .when{color:var(--ink2)}
+a.subject.done .dot{background:var(--muted)}
 a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 .howto{margin-top:28px;border-top:1px solid var(--line);padding-top:20px;color:var(--muted);font-size:.9rem;max-width:68ch}
 .howto b{color:var(--ink2);font-weight:600}
