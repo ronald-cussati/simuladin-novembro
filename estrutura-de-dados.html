@@ -654,6 +654,9 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   });
   const T = {};
   E.topics.forEach((t) => (T[t.id] = t));
+  // Prática Plus: assunto à parte (topic.plus). Fica fora do simulado normal e do mapa de prioridades;
+  // tem tela própria (#praticaplus). Os ids das questões não mudam, então o progresso salvo é preservado.
+  const QM = Q.filter((q) => !(T[q.t] && T[q.t].plus)), QP = Q.filter((q) => T[q.t] && T[q.t].plus), TM = E.topics.filter((t) => !t.plus);
   const lvl = (p) => (p >= 85 ? ["hot", "Muito alta"] : p >= 70 ? ["high", "Alta"] : p >= 50 ? ["mid", "Média"] : ["low", "Baixa"]);
 
   // ---------- persistência ----------
@@ -676,16 +679,18 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   // ---------- navegação ----------
-  const VIEWS = ["home", "setup", "quiz", "result", "cheat", "practice"];
+  const VIEWS = ["home", "setup", "quiz", "result", "cheat", "practice", "praticaplus"];
   function nav() {
     const tabs = [["home", "Prioridades"], ["setup", "Simulado"], ["cheat", "Resumão"]];
     if (E.practice) tabs.push(["practice", E.practiceTab || "Prática"]);
-    const cur = view === "quiz" || view === "result" ? "setup" : view;
+    if (QP.length) tabs.push(["praticaplus", "Prática Plus"]);
+    const cur = view === "quiz" || view === "result" ? (S && S.back === "praticaplus" ? "praticaplus" : "setup") : view;
     $("#tabs").innerHTML = tabs.map(([k, n]) => `<button class="${k === cur ? "on" : ""}" data-go="${k}">${n}</button>`).join("");
   }
   // mostra uma tela (sem mexer no histórico); telas que dependem de uma sessão caem em "home" se ela não existe
   function show(v) {
-    if (!VIEWS.includes(v)) v = "home";
+    if (v === "pratica-plus" || v === "plus") v = "praticaplus";
+    if (!VIEWS.includes(v) || (v === "praticaplus" && !QP.length)) v = "home";
     if (v === "quiz" && (!S || S.done)) v = S && S.done ? "result" : "home";
     if (v === "result" && !(S && S.done)) v = "home";
     view = v; render(); window.scrollTo(0, 0);
@@ -693,7 +698,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   // vai para uma tela e registra no histórico do navegador: o botão "voltar" (inclusive no celular) funciona
   function go(v) { show(v); if (location.hash !== "#" + v) { try { location.hash = v; } catch (e) {} } }
   window.addEventListener("hashchange", () => { const v = location.hash.slice(1) || "home"; if (v !== view) show(v); });
-  function render() { nav(); const hi = $("#h-intro"); if (hi) hi.hidden = view !== "home"; ({ home, setup, quiz, result, cheat, practice })[view](); }
+  function render() { nav(); const hi = $("#h-intro"); if (hi) hi.hidden = view !== "home"; ({ home, setup, quiz, result, cheat, practice, praticaplus })[view](); }
 
   // ---------- estatísticas ----------
   function topicStats(id) {
@@ -705,9 +710,10 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
 
   // ---------- INÍCIO ----------
   function home() {
-    const answered = Object.keys(store.q).length;
-    const right = Object.values(store.q).filter((x) => x.ok).length;
-    const rows = E.topics.map((t) => ({ t, s: topicStats(t.id) }));
+    const answeredQ = QM.filter((q) => store.q[q.id]);
+    const answered = answeredQ.length;
+    const right = answeredQ.filter((q) => store.q[q.id].ok).length;
+    const rows = TM.map((t) => ({ t, s: topicStats(t.id) }));
     const prio = rows.slice().sort((a, b) => b.t.prob * (1 - (b.s.acc ?? 0) * 0.9) - a.t.prob * (1 - (a.s.acc ?? 0) * 0.9)).slice(0, 3);
     const card = ({ t, s }) => {
       const [cls, lab] = lvl(t.prob);
@@ -724,7 +730,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     ${resumeBar()}
     ${E.notice ? `<div class="notice">${md(E.notice)}</div>` : ""}
     <div class="card stats">
-      <div><b>${Q.length}</b><span>questões no banco</span></div>
+      <div><b>${QM.length}</b><span>questões no banco</span></div>
       <div><b>${answered}</b><span>já respondidas</span></div>
       <div><b>${answered ? Math.round((right / answered) * 100) + "%" : "—"}</b><span>de acerto${answered ? ` · ${right} certas, ${answered - right} erradas` : ""}</span></div>
     </div>
@@ -749,13 +755,13 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   // ---------- MONTAR SIMULADO ----------
   let cfg = { mode: "full", topic: E.topics[0].id, feedback: "treino", sq: true, so: true, chain: true, mix: false };
   function setup() {
-    const wrongs = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
-    const R = (name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
+    const wrongs = QM.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
+    const R =(name, val, cur, title, desc) => `<label class="opt-row ${cur === val ? "on" : ""}"><input type="radio" name="${name}" value="${val}" ${cur === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
     app.innerHTML = `${resumeBar()}<div class="card"><h2>Montar simulado</h2>
       <p class="muted small" style="margin:-4px 0 12px">O simulado segue em fluxo contínuo, assunto por assunto: ao terminar um, entra direto no próximo e avisa a troca.</p>
-      ${R("mode", "full", cfg.mode, `Completo · ${Q.length} questões`, "Todas as questões, assunto por assunto, como numa prova de verdade.")}
+      ${R("mode", "full", cfg.mode, `Completo · ${QM.length} questões`, "Todas as questões, assunto por assunto, como numa prova de verdade.")}
       ${R("mode", "top", cfg.mode, "Rápido · as 20 mais prováveis", "Questões dos assuntos com maior chance de cair. Bom para a véspera.")}
-      ${R("mode", "topic", cfg.mode, "Por assunto", `Começa no assunto escolhido e segue para os próximos.<br><select id="tsel">${E.topics.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
+      ${R("mode", "topic", cfg.mode, "Por assunto", `Começa no assunto escolhido e segue para os próximos.<br><select id="tsel">${TM.map((t) => `<option value="${t.id}" ${t.id === cfg.topic ? "selected" : ""}>${t.name} (${Q.filter((q) => q.t === t.id).length})</option>`).join("")}</select>`)}
       ${R("mode", "wrong", cfg.mode, `Só as que eu errei · ${wrongs}`, wrongs ? "Refaz apenas as questões que você errou da última vez." : "Nada para refazer ainda. Faça um simulado primeiro.")}
       <h3>Modo</h3>
       ${R("fb", "treino", cfg.feedback, "Treino", "Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.")}
@@ -779,14 +785,14 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
   }
   function buildList() {
     let l, byProb = false, start = null;
-    if (cfg.mode === "full") l = Q.slice();
-    else if (cfg.mode === "top") { l = Q.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20); byProb = true; }
-    else if (cfg.mode === "topic") { l = cfg.chain ? Q.slice() : Q.filter((q) => q.t === cfg.topic); start = cfg.topic; }
-    else l = Q.filter((q) => store.q[q.id] && !store.q[q.id].ok);
+    if (cfg.mode === "full") l = QM.slice();
+    else if (cfg.mode === "top") { l = QM.slice().sort((a, b) => T[b.t].prob - T[a.t].prob || Math.random() - 0.5).slice(0, 20); byProb = true; }
+    else if (cfg.mode === "topic") { l = cfg.chain ? QM.slice() : QM.filter((q) => q.t === cfg.topic); start = cfg.topic; }
+    else l = QM.filter((q) => store.q[q.id] && !store.q[q.id].ok);
     return cfg.mix ? shuffle(l) : orderByTopic(l, start, byProb);
   }
   function startSession(list, label) {
-    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now(), back: view === "setup" ? "setup" : "home", mixed: cfg.mix, segs: [] };
+    S = { list: list.map((q) => q.i), p: 0, ans: {}, ord: {}, fb: cfg.feedback, label, t0: Date.now(), back: view === "setup" || view === "praticaplus" ? view : S && S.back === "praticaplus" && view === "result" ? "praticaplus" : "home", mixed: cfg.mix, segs: [] };
     S.list.forEach((i) => { const n = Q[i].o.length; const idx = [...Array(n).keys()]; S.ord[i] = cfg.so ? shuffle(idx) : idx; });
     // blocos por assunto (um bloco = sequência de questões do mesmo assunto)
     S.list.forEach((i, p) => { const t = Q[i].t, last = S.segs[S.segs.length - 1]; if (!last || last.t !== t) S.segs.push({ t, from: p, to: p }); else last.to = p; });
@@ -880,7 +886,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     const wrongs = S.list.filter((i) => S.ans[i] !== Q[i].a);
     const msg = pct >= 90 ? "Excelente. Você está pronto." : pct >= 70 ? "Muito bom. Revise só os erros abaixo." : pct >= 50 ? "No caminho. Foque nos assuntos com barra vermelha." : "É para isso que serve o simulado. Leia as explicações e refaça só os erros.";
     app.innerHTML = `<div class="card"><div class="row" style="gap:28px;align-items:flex-end"><div><div class="score">${pct}%</div><div class="muted small" style="margin-top:6px">${s} de ${n} certas · ${Math.max(1, Math.round((Date.now() - S.t0) / 60000))} min</div></div><div style="flex:1;min-width:220px"><h2 style="margin:0;font-size:1.15rem">${msg}</h2></div></div>
-      <hr class="hr"><div class="row"><button class="btn" data-act="redoWrong" ${wrongs.length ? "" : "disabled"}>Refazer só as erradas · ${wrongs.length}</button><button class="btn ghost" data-go="setup">Novo simulado</button><button class="btn ghost" data-go="home">Prioridades</button></div></div>
+      <hr class="hr"><div class="row"><button class="btn" data-act="redoWrong" ${wrongs.length ? "" : "disabled"}>Refazer só as erradas · ${wrongs.length}</button>${S.back === "praticaplus" ? '<button class="btn ghost" data-go="praticaplus">Prática Plus</button>' : '<button class="btn ghost" data-go="setup">Novo simulado</button>'}<button class="btn ghost" data-go="home">Prioridades</button></div></div>
       <div class="card"><h2>Desempenho por assunto</h2><table class="topics">${Object.entries(byT).sort((a, b) => a[1].s / a[1].n - b[1].s / b[1].n).map(([t, v]) => `<tr><td style="padding:12px 12px 12px 0">${esc(T[t].name)}</td><td style="width:40%;padding:12px 12px 12px 0"><div class="bar2 ${v.s / v.n >= 0.7 ? "acc" : "bad"}" style="margin:0"><i style="width:${(v.s / v.n) * 100}%"></i></div></td><td style="text-align:right;padding:12px 0" class="tnum">${v.s}/${v.n}</td></tr>`).join("")}</table></div>
       ${wrongs.length ? `<div class="card rev"><h2>Revise o que você errou · ${wrongs.length}</h2>${wrongs.map((i) => { const q = Q[i]; return `<details open><summary>${esc(T[q.t].name)} · ${esc(q.q.slice(0, 90))}${q.q.length > 90 ? "…" : ""}</summary><div class="qtext" style="margin-top:14px">${md(q.q)}</div>${q.c ? `<pre class="code">${esc(q.c)}</pre>` : ""}${explain(q, S.ans[i])}</details>`; }).join("")}</div>` : `<div class="card"><h2>Gabarito perfeito</h2><p class="muted" style="margin:0">Nenhum erro neste simulado.</p></div>`}`;
   }
@@ -898,6 +904,28 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
       <details><summary>Ver resolução</summary><div style="margin:.6rem 0 0 14px;color:var(--ink2)">${p.a ? `<p style="margin:0 0 8px">${md(p.a)}</p>` : ""}${p.code ? `<pre class="code">${esc(p.code)}</pre>` : ""}${p.after ? `<p style="margin:8px 0 0">${md(p.after)}</p>` : ""}</div></details></div>`).join("");
   }
 
+  // ---------- PRÁTICA PLUS (só código) ----------
+  function praticaplus() {
+    const done = QP.filter((q) => store.q[q.id]), ok = done.filter((q) => store.q[q.id].ok).length, wrongs = QP.filter((q) => store.q[q.id] && !store.q[q.id].ok).length;
+    const R = (val, title, desc) => `<label class="opt-row ${cfg.feedback === val ? "on" : ""}"><input type="radio" name="pfb" value="${val}" ${cfg.feedback === val ? "checked" : ""}><div><b>${title}</b><div class="small muted">${desc}</div></div></label>`;
+    app.innerHTML = `${resumeBar()}<div class="card"><h2>Prática Plus</h2>
+      <p class="muted" style="margin:0">${md(E.plusIntro || "Só código para analisar.")}</p>
+      <div class="stats" style="margin-top:16px"><div><b>${QP.length}</b><span>trechos de código</span></div><div><b>${done.length}</b><span>já respondidos</span></div><div><b>${done.length ? Math.round((ok / done.length) * 100) + "%" : "—"}</b><span>de acerto${done.length ? ` · ${ok} certas, ${done.length - ok} erradas` : ""}</span></div></div></div>
+      <div class="card"><h3 style="margin-top:0">Modo</h3>
+      ${R("treino", "Treino", "Mostra se acertou e explica na hora, a cada questão. Melhor para aprender.")}
+      ${R("prova", "Prova", "Resultado e explicações só no final.")}
+      <label class="check" style="margin-top:14px"><input type="checkbox" id="sq" ${cfg.sq ? "checked" : ""}> Embaralhar a ordem das questões</label>
+      <label class="check"><input type="checkbox" id="so" ${cfg.so ? "checked" : ""}> Embaralhar as alternativas (evita decorar a letra)</label>
+      <div class="row" style="margin-top:18px"><button class="btn" data-act="startplus">Começar · ${QP.length} questões</button>
+      <button class="btn ghost" data-act="startplusw" ${wrongs ? "" : "disabled"}>Só as que errei · ${wrongs}</button></div></div>`;
+  }
+  const startPlus = (onlyWrong) => {
+    let l = onlyWrong ? QP.filter((q) => store.q[q.id] && !store.q[q.id].ok) : QP.slice();
+    if (cfg.sq) l = shuffle(l);
+    if (!l.length) return;
+    startSession(l, "Prática Plus" + (onlyWrong ? " · só as erradas" : "") + (cfg.feedback === "prova" ? " · prova" : ""));
+  };
+
   // ---------- eventos ----------
   const startTopic = (id) => { cfg.mode = "topic"; cfg.topic = id; startSession(buildList(), (cfg.chain ? "A partir de: " : "Assunto: ") + T[id].name); };
   document.addEventListener("click", (ev) => {
@@ -913,10 +941,12 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     }
     const a = b.dataset.act;
     if (a === "start") { const lab = { full: "Completo", top: "Rápido", topic: (cfg.chain ? "A partir de: " : "Assunto: ") + (T[cfg.topic] || {}).name, wrong: "Só as erradas" }[cfg.mode]; startSession(buildList(), lab + (cfg.feedback === "prova" ? " · prova" : "")); }
+    if (a === "startplus") startPlus(false);
+    if (a === "startplusw") startPlus(true);
     if (a === "next") { if (S.p === S.list.length - 1) finish(); else { S.p++; quiz(); window.scrollTo(0, 0); } }
     if (a === "skip") { if (S.p < S.list.length - 1) { S.p++; quiz(); window.scrollTo(0, 0); } }
     if (a === "prev") { if (S.p > 0) { S.p--; quiz(); window.scrollTo(0, 0); } }
-    if (a === "leave") { clearInterval(clockT); go(S && S.back === "setup" ? "setup" : "home"); }
+    if (a === "leave") { clearInterval(clockT); go(S && (S.back === "setup" || S.back === "praticaplus") ? S.back : "home"); }
     if (a === "end") { if (S.list.some((i) => S.ans[i] != null) ? confirm("Encerrar agora e ver o resultado do que você já respondeu?") : confirm("Você ainda não respondeu nada. Sair do simulado?")) finish(true); }
     if (a === "resume") go("quiz");
     if (a === "discard") { if (confirm("Descartar o simulado em andamento?")) { clearInterval(clockT); S = null; render(); } }
@@ -930,6 +960,7 @@ a.subject .status{font-size:.8rem;color:var(--muted);margin-top:8px}
     const t = ev.target;
     if (t.name === "mode") { cfg.mode = t.value; setup(); }
     else if (t.name === "fb") { cfg.feedback = t.value; setup(); }
+    else if (t.name === "pfb") { cfg.feedback = t.value; praticaplus(); }
     else if (t.id === "tsel") cfg.topic = t.value;
     else if (t.id === "sq") cfg.sq = t.checked;
     else if (t.id === "so") cfg.so = t.checked;

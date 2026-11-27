@@ -7,6 +7,7 @@ window.EXAM = {
   examLabel: "Prova prática",
   color: "#7c3aed",
   intro: "50 questões de leitura de código (o que imprime? onde está o erro? qual trecho completa o programa?) mais 8 exercícios de **escrever código** com solução, na aba Prática. A prova é prática: o que o professor construiu nas aulas é o que vai cair — média de notas, lista de tarefas com menu, `while`, `TryParse` e métodos.",
+  plusIntro: "**20 trechos de código, só para analisar.** Leia o programa, faça o teste de mesa e responda: o que imprime? onde está o erro? o que acontece ao executar? Cobre divisão inteira, `while` e `for`, `List<T>`, `TryParse` e `try/catch`, métodos (retorno, parâmetro e escopo) e os erros de lógica mais comuns na prova prática.",
   notice: "**Prova prática:** digite o código no compilador online, não só leia. O exercício mais importante é refazer do zero a lista de tarefas com menu e métodos.",
   disclaimer: "**Leitura dos materiais:** o fio condutor das 3 aulas é um só projeto crescendo — Aula 1 (variáveis, if, for, método simples, classe, média de notas) → Aula 2 (List, while, TryParse, try/catch, **lista de tarefas com menu**) → Aula 3 (**separar em métodos**: parâmetro x argumento, return, void, escopo). Espere pedido de: refazer a lista de tarefas e/ou adicionar uma função (ex.: “Concluir tarefa”, desafios do final de cada slide). Não achei provas antigas da Multivix publicadas; as estimativas vêm do peso de cada tema nos slides (Aula 3, a mais recente, tem o desafio final).",
   topics: [
@@ -20,7 +21,8 @@ window.EXAM = {
     { id: "dep", name: "Depuração", prob: 50, why: "Breakpoint, step over, inspecionar, roteiro de 4 passos." },
     { id: "metodo", name: "Métodos", prob: 96, why: "Aula 3 inteira: definir x chamar, parâmetro x argumento, return, void, escopo local. **Maior chance.**" },
     { id: "poo", name: "Classes e objetos (introdução)", prob: 55, why: "Classe = molde; objeto; propriedade; método. O professor diz que não precisa dominar, só reconhecer." },
-    { id: "proj", name: "Projeto: lista de tarefas com menu", prob: 88, why: "É o projeto das Aulas 2 e 3. Menu com while, RemoveAt(n−1), validação de limites." }
+    { id: "proj", name: "Projeto: lista de tarefas com menu", prob: 88, why: "É o projeto das Aulas 2 e 3. Menu com while, RemoveAt(n−1), validação de limites." },
+    { id: "plus", name: "Prática Plus", plus: true, prob: 70, why: "Só código para analisar: o que imprime, onde está o erro, o que acontece ao rodar." }
   ],
   plan: [
     "**Hoje:** faça o simulado de **Métodos** e **List<T>** e a aba Prática (exercícios 1–4). Digite o código no compilador online — não só leia.",
@@ -445,7 +447,234 @@ p.Apresentar();`],
       ["Chamar `RemoveAt(3)` e capturar a exceção com `try/catch`, sem avisar o usuário", "Mostrar uma mensagem de opção inválida e voltar ao menu, sem remover nada", "Remover o último item da lista, que é o mais próximo do número digitado", "Encerrar o programa, pois a entrada inválida impede a continuação do menu", "Aceitar o 4 e remover o terceiro item, arredondando para o maior índice válido"], 1,
       "O número deve estar entre 1 e Count (aqui 1–3). Fora do intervalo → mensagem de erro; `RemoveAt(3)` lançaria exceção. Cenários de teste da aula: **remover 0, um índice válido e um acima do total**.",
       "Pedir o andar 4 num prédio de 3: o elevador avisa que não existe, não tenta subir.",
-      ["Capturar a exceção em silêncio não é validar a entrada; o usuário fica sem retorno.", "", "Remover um item que o usuário não pediu é pior do que recusar a entrada.", "Encerrar o programa é exagero; basta avisar e voltar ao menu.", "O 4 não é um número válido (1 a 3); nada deve ser removido."]]
+      ["Capturar a exceção em silêncio não é validar a entrada; o usuário fica sem retorno.", "", "Remover um item que o usuário não pediu é pior do que recusar a entrada.", "Encerrar o programa é exagero; basta avisar e voltar ao menu.", "O 4 não é um número válido (1 a 3); nada deve ser removido."]],
+
+    // ============ PRÁTICA PLUS (só código para analisar) ============
+    ["plus", "O que o programa abaixo imprime?",
+      ["3", "3,5", "4", "2", "Nada: o programa não compila porque o resultado de `/` com `int` não cabe em `double`"], 0,
+      "`a` e `b` são `int`, então `7 / 2` é **divisão inteira** e vale 3. Só depois o 3 é convertido para `double` ao ser guardado em `r`, e `double` com valor 3 é exibido como `3`.",
+      "Dividir 7 balas entre 2 crianças só com balas inteiras: cada uma leva 3 e sobra 1. Guardar o 3 numa caixa maior (`double`) não traz a sobra de volta.",
+      ["", "O 3,5 só apareceria se pelo menos um dos operandos fosse `double`, por exemplo `7.0 / 2`.", "A divisão inteira trunca, não arredonda para cima.", "O resultado de 7 / 2 não é 2.", "Guardar um `int` em um `double` é permitido e automático; não há erro."],
+      `int a = 7;
+int b = 2;
+double r = a / b;
+Console.WriteLine(r);`],
+    ["plus", "Qual é a saída do programa?",
+      ["10 4", "10 5", "6 4", "15 5", "10 6"], 1,
+      "Teste de mesa: soma vai 0→1→3→6→10 enquanto `i` vale 1, 2, 3 e 4. Depois do último `i++`, `i` vira **5**, e o teste `5 <= 4` é falso: o laço termina com `soma = 10` e `i = 5`.",
+      "Contar degraus subindo: você só para quando já pisou no degrau seguinte ao último que queria somar.",
+      ["O `i` é incrementado depois de somar, então termina em 5, e não em 4.", "", "6 seria a soma até 3, mas o laço roda também para `i = 4`.", "15 seria a soma até 5, mas `i = 5` não entra no laço.", "O `i` para assim que o teste falha, sem passar de 5."],
+      `int i = 1;
+int soma = 0;
+while (i <= 4)
+{
+    soma += i;
+    i++;
+}
+Console.WriteLine($"{soma} {i}");`],
+    ["plus", "O que aparece no console quando este laço termina? (`Write` não pula linha)",
+      ["2 4 6", "0 1 2", "0 2 4", "0 2 4 6", "1 3 5"], 2,
+      "`i` vale 0, 1 e 2 (para em 3). Em cada volta imprime `i * 2`: **0, 2, 4**, cada um seguido de um espaço, tudo na mesma linha porque é `Write`.",
+      "Três passos na escada, andando de dois em dois degraus: começa no zero.",
+      ["Começaria em 2 se `i` iniciasse em 1.", "Isso seria a impressão de `i`, e não de `i * 2`.", "", "O laço dá só 3 voltas (`i < 3`), então não chega ao 6.", "Esses são `i * 2 + 1`, e o código não soma 1."],
+      `for (int i = 0; i < 3; i++)
+{
+    Console.Write(i * 2 + " ");
+}`],
+    ["plus", "Qual é a saída do programa?",
+      ["3 8", "4 2", "3 9", "3 2", "4 8"], 3,
+      "Passo a passo: `{5, 8, 2}` → `Add(9)` → `{5, 8, 2, 9}` → `RemoveAt(1)` tira o **8** (índice 1) → `{5, 2, 9}`. Então `Count` é 3 e `n[1]` é 2.",
+      "Fila com 4 pessoas: a 2ª posição (índice 1) sai e todo mundo atrás avança um lugar.",
+      ["O 8 foi removido; o que está no índice 1 agora é o 2.", "O `Count` caiu de 4 para 3 depois da remoção.", "O 9 está no índice 2; o índice 1 guarda o 2.", "", "A lista já perdeu um item e o 8 foi o removido."],
+      `List<int> n = new() { 5, 8, 2 };
+n.Add(9);
+n.RemoveAt(1);
+Console.WriteLine($"{n.Count} {n[1]}");`],
+    ["plus", "O que acontece ao executar este programa?",
+      ["Imprime `revisar`, o último item da lista", "Imprime uma linha vazia, pois o índice não existe", "Não compila: `Count` não pode ser usado dentro de colchetes", "Lança ArgumentOutOfRangeException em tempo de execução", "Imprime `null` e continua normalmente"], 3,
+      "Com 3 itens, os índices válidos são **0, 1 e 2**. `tarefas[tarefas.Count]` é `tarefas[3]`: fora do intervalo, e o erro só aparece ao **rodar**. O último item é `tarefas[tarefas.Count - 1]`.",
+      "Um prédio de 3 andares com os andares numerados 0, 1 e 2: apertar o botão 3 não leva a lugar nenhum.",
+      ["O último item está em `Count - 1`, e não em `Count`.", "Acessar um índice inexistente não devolve vazio; gera um erro.", "O compilador aceita a expressão; o problema só aparece na execução.", "", "Uma lista de `string` não devolve `null` para índice inexistente; lança exceção."],
+      `List<string> tarefas = new() { "estudar", "treinar", "revisar" };
+Console.WriteLine(tarefas[tarefas.Count]);`],
+    ["plus", "Qual valor é impresso na última linha?",
+      ["8", "0", "Erro de compilação por ignorar o valor retornado", "9", "4"], 4,
+      "`Dobro(n)` calcula 8, mas o resultado **não foi guardado** em lugar nenhum. A variável `n` nunca foi alterada, então continua valendo **4**. Chamar um método e descartar o retorno é permitido.",
+      "Pedir ao garçom para calcular a conta e não anotar o número: a conta continua a mesma na sua mesa.",
+      ["O 8 só apareceria com `n = Dobro(n);` ou imprimindo `Dobro(n)`.", "`n` não foi zerado; ele mantém o valor original.", "Ignorar o retorno de um método é válido em C#.", "Nenhuma conta no código resulta em 9.", ""],
+      `static int Dobro(int x)
+{
+    return x * 2;
+}
+
+int n = 4;
+Dobro(n);
+Console.WriteLine(n);`],
+    ["plus", "Qual é o resultado do programa?",
+      ["Imprime 10, o valor guardado dentro do método", "Imprime 0, o valor padrão de um `int` sem atribuição", "Erro de compilação: `total` não existe fora do método", "Lança NullReferenceException ao tentar ler `total`", "Compila e termina sem imprimir nada na tela"], 2,
+      "`total` é uma variável **local**: só existe dentro de `Calcular()`. Fora do método o nome não é conhecido e o compilador acusa erro (*the name 'total' does not exist in the current context*).",
+      "Um recado escrito dentro de uma sala fechada: quem está do lado de fora não consegue lê-lo.",
+      ["O valor 10 vive só dentro do método.", "Variável fora do escopo não vale 0; ela simplesmente não existe ali.", "", "Não há objeto nulo envolvido; o erro é anterior à execução.", "O programa nem chega a ser executado, pois não compila."],
+      `static void Calcular()
+{
+    int total = 10;
+}
+
+Calcular();
+Console.WriteLine(total);`],
+    ["plus", "Qual é a saída para a entrada `12a`?",
+      ["Número: 12", "Inválido: 12", "Inválido: 0", "Inválido:", "Lança FormatException e o programa termina"], 2,
+      "`TryParse` **não lança exceção**: ele devolve `false` e coloca **0** na variável `out`. Cai no `else` e imprime `Inválido: 0`.",
+      "Um caixa eletrônico que, ao não entender o valor, mostra “inválido” e zera o campo, sem derrubar o sistema.",
+      ["`12a` não é um número inteiro válido, então o ramo do `if` não roda.", "`TryParse` não aproveita a parte `12`; em caso de falha a variável `out` fica com 0.", "", "A variável `out` sempre recebe um valor (0 se falhar), então o 0 é impresso.", "A exceção seria típica do `int.Parse`; o `TryParse` evita esse erro."],
+      `string entrada = "12a";
+if (int.TryParse(entrada, out int n))
+    Console.WriteLine($"Número: {n}");
+else
+    Console.WriteLine($"Inválido: {n}");`],
+    ["plus", "Quais linhas são impressas, na ordem?",
+      ["A, B, D", "A, C, D", "A, B, C, D", "A, D", "A, C"], 1,
+      "Imprime `A`; `int.Parse(\"abc\")` lança `FormatException`; o resto do `try` (o `B`) é **pulado**; o `catch` imprime `C`; depois o programa segue e imprime `D`.",
+      "Um tropeço no meio do corredor: você não termina o trecho, vai ao pronto-socorro (catch) e depois continua a rotina.",
+      ["O `B` não aparece: a exceção interrompe o `try` na linha do `Parse`.", "", "`B` e `C` não saem juntos: ou o `try` completa ou cai no `catch`.", "O `catch` foi acionado, então o `C` também é impresso.", "O programa não termina no `catch`; a linha seguinte ainda roda."],
+      `try
+{
+    Console.WriteLine("A");
+    int x = int.Parse("abc");
+    Console.WriteLine("B");
+}
+catch (FormatException)
+{
+    Console.WriteLine("C");
+}
+Console.WriteLine("D");`],
+    ["plus", "O que este trecho faz ao ser executado?",
+      ["Imprime 1, 2 e 3 e depois termina normalmente", "Imprime 1 sem parar, pois a condição nunca fica falsa", "Não compila, pois o `while` exige a palavra `else`", "Não imprime nada, pois 1 já começa fora do limite", "Imprime 1, 2, 3 e 4 e termina normalmente depois"], 1,
+      "O `while` tem 3 partes: **condição, corpo e atualização**. Aqui falta a atualização (`contador++`): `contador` fica em 1, `1 <= 3` é sempre verdadeiro e o laço se repete para sempre.",
+      "Uma esteira que só anda se alguém apertar o botão, e ninguém aperta: ela continua na mesma posição, rodando.",
+      ["Sem o `contador++`, o valor nunca muda para 2 ou 3.", "", "O `while` não depende de `else`.", "A condição `1 <= 3` é verdadeira, então o corpo roda.", "O valor nunca chega a 4 porque nunca é incrementado."],
+      `int contador = 1;
+while (contador <= 3)
+{
+    Console.WriteLine(contador);
+}`],
+    ["plus", "O que acontece ao compilar este código?",
+      ["Imprime `Maior`, porque 18 é de fato igual a 18", "Compila normalmente, mas não imprime nada na tela", "Não compila: `=` atribui, e `int` não serve de condição", "Compila e lança uma exceção ao executar a comparação", "Imprime `Maior` e altera `idade` para 18 novamente"], 2,
+      "Em C#, `=` **atribui** e `==` **compara**. `if (idade = 18)` tenta usar um `int` onde o `if` exige `bool` — erro de compilação. O correto é `if (idade == 18)`.",
+      "`=` é “coloque isto aqui”; `==` é “isto é igual àquilo?”. O `if` só aceita a pergunta.",
+      ["O programa nem chega a rodar, pois a condição não é válida.", "Não há compilação com sucesso: a condição é inválida.", "", "O erro ocorre antes da execução, na compilação.", "O programa não chega a atribuir nada porque não compila."],
+      `int idade = 18;
+if (idade = 18)
+{
+    Console.WriteLine("Maior");
+}`],
+    ["plus", "O que o programa imprime?",
+      ["Aprovado", "Reprovado", "Recuperação", "6", "Erro de compilação: o operador ternário não pode ser aninhado"], 2,
+      "`6 >= 7` é falso, então segue para o segundo ternário: `6 >= 5` é verdadeiro e resulta em **Recuperação**. O ternário `cond ? a : b` pode ser encadeado.",
+      "Duas perguntas em fila: “passou direto?” (não) → “pelo menos recuperação?” (sim).",
+      ["Aprovado exigiria nota maior ou igual a 7.", "Reprovado só ocorreria com nota menor que 5.", "", "A variável `r` guarda o texto escolhido, e não a nota.", "O ternário pode ser aninhado, embora fique menos legível."],
+      `int nota = 6;
+string r = nota >= 7 ? "Aprovado" : nota >= 5 ? "Recuperação" : "Reprovado";
+Console.WriteLine(r);`],
+    ["plus", "Qual é a saída das duas linhas?",
+      ["Soma: 8 | 8 é a soma", "Soma: 53 | 53 é a soma", "Soma: 8 | 53 é a soma", "Soma: 53 | 8 é a soma", "Erro de compilação ao misturar `int` e `string`"], 3,
+      "A expressão é calculada da esquerda para a direita. Na 1ª linha, `\"Soma: \" + a` já vira texto, e então `+ b` **concatena** (`Soma: 53`). Na 2ª, `a + b` ainda são dois `int` e somam 8 antes de virar texto (`8 é a soma`).",
+      "Se a primeira coisa já é texto, tudo o que vem depois é colado; se começa com números, eles somam primeiro.",
+      ["Na 1ª linha, o `+` depois do texto concatena, não soma.", "Na 2ª linha, `a + b` é somado antes de encontrar o texto.", "A ordem está trocada: o texto à esquerda força a concatenação.", "", "Misturar `int` e `string` com `+` é permitido e vira concatenação."],
+      `int a = 5;
+int b = 3;
+Console.WriteLine("Soma: " + a + b);
+Console.WriteLine(a + b + " é a soma");`],
+    ["plus", "Qual é a saída do programa?",
+      ["B C D", "A B D", "A C D", "A B C", "A C"], 2,
+      "O menu mostra 1..Count, mas a lista começa em 0, por isso se usa `RemoveAt(opcao - 1)`. Com `opcao = 2`, remove o índice **1** (o `B`). Sobram `A C D`.",
+      "Na fila numerada a partir de 1, a pessoa nº 2 é a que está na posição 1 do computador.",
+      ["Isso removeria o `A`, o índice 0 (`RemoveAt(opcao - 2)`).", "Isso removeria o `C`, o índice 2 (`RemoveAt(opcao)`).", "", "Isso removeria o `D`, o último índice.", "Só um item foi removido da lista de 4, então ainda restam 3."],
+      `List<string> t = new() { "A", "B", "C", "D" };
+int opcao = 2;
+t.RemoveAt(opcao - 1);
+
+foreach (string x in t)
+{
+    Console.Write(x + " ");
+}`],
+    ["plus", "Qual valor é impresso?",
+      ["24", "14", "17", "10", "7"], 2,
+      "O `foreach` visita todos os itens, mas só soma os que passam no `if (x > 5)`: **7 e 10**, e 4 e 3 ficam de fora. 7 + 10 = 17.",
+      "Passar um ímã sobre moedas: só as maiores que o limite grudam e entram na soma.",
+      ["24 é a soma de todos os itens, ignorando o `if`.", "14 é 4 + 10, que não é o resultado da condição `x > 5`.", "", "10 seria apenas um dos valores que passam; o 7 também entra.", "7 é só um dos itens maiores que 5; o 10 também entra na soma."],
+      `List<int> v = new() { 4, 7, 10, 3 };
+int s = 0;
+foreach (int x in v)
+{
+    if (x > 5)
+        s += x;
+}
+Console.WriteLine(s);`],
+    ["plus", "Qual valor é impresso?",
+      ["7", "-7", "13", "0", "Erro de compilação por ter retorno negativo"], 1,
+      "Os argumentos entram **na ordem** dos parâmetros: `a = 3` e `b = 10`. O método devolve `3 - 10 = -7`. Subtração não é comutativa: a ordem da chamada importa.",
+      "Tirar 10 reais de uma carteira com 3: você fica devendo 7, e o sinal negativo mostra isso.",
+      ["Seria o resultado de `Subtrair(10, 3)`, com a ordem trocada.", "", "13 seria a soma, e o método subtrai.", "O resultado só seria 0 se os dois argumentos fossem iguais.", "`int` aceita valores negativos sem problema."],
+      `static int Subtrair(int a, int b)
+{
+    return a - b;
+}
+
+Console.WriteLine(Subtrair(3, 10));`],
+    ["plus", "O que acontece ao compilar este método?",
+      ["Compila e devolve `null` quando a média for menor que 5", "Compila e devolve texto vazio quando a média for menor que 5", "Erro de compilação: nem todos os caminhos devolvem um valor", "Erro de compilação: `else if` não existe em C#", "Erro de compilação: `double` não pode ser comparado com `int`"], 2,
+      "Se a média for **menor que 5**, nenhum `return` é executado e o método chegaria ao fim sem devolver nada. O C# exige que **todos os caminhos** de um método não-`void` terminem em `return`. Falta um `else` final.",
+      "Um caixa que responde “aprovado” ou “recuperação”, mas para a terceira situação fica mudo: o sistema não aceita um atendimento sem resposta.",
+      ["O C# não devolve `null` por conta própria; ele recusa o método.", "Também não completa um valor padrão; ele recusa o método.", "", "`else if` existe e é usado nos materiais de aula.", "Comparar `double` com `int` é permitido."],
+      `static string Classificar(double media)
+{
+    if (media >= 7)
+        return "Aprovado";
+    else if (media >= 5)
+        return "Recuperação";
+}`],
+    ["plus", "Qual valor é impresso?",
+      ["25", "10", "15", "20", "5"], 2,
+      "A chamada de dentro para fora: `Somar(5, 5)` = 10; depois `Somar(5, 10)` = **15**. Um método pode chamar outro, e o resultado do interno vira argumento do externo.",
+      "Primeiro você resolve a conta entre parênteses; depois usa esse resultado na conta de fora.",
+      ["25 seria 5 · 5, mas não há multiplicação no código.", "10 é só o resultado da chamada interna.", "", "20 seria 5 + 5 + 5 + 5; ele soma apenas três vezes o valor.", "5 é o argumento de entrada, e não o resultado."],
+      `static int Somar(int a, int b)
+{
+    return a + b;
+}
+
+static int Triplo(int x)
+{
+    return Somar(x, Somar(x, x));
+}
+
+Console.WriteLine(Triplo(5));`],
+    ["plus", "Quais valores aparecem, nesta ordem?",
+      ["15 e 15", "5 e 5", "10 e 5", "5 e 15", "15 e 5"], 4,
+      "O parâmetro `x` é uma **cópia** do valor que foi enviado. Dentro do método ele vira 15 (e imprime 15), mas a variável `n` de quem chamou não é alterada e continua em **5**.",
+      "Fotocopiar uma ficha e rabiscar a cópia: o original continua intacto na gaveta.",
+      ["`n` não é modificado pelo método; só a cópia `x` muda.", "O método soma 10 e imprime o novo valor, então o primeiro número não é 5.", "O método soma 10 a 5, resultando em 15, e não em 10.", "A ordem está trocada: o método imprime antes de `Console.WriteLine(n)`.", ""],
+      `static void Aumentar(int x)
+{
+    x = x + 10;
+    Console.WriteLine(x);
+}
+
+int n = 5;
+Aumentar(n);
+Console.WriteLine(n);`],
+    ["plus", "A lista tem 2 tarefas. O que acontece ao executar este laço?",
+      ["Imprime as 2 tarefas e depois termina normalmente", "Imprime as 2 tarefas e lança ArgumentOutOfRangeException", "Imprime as 2 tarefas e depois uma terceira linha vazia", "Não compila, pois `<=` não pode ser usado com `Count`", "Repete a primeira tarefa para sempre, sem terminar"], 1,
+      "O laço usa `i <= tarefas.Count`: roda com `i = 0, 1` e **também com `i = 2`**, índice que não existe (os válidos são 0 e 1). Para percorrer tudo, o certo é `i < tarefas.Count`.",
+      "Contar 2 pessoas numa fila e chamar uma terceira que não existe: você chama, ninguém responde, e o sistema acusa erro.",
+      ["O `<=` faz uma volta a mais, e essa volta extra gera erro.", "", "Uma lista não devolve linha vazia para índice inexistente; lança exceção.", "`<=` pode ser usado normalmente; o problema é lógico.", "O `i++` está presente, então o laço não é infinito."],
+      `List<string> tarefas = new() { "estudar", "treinar" };
+
+for (int i = 0; i <= tarefas.Count; i++)
+{
+    Console.WriteLine(tarefas[i]);
+}`]
   ],
   cheat: [
     { h: "Tipos e operadores", items: [
